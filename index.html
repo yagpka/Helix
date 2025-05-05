@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Helix Point Drop - Telegram Mini App</title> <!-- Removed (Local Test) -->
+    <title>Helix Point Drop - Telegram Mini App</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
@@ -307,7 +307,6 @@
     </style>
     <!-- Ad SDK Script Tag (whephiwums) -->
     <script src='//whephiwums.com/sdk.js' data-zone='9292240' data-sdk='show_9292240'></script>
-    <!-- REMOVED: onclicka Ad SDK Script Tag -->
 </head>
 <body>
 
@@ -353,7 +352,6 @@
         <button class="overlay-close-button" data-overlay-id="withdrawal-overlay">Close</button>
         <h2 class="overlay-title">Withdrawal</h2>
         <div class="overlay-content">
-            <!-- MODIFIED: Updated withdrawal condition text -->
             <p>Withdrawal functionality will be activated from <strong>early or late July</strong>. You must have at least <strong class="highlight">5 referrals</strong> to be eligible. Other conditions may apply and will be announced later. Stay tuned!</p>
             <button id="withdraw-main-button" disabled>Withdrawal (Coming Soon)</button>
         </div>
@@ -364,7 +362,6 @@
         <div class="overlay-content">
             <div class="referral-info">
                 <p>Invite your friends using your unique referral link!</p>
-                <!-- MODIFIED: Removed point bonus info, added withdrawal requirement info -->
                 <p>You need at least <strong class="highlight">5 referrals</strong> to be eligible for withdrawal.</p>
                  <div id="referral-link-container">
                      <span id="referral-link-display">Generating link...</span>
@@ -431,11 +428,6 @@
     <!-- Game Container -->
     <div id="game-container"> <canvas id="game-canvas"></canvas> </div>
 
-    <!-- *********************************************************** -->
-    <!-- * REMOVED MOCK TELEGRAM OBJECT SCRIPT                     * -->
-    <!-- *********************************************************** -->
-
-
     <!-- Libraries & SDKs -->
     <script type="importmap">{ "imports": { "three": "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.min.js", "three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/" } }</script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
@@ -454,17 +446,15 @@
         import { TextureLoader } from 'three';
 
         // --- Constants ---
-        const BOT_USERNAME = "Crypto_drop_ya_bot"; // MAKE SURE THIS IS CORRECT
-        const MINI_APP_NAME = ""; // Set if your mini app has a specific path/name in the bot menu link
-        // REMOVED: Referral bonus point constants
+        // IMPORTANT: Replace with your actual bot username
+        const BOT_USERNAME = "YOUR_BOT_USERNAME"; // e.g., "MyCoolGameBot"
+        const MINI_APP_NAME = ""; // e.g., "game" if link is t.me/MyCoolGameBot/game
         const REWARDED_AD_TASKS_CONFIG = {
             'task_1': { title: "Watch video", reward: 50, limit: 50, icon: 'video', adType: 'rewardedInterstitial' },
             'task_2': { title: "Watch video", reward: 40, limit: 40, icon: 'video', adType: 'rewardedPopup' },
             'task_3': { title: "Watch video", reward: 30, limit: 30, icon: 'video', adType: 'inAppInterstitial' },
-            // MODIFIED: Changed adType for task_4 to match task_1
-            'task_4': { title: "Watch video", reward: 20, limit: 20, icon: 'video', adType: 'rewardedInterstitial' },
-            // MODIFIED: Changed adType for task_5 to match task_2
-            'task_5': { title: "Watch video", reward: 10, limit: 10, icon: 'video', adType: 'rewardedPopup' }
+            'task_4': { title: "Watch video", reward: 20, limit: 20, icon: 'video', adType: 'rewardedInterstitial' }, // Changed back
+            'task_5': { title: "Watch video", reward: 10, limit: 10, icon: 'video', adType: 'rewardedPopup' }        // Changed back
         };
 
 
@@ -533,14 +523,15 @@
         const rewardedTasksListContainer = document.getElementById('rewarded-tasks-list');
 
         // --- Firebase Setup ---
+        // IMPORTANT: Replace with your actual Firebase configuration
          const firebaseConfig = {
-             apiKey: "AIzaSyCIYBPkVduy16dcYQ9PaSIc58BsNVamsO0", // Replace with your actual API key
-             authDomain: "helix-cryptodrop.firebaseapp.com", // Replace with your actual auth domain
-             databaseURL: "https://helix-cryptodrop-default-rtdb.firebaseio.com", // Replace with your actual database URL
-             projectId: "helix-cryptodrop", // Replace with your actual project ID
-             storageBucket: "helix-cryptodrop.appspot.com", // Replace with your actual storage bucket
-             messagingSenderId: "981063831600", // Replace with your actual sender ID
-             appId: "1:981063831600:web:2628901c5186a635e65df5" // Replace with your actual app ID
+             apiKey: "YOUR_API_KEY",
+             authDomain: "YOUR_AUTH_DOMAIN",
+             databaseURL: "YOUR_DATABASE_URL",
+             projectId: "YOUR_PROJECT_ID",
+             storageBucket: "YOUR_STORAGE_BUCKET",
+             messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+             appId: "YOUR_APP_ID"
          };
          let app, db;
          let telegramUserId = null;
@@ -558,7 +549,7 @@
         function parseColorHex(colorString) { if (colorString.startsWith('#')) { return parseInt(colorString.substring(1), 16); } console.warn(`Could not parse color hex: ${colorString}`); return 0xffffff; }
         function formatNumber(num) { if (typeof num !== 'number') return num; return num.toLocaleString(); }
         function maskUsername(username) { if (!username || username.length <= 3) return "***"; return username.substring(0, 3) + '*'.repeat(username.length - 3); }
-        function generateReferralLink(userId) { if (!userId || BOT_USERNAME === "YOUR_BOT_USERNAME") { if (BOT_USERNAME === "YOUR_BOT_USERNAME") console.warn("Set BOT_USERNAME"); return "Link Unavailable"; } const appPath = MINI_APP_NAME ? `/${MINI_APP_NAME}` : ''; return `https://t.me/${BOT_USERNAME}${appPath}?startapp=${userId}`; }
+        function generateReferralLink(userId) { if (!userId || BOT_USERNAME === "YOUR_BOT_USERNAME") { if (BOT_USERNAME === "YOUR_BOT_USERNAME") console.warn("Reminder: Set your actual BOT_USERNAME constant in the script."); return "Link Unavailable"; } const appPath = MINI_APP_NAME ? `/${MINI_APP_NAME}` : ''; return `https://t.me/${BOT_USERNAME}${appPath}?startapp=${userId}`; }
         async function copyToClipboard(text) { if (!navigator.clipboard) { console.warn("Clipboard API missing"); return false; } try { await navigator.clipboard.writeText(text); return true; } catch (err) { console.error('Copy fail: ', err); return false; } }
 
 
@@ -617,120 +608,291 @@
 
         // --- Firebase Functions ---
         function initializeFirebaseApp() {
-            try { if (!firebaseConfig.apiKey || !firebaseConfig.databaseURL) { throw new Error("Firebase config missing."); } if (!firebase.apps.length) { app = firebase.initializeApp(firebaseConfig); } else { app = firebase.app(); } db = firebase.database(); console.log("Firebase Initialized OK"); }
-            catch (e) { console.error("Firebase Init Failed:", e); showFatalError("Service Initialization Error."); }
+            try {
+                // Check if Firebase config placeholders are still present
+                if (!firebaseConfig.apiKey || firebaseConfig.apiKey === "YOUR_API_KEY") {
+                    throw new Error("Firebase configuration is missing or incomplete. Please replace placeholder values.");
+                 }
+                if (!firebase.apps.length) {
+                     app = firebase.initializeApp(firebaseConfig);
+                 } else {
+                     app = firebase.app(); // Get default app if already initialized
+                 }
+                 db = firebase.database();
+                 console.log("Firebase Initialized OK");
+             } catch (e) {
+                 console.error("Firebase Init Failed:", e);
+                 // Show a user-friendly error in the UI
+                showFatalError(`Service Initialization Error: ${e.message || 'Could not connect to database services.'}`);
+            }
         }
          // Function to show a fatal error and stop the game
         function showFatalError(message) {
-            alert(message); // Simple alert for now
+            // Use Telegram's alert if available, otherwise use browser alert
+            if (window.Telegram?.WebApp?.showAlert) {
+                 window.Telegram.WebApp.showAlert(message, () => {
+                     // Optionally close the app after showing the alert
+                     // window.Telegram.WebApp.close();
+                 });
+            } else {
+                 alert(message);
+            }
             console.error("FATAL ERROR:", message);
             gameState = 'error';
             setInternalPause(true);
-            // Optionally disable UI elements further
-            document.body.innerHTML = `<div style="color: var(--text-error); padding: 30px; text-align: center; font-size: 1.2em;">${message}<br>Please try again later.</div>`;
+            // Attempt to display the error message prominently in the body
+             try {
+                 document.body.innerHTML = `<div style="color: var(--text-error, #ff4081); background: var(--bg-overlay, rgba(11, 11, 34, 0.98)); padding: 40px 20px; text-align: center; font-size: 1.2em; height: 100%; display: flex; align-items: center; justify-content: center;">${message}<br>Please close and reopen the app.</div>`;
+             } catch (uiError) {
+                 console.error("Failed to update UI with fatal error message:", uiError);
+             }
         }
 
         function listenToUserData(tgUserId) {
-             if (!db) { console.warn("DB unavailable."); showFatalError("Database connection failed."); return; }
+             if (!db) { console.warn("DB unavailable. Listener aborted."); return; } // DB check moved to caller (init)
              if (!tgUserId) { console.warn("Cannot listen: No User ID."); showFatalError("Could not verify user."); return; }
-             if (userRef && userDataListener) { userRef.off('value', userDataListener); }
-             const dbPath = `users/tg_${tgUserId}`; console.log("Listening:", dbPath); userRef = db.ref(dbPath);
+
+             // Clean up previous listener if any
+             if (userRef && userDataListener) {
+                 try { userRef.off('value', userDataListener); } catch (offError) { console.warn("Error removing previous listener:", offError); }
+                 userRef = null; userDataListener = null;
+             }
+
+             const dbPath = `users/tg_${tgUserId}`;
+             console.log("Starting listener for:", dbPath);
+             userRef = db.ref(dbPath);
 
              userDataListener = userRef.on('value', (snapshot) => {
+                 console.log("User data received:", snapshot.val()); // Log received data
                  let score = 0, refCount = 0, refs = {}, refBy = null, adTasks = {};
                  const defaultAdTaskData = {};
                  Object.keys(REWARDED_AD_TASKS_CONFIG).forEach(key => { defaultAdTaskData[key] = { completed: 0 }; });
 
                  if (snapshot.exists()) {
                      const data = snapshot.val();
-                     score = Math.floor(data.totalScore || 0);
-                     refCount = data.referrals?.count || 0;
-                     refs = data.referrals?.list || {};
-                     refBy = data.referredBy || null;
-                     adTasks = { ...defaultAdTaskData, ...(data.adTasks || {}) };
-                     if (typeof data.totalScore !== 'number') snapshot.ref.child('totalScore').set(0).catch(e=>console.warn("Fix score err", e));
-                     if (!data.referrals) snapshot.ref.child('referrals').set({ count: 0, list: {} }).catch(e=>console.warn("Fix ref err", e));
-                     if (typeof data.referrals?.count !== 'number' && data.referrals) snapshot.ref.child('referrals/count').set(0).catch(e=>console.warn("Fix ref count err", e));
-                     if (!data.adTasks) snapshot.ref.child('adTasks').set(defaultAdTaskData).catch(e=>console.warn("Init adTasks err", e));
-                     // Ensure all tasks from config exist in user data, prevents errors if config changes
-                     Object.keys(REWARDED_AD_TASKS_CONFIG).forEach(taskId => {
-                        if (!adTasks[taskId]) {
-                            adTasks[taskId] = { completed: 0 };
-                             snapshot.ref.child(`adTasks/${taskId}`).set({ completed: 0 }).catch(e=>console.warn(`Fix missing task ${taskId} err`, e));
-                        }
-                     });
+                     // Safely access nested properties
+                     score = Math.floor(data?.totalScore || 0);
+                     refCount = data?.referrals?.count || 0;
+                     refs = data?.referrals?.list || {};
+                     refBy = data?.referredBy || null;
+                     adTasks = { ...defaultAdTaskData, ...(data?.adTasks || {}) }; // Merge defaults with fetched data
+
+                     // --- Data Validation and Correction ---
+                     let needsUpdate = false;
+                     const corrections = {};
+                     if (typeof data.totalScore !== 'number' || isNaN(score)) {
+                         console.warn(`Invalid totalScore found (${data.totalScore}), resetting to 0.`);
+                         corrections['totalScore'] = 0; score = 0; needsUpdate = true;
+                     }
+                     if (!data.referrals || typeof data.referrals !== 'object') {
+                         console.warn(`Invalid referrals object found (${data.referrals}), resetting.`);
+                         corrections['referrals'] = { count: 0, list: {} }; refCount = 0; refs = {}; needsUpdate = true;
+                     } else {
+                         if (typeof data.referrals.count !== 'number' || isNaN(refCount)) {
+                             console.warn(`Invalid referrals.count found (${data.referrals.count}), resetting to 0.`);
+                             corrections['referrals/count'] = 0; refCount = 0; needsUpdate = true;
+                         }
+                         if (typeof data.referrals.list !== 'object' || data.referrals.list === null) {
+                              console.warn(`Invalid referrals.list found (${data.referrals.list}), resetting.`);
+                              corrections['referrals/list'] = {}; refs = {}; needsUpdate = true;
+                         }
+                     }
+                      if (!data.adTasks || typeof data.adTasks !== 'object') {
+                         console.warn(`Invalid adTasks object found (${data.adTasks}), resetting.`);
+                         corrections['adTasks'] = defaultAdTaskData; adTasks = defaultAdTaskData; needsUpdate = true;
+                     } else {
+                         // Ensure all configured tasks exist in user data
+                         Object.keys(REWARDED_AD_TASKS_CONFIG).forEach(taskId => {
+                             if (!adTasks[taskId] || typeof adTasks[taskId] !== 'object') {
+                                console.warn(`Missing or invalid adTasks entry for ${taskId}, resetting.`);
+                                corrections[`adTasks/${taskId}`] = { completed: 0 };
+                                adTasks[taskId] = { completed: 0 }; // Correct local copy too
+                                needsUpdate = true;
+                             } else if (typeof adTasks[taskId].completed !== 'number' || isNaN(adTasks[taskId].completed)) {
+                                 console.warn(`Invalid adTasks.completed for ${taskId} (${adTasks[taskId].completed}), resetting to 0.`);
+                                 corrections[`adTasks/${taskId}/completed`] = 0;
+                                 adTasks[taskId].completed = 0;
+                                 needsUpdate = true;
+                             }
+                         });
+                     }
+
+                    if (needsUpdate) {
+                         console.log("Applying corrections to user data:", corrections);
+                         snapshot.ref.update(corrections).catch(e => console.error("Error applying data corrections:", e));
+                     }
+                     // --- End Validation ---
 
                  } else {
-                     console.log("User data missing, initializing...");
-                     const initialData = { totalScore: 0, referrals: { count: 0, list: {} }, firstSeen: firebase.database.ServerValue.TIMESTAMP, firstName: telegramUserData?.first_name || 'User', username: telegramUserData?.username || null, referredBy: null, adTasks: defaultAdTaskData };
-                     userRef.set(initialData).then(() => { console.log("Initialized user data."); processReferralOnLoad(tgUserId); }).catch(e => {console.error("Init user err", e); showFatalError("Failed to initialize user data.");});
+                     console.log("User data missing for", dbPath, "Initializing...");
+                     const initialData = {
+                         totalScore: 0,
+                         referrals: { count: 0, list: {} },
+                         firstSeen: firebase.database.ServerValue.TIMESTAMP,
+                         firstName: telegramUserData?.first_name || 'User',
+                         username: telegramUserData?.username || null,
+                         referredBy: null,
+                         adTasks: defaultAdTaskData
+                     };
+                     userRef.set(initialData).then(() => {
+                         console.log("Initialized user data for", dbPath);
+                         processReferralOnLoad(tgUserId); // Check referral immediately after creation
+                     }).catch(e => {
+                         console.error("Failed to initialize user data:", e);
+                         showFatalError("Failed to save initial user data.");
+                     });
+                     // Set local variables to initial state
                      score = 0; refCount = 0; refs = {}; refBy = null; adTasks = defaultAdTaskData;
                  }
+
+                 // Update global state
                  currentUserTotalScore = score;
                  currentUserReferralCount = refCount;
                  currentUserReferrals = refs;
                  currentUserAdTasks = adTasks;
 
+                 // Update UI
                  updateTotalScoreUI(score);
                  updateReferralCountUI(refCount);
                  populateReferralListUI(refs);
                  updateReferralLinkUI(tgUserId);
                  generateAndPopulateRewardedTasksUI(adTasks);
 
-                 if (!hasProcessedReferral && refBy === null && snapshot.exists()) { processReferralOnLoad(tgUserId); }
-                 else if (refBy !== null) { hasProcessedReferral = true; }
-
-             }, (error) => { console.error("User data listener error:", error); showFatalError("Failed to load user data."); userRef = null; userDataListener = null; });
-         }
-
-         async function processReferralOnLoad(currentUserId) {
-             if (hasProcessedReferral || !window.Telegram?.WebApp?.initDataUnsafe) return;
-             const startParam = window.Telegram.WebApp.initDataUnsafe.start_param;
-             if (!startParam) { console.log("No start_param."); hasProcessedReferral = true; return; }
-             const referrerId = parseInt(startParam, 10);
-             if (!referrerId || isNaN(referrerId) || referrerId === currentUserId) { console.warn("Invalid/self referral:", startParam); hasProcessedReferral = true; return; }
-             console.log(`Referral detected: Referrer ${referrerId}, Current ${currentUserId}`);
-             hasProcessedReferral = true; // Assume processing starts, set back on error
-             const currentUserRef = db.ref(`users/tg_${currentUserId}`);
-             try {
-                 const currentUserSnapshot = await currentUserRef.get();
-                 if (!currentUserSnapshot.exists()){ console.warn("User data missing during referral check."); hasProcessedReferral = false; return; } // Can't proceed if user doesn't exist yet
-                 if (currentUserSnapshot.val()?.referredBy) { console.log(`User ${currentUserId} already referred.`); return; } // Already processed
-
-                 const updates = {};
-                 const currentUsername = window.Telegram.WebApp.initDataUnsafe.user?.username || `User_${currentUserId}`;
-                 const refListPath = `users/tg_${referrerId}/referrals/list/tg_${currentUserId}`;
-                 const refCountPath = `users/tg_${referrerId}/referrals/count`;
-                 const newUserRefByPath = `users/tg_${currentUserId}/referredBy`;
-
-                 // Check if referrer exists before trying to update them
-                 const referrerRef = db.ref(`users/tg_${referrerId}`);
-                 const referrerSnapshot = await referrerRef.get();
-                 if (!referrerSnapshot.exists()) {
-                     console.warn(`Referrer user tg_${referrerId} not found in database. Cannot credit referral.`);
-                     // Still mark the new user as referred by this ID, even if referrer doesn't exist
-                     updates[newUserRefByPath] = referrerId;
-                 } else {
-                     // Referrer exists, add new user to their list and increment count
-                     updates[refListPath] = { username: currentUsername, timestamp: firebase.database.ServerValue.TIMESTAMP };
-                     updates[refCountPath] = firebase.database.ServerValue.increment(1);
-                     updates[newUserRefByPath] = referrerId;
+                 // Process referral only once after initial data load/check
+                 if (!hasProcessedReferral && refBy === null && snapshot.exists()) {
+                     processReferralOnLoad(tgUserId);
+                 } else if (refBy !== null) {
+                     hasProcessedReferral = true; // Mark as processed if referredBy is set
                  }
 
-
-                 console.log("Performing referral update (no point bonus):", updates);
-                 await db.ref().update(updates);
-                 console.log("Referral processed successfully (no point bonus)!");
-             } catch (error) { console.error("Error checking/processing referral:", error); hasProcessedReferral = false; } // Allow retry if error occurred
+             }, (error) => {
+                 console.error("Firebase data listener error:", error);
+                 showFatalError(`Failed to load user data: ${error.message || 'Connection error.'}`);
+                 // Clean up listener state on error
+                 if (userRef && userDataListener) {
+                    try { userRef.off('value', userDataListener); } catch (offError) { /* Ignore */ }
+                 }
+                 userRef = null;
+                 userDataListener = null;
+             });
          }
 
+
+         async function processReferralOnLoad(currentUserId) {
+             if (!db) { console.warn("DB unavailable for referral processing."); return; }
+             if (hasProcessedReferral) { console.log("Referral already processed or checked."); return; }
+             if (!window.Telegram?.WebApp?.initDataUnsafe) { console.warn("TG initDataUnsafe not available for referral check."); return; }
+
+             const startParam = window.Telegram.WebApp.initDataUnsafe.start_param;
+             if (!startParam) {
+                 console.log("No start_param found.");
+                 hasProcessedReferral = true; // Mark as checked even if no param
+                 return;
+             }
+
+             const referrerId = parseInt(startParam, 10);
+             if (!referrerId || isNaN(referrerId) || referrerId === currentUserId) {
+                 console.warn("Invalid or self referral start_param:", startParam);
+                 hasProcessedReferral = true; // Mark as checked
+                 return;
+             }
+
+             console.log(`Referral detected: Referrer ${referrerId}, Current ${currentUserId}. Checking status...`);
+             hasProcessedReferral = true; // Assume processing starts, set back on error only if retry is desired
+             const currentUserRef = db.ref(`users/tg_${currentUserId}`);
+
+             try {
+                 // Use a transaction to ensure atomicity when checking referredBy and updating
+                 const { committed, snapshot } = await currentUserRef.transaction(currentUserData => {
+                     if (currentUserData === null) {
+                         // This case should ideally be handled by the initialization in listenToUserData,
+                         // but as a safety measure, we don't proceed if data is null here.
+                         console.warn("currentUserData is null during referral transaction. Aborting.");
+                         return; // Abort transaction
+                     }
+                     if (currentUserData.referredBy) {
+                         console.log(`User ${currentUserId} already referred by ${currentUserData.referredBy}. Aborting referral update.`);
+                         return; // Abort transaction - already referred
+                     }
+                     // Mark as referred by the referrerId
+                     currentUserData.referredBy = referrerId;
+                     return currentUserData; // Return modified data to commit
+                 });
+
+                 if (committed && snapshot.exists() && snapshot.val()?.referredBy === referrerId) {
+                     // User was successfully marked as referred, now update the referrer
+                     console.log(`User ${currentUserId} successfully marked as referred by ${referrerId}. Updating referrer...`);
+                     const updates = {};
+                     const currentUsername = window.Telegram.WebApp.initDataUnsafe.user?.username || `User_${currentUserId}`;
+                     const refListPath = `users/tg_${referrerId}/referrals/list/tg_${currentUserId}`;
+                     const refCountPath = `users/tg_${referrerId}/referrals/count`;
+
+                     // Check if referrer exists before trying to update them
+                     const referrerRef = db.ref(`users/tg_${referrerId}`);
+                     const referrerSnapshot = await referrerRef.get();
+
+                     if (!referrerSnapshot.exists()) {
+                         console.warn(`Referrer user tg_${referrerId} not found in database. Cannot credit referral list/count.`);
+                         // No updates needed for the referrer in this case
+                     } else {
+                         // Referrer exists, add new user to their list and increment count
+                         updates[refListPath] = { username: currentUsername, timestamp: firebase.database.ServerValue.TIMESTAMP };
+                         updates[refCountPath] = firebase.database.ServerValue.increment(1);
+                     }
+
+                     if (Object.keys(updates).length > 0) {
+                        console.log("Performing referrer update:", updates);
+                        await db.ref().update(updates); // Apply updates to referrer
+                     }
+                     console.log("Referral processing complete.");
+
+                 } else if (!committed) {
+                     console.warn("Referral transaction aborted, likely because user was already referred.");
+                 } else {
+                      console.warn("Referral transaction committed, but snapshot verification failed.");
+                 }
+
+             } catch (error) {
+                 console.error("Error checking/processing referral:", error);
+                 // Decide if hasProcessedReferral should be reset to allow retries,
+                 // but be cautious of infinite loops if the error persists.
+                 // For now, keep it true to avoid repeated attempts on transient errors.
+                 // hasProcessedReferral = false;
+             }
+         }
+
+
         function updateUserTotalScore(scoreToAdd) {
-             if (!db || !telegramUserId || typeof scoreToAdd !== 'number' || isNaN(scoreToAdd)) return Promise.reject("Invalid score input");
-             if (scoreToAdd <= 0) return Promise.resolve();
+             if (!db || !telegramUserId) { console.warn("DB or User ID not available for score update."); return Promise.reject("DB or User ID missing"); }
+             if (typeof scoreToAdd !== 'number' || isNaN(scoreToAdd)) { console.warn("Invalid score to add:", scoreToAdd); return Promise.reject("Invalid score input"); }
+             if (scoreToAdd <= 0) { console.log("Score to add is zero or negative, skipping update."); return Promise.resolve(); } // No need to update for 0 or less
+
              const ref = db.ref(`users/tg_${telegramUserId}/totalScore`);
-             return ref.transaction(curr => (curr || 0) + Math.floor(scoreToAdd))
-                .then(()=>console.log(`Score updated by ${scoreToAdd}`))
-                .catch((e)=>{console.error("Score update tx err:", e); return Promise.reject(e);});
+             console.log(`Attempting to add ${scoreToAdd} to score for user ${telegramUserId}`);
+
+             return ref.transaction(currentScore => {
+                 // Ensure currentScore is treated as a number, default to 0 if null/undefined
+                 const numericCurrentScore = Number(currentScore || 0);
+                 if (isNaN(numericCurrentScore)) {
+                      console.warn(`Current score is NaN (${currentScore}), resetting to 0 before adding.`);
+                      return Math.floor(scoreToAdd); // Start from the score to add
+                 }
+                 return numericCurrentScore + Math.floor(scoreToAdd);
+             }).then(({ committed, snapshot }) => { // Destructure result
+                 if (committed) {
+                     console.log(`Score update successful. New score: ${snapshot.val()}`);
+                 } else {
+                     console.warn("Score update transaction aborted.");
+                 }
+                 // Resolve anyway, transaction completion (committed or aborted) is the outcome
+                 return;
+             }).catch((error) => {
+                 console.error("Score update transaction failed:", error);
+                 // Potentially show an error to the user
+                  const message = "Failed to update score. Please check connection.";
+                  if (window.Telegram?.WebApp?.showAlert) window.Telegram.WebApp.showAlert(message); else alert(message);
+                 return Promise.reject(error); // Propagate the error
+             });
          }
 
         // --- Theme Handling ---
@@ -751,17 +913,24 @@
 
         // --- Rewarded Ad Task Logic (Using Ad SDKs) ---
         function handleWatchRewardedAd(taskId, reward, taskElement) {
+            if (gameState === 'error') return; // Don't process if game is in error state
             if (!db || !telegramUserId || !taskElement) {
-                if (window.Telegram?.WebApp?.showAlert) window.Telegram.WebApp.showAlert("Cannot process task. Please try again later."); else alert("Cannot process task. Please try again later.");
+                const message = "Cannot process task. Please try again later.";
+                if (window.Telegram?.WebApp?.showAlert) window.Telegram.WebApp.showAlert(message); else alert(message);
                 return;
              }
 
             const config = REWARDED_AD_TASKS_CONFIG[taskId];
+            if (!config) {
+                 console.error(`Configuration missing for task ID: ${taskId}`);
+                 return;
+            }
             const currentData = currentUserAdTasks[taskId] || { completed: 0 };
             const completed = currentData.completed || 0;
 
             if (completed >= config.limit) {
-                if (window.Telegram?.WebApp?.showAlert) window.Telegram.WebApp.showAlert("No more ads available for this task today."); else alert("No more ads available for this task today.");
+                const message = "No more ads available for this task today.";
+                 if (window.Telegram?.WebApp?.showAlert) window.Telegram.WebApp.showAlert(message); else alert(message);
                 return;
             }
 
@@ -770,41 +939,53 @@
 
             // Define the reward logic as a reusable function
             const grantReward = () => {
-                console.log(`Ad success/simulation complete for task ${taskId}.`);
+                console.log(`Ad success/simulation complete for task ${taskId}. Awarding reward.`);
+                if (!db || !telegramUserId) { console.warn("DB or User ID missing, cannot grant reward."); taskElement.classList.remove('disabled'); return; } // Safety check
+
                 const adTaskRef = db.ref(`users/tg_${telegramUserId}/adTasks/${taskId}/completed`);
                 const scoreRef = db.ref(`users/tg_${telegramUserId}/totalScore`);
 
+                // Use transaction for updating completed count atomically
                 adTaskRef.transaction(currentCompleted => {
-                    if (currentCompleted === null) currentCompleted = 0;
-                    // Double check limit inside transaction
-                    if (currentCompleted >= config.limit) {
+                    const numericCurrentCompleted = Number(currentCompleted || 0);
+                     if (isNaN(numericCurrentCompleted)) {
+                         console.warn(`Task ${taskId} count is NaN (${currentCompleted}), resetting.`);
+                         return 1; // Start from 1
+                     }
+                    if (numericCurrentCompleted >= config.limit) {
                         console.warn(`Limit reached for task ${taskId} during transaction.`);
-                        return; // Abort transaction
+                        return; // Abort transaction if limit is somehow reached concurrently
                     }
-                    return currentCompleted + 1;
-                }).then(result => {
-                    if (result.committed && result.snapshot.exists()) {
-                        const newCompleted = result.snapshot.val();
+                    return numericCurrentCompleted + 1;
+                }).then(({ committed, snapshot }) => { // Destructure result
+                    if (committed && snapshot.exists()) {
+                        const newCompleted = snapshot.val();
                         console.log(`Task ${taskId} count updated to ${newCompleted}. Awarding points.`);
-                        return scoreRef.transaction(currentScore => (currentScore || 0) + reward);
+                        // Now update the score using its own transaction
+                         return updateUserTotalScore(reward); // Chain the score update promise
                     } else {
-                        console.warn(`Failed to update count for task ${taskId}. Aborting reward.`);
-                        if (!result.committed) { // Only alert if the transaction explicitly failed
-                            if (window.Telegram?.WebApp?.showAlert) window.Telegram.WebApp.showAlert("Could not update task count. Please try again."); else alert("Could not update task count. Please try again.");
-                        }
-                        // Re-enable button if count update fails/aborted but limit not reached (check latest state)
+                        console.warn(`Failed to update count for task ${taskId} or transaction aborted. Aborting reward.`);
+                        if (!committed) {
+                             const message = "Could not update task progress. Please try again.";
+                             if (window.Telegram?.WebApp?.showAlert) window.Telegram.WebApp.showAlert(message); else alert(message);
+                         }
+                         // Re-enable button if count update fails/aborted but limit not reached (check latest state)
                         const latestCount = currentUserAdTasks[taskId]?.completed || 0;
                         if (latestCount < config.limit) taskElement.classList.remove('disabled');
-                        return Promise.reject("Count update failed or aborted");
+                        return Promise.reject("Count update failed or aborted"); // Propagate rejection
                     }
                 }).then(() => {
+                    // This .then() executes only if both transactions were successful
                     console.log(`Successfully awarded ${reward} points for task ${taskId}`);
-                    if (window.Telegram?.WebApp?.showAlert) window.Telegram.WebApp.showAlert(`You received ${reward} points!`); else alert(`You received ${reward} points!`);
-                    // UI update happens via listener (which will re-enable button if necessary based on new count)
+                     const message = `You received ${reward} points!`;
+                     if (window.Telegram?.WebApp?.showAlert) window.Telegram.WebApp.showAlert(message); else alert(message);
+                    // UI updates (disabling/enabling button based on limit) happen via the main data listener
                 }).catch(error => {
-                    if (error !== "Count update failed or aborted") {
-                        console.error(`Error processing task ${taskId} reward:`, error);
-                        if (window.Telegram?.WebApp?.showAlert) window.Telegram.WebApp.showAlert("An error occurred processing the reward."); else alert("An error occurred processing the reward.");
+                    // Catch errors from either transaction
+                    if (error !== "Count update failed or aborted") { // Avoid double logging specific abort message
+                        console.error(`Error processing task ${taskId} reward chain:`, error);
+                        const message = "An error occurred processing the reward.";
+                        if (window.Telegram?.WebApp?.showAlert) window.Telegram.WebApp.showAlert(message); else alert(message);
                     }
                     // Ensure button is re-enabled if error occurs and limit not reached
                      const latestCount = currentUserAdTasks[taskId]?.completed || 0;
@@ -813,60 +994,58 @@
             };
 
             // --- Ad SDK Handling ---
-            if (config.adType === 'rewardedInterstitial' || config.adType === 'rewardedPopup' || config.adType === 'inAppInterstitial') {
-                 if (typeof show_9292240 !== 'function') {
-                     console.error("Ad SDK function 'show_9292240' not found.");
-                     const message = "Ad service is temporarily unavailable. Please try again later.";
-                     if (window.Telegram?.WebApp?.showAlert) window.Telegram.WebApp.showAlert(message); else alert(message);
-                     taskElement.classList.remove('disabled');
-                     return;
-                 }
-
-                 const adCall = (type) => {
-                     return new Promise((resolve, reject) => {
-                         // The show_9292240 SDK seems to use a Promise-like structure or callbacks internally
-                         try {
-                             if (type === 'rewardedInterstitial') {
-                                 show_9292240().then(resolve).catch(reject);
-                             } else if (type === 'rewardedPopup') {
-                                 show_9292240('pop').then(resolve).catch(reject);
-                             } else if (type === 'inAppInterstitial') {
-                                 // In-App doesn't guarantee a reward callback. We simulate success on initiation.
-                                 console.warn("Using In-App Interstitial. Reward might not be guaranteed by SDK.");
-                                 show_9292240({ type: 'inApp', inAppSettings: { frequency: 1, capping: 24, interval: 0, timeout: 0, everyPage: false } });
-                                 console.log(`In-App Interstitial initiated for task ${taskId}. Simulating success.`);
-                                 setTimeout(resolve, 500); // Simulate success
-                             } else {
-                                 reject(new Error("Unsupported ad type for show_9292240"));
-                             }
-                         } catch (error) {
-                             reject(error); // Catch synchronous errors during SDK call
-                         }
-                     });
-                 };
-
-                 adCall(config.adType)
-                    .then(grantReward)
-                    .catch(error => {
-                        console.error(`Ad SDK failed for task ${taskId} (Type: ${config.adType}):`, error);
-                        const message = "Ad failed or was skipped. No reward granted.";
-                        if (window.Telegram?.WebApp?.showAlert) window.Telegram.WebApp.showAlert(message); else alert(message);
-                        const latestCount = currentUserAdTasks[taskId]?.completed || 0;
-                        if (latestCount < config.limit) taskElement.classList.remove('disabled'); // Re-enable if limit not hit
-                     });
-
-            } else { // 'simulation' or other unrecognized types (fallback)
-                console.log(`Simulating ad for task ${taskId} (Type: ${config.adType})`);
-                 const message = `Simulating Ad Watch... (Task: ${config.title} - ${reward} Points)`;
+            // Check if the Ad SDK function exists globally
+            if (typeof show_9292240 !== 'function') {
+                 console.error("Ad SDK function 'show_9292240' not found.");
+                 const message = "Ad service is temporarily unavailable (SDK not loaded). Please try again later.";
                  if (window.Telegram?.WebApp?.showAlert) window.Telegram.WebApp.showAlert(message); else alert(message);
-                setTimeout(grantReward, 1500); // Simulate success after delay
+                 taskElement.classList.remove('disabled');
+                 return;
             }
+
+            const adCall = (type) => {
+                return new Promise((resolve, reject) => {
+                    try {
+                        console.log(`Calling show_9292240 with type: ${type || 'default (rewardedInterstitial)'}`);
+                        if (type === 'rewardedInterstitial') {
+                            show_9292240().then(resolve).catch(reject);
+                        } else if (type === 'rewardedPopup') {
+                            show_9292240('pop').then(resolve).catch(reject);
+                        } else if (type === 'inAppInterstitial') {
+                            console.warn("Using In-App Interstitial. Reward might not be guaranteed by SDK.");
+                            show_9292240({ type: 'inApp', inAppSettings: { frequency: 1, capping: 24, interval: 0, timeout: 0, everyPage: false } });
+                            console.log(`In-App Interstitial initiated for task ${taskId}. Simulating success.`);
+                            setTimeout(resolve, 500); // Simulate success callback
+                        } else {
+                            console.error(`Unsupported ad type specified: ${type}. Falling back to default.`);
+                            show_9292240().then(resolve).catch(reject); // Default to rewardedInterstitial
+                        }
+                    } catch (error) {
+                        console.error(`Synchronous error calling ad SDK for type ${type}:`, error);
+                        reject(error); // Catch sync errors during SDK call itself
+                    }
+                });
+            };
+
+            // Execute the ad call based on config type
+            adCall(config.adType)
+                .then(grantReward) // If ad succeeds (or is simulated), grant the reward
+                .catch(error => {
+                    console.error(`Ad SDK failed or was skipped for task ${taskId} (Type: ${config.adType}):`, error);
+                    const message = "Ad failed or was skipped. No reward granted.";
+                    if (window.Telegram?.WebApp?.showAlert) window.Telegram.WebApp.showAlert(message); else alert(message);
+                    // Re-enable the button only if the limit hasn't been reached
+                    const latestCount = currentUserAdTasks[taskId]?.completed || 0;
+                    if (latestCount < config.limit) {
+                        taskElement.classList.remove('disabled');
+                    }
+                 });
         }
 
 
         // --- Game Object Creation ---
-        function createStarfield() { if(starField)scene.remove(starField); const c=7000; const p=new Float32Array(c*3); const g=new THREE.BufferGeometry(); const h=parseColorHex(getCssVariable('--star-color')); for(let i=0;i<c;i++){ const i3=i*3; const r=60+Math.random()*60; const ph=Math.acos(-1+(2*Math.random())); const th=Math.random()*Math.PI*2; p[i3]=r*Math.sin(ph)*Math.cos(th); p[i3+1]=r*Math.cos(ph); p[i3+2]=r*Math.sin(ph)*Math.sin(th); } g.setAttribute('position',new THREE.BufferAttribute(p,3)); const m=new THREE.PointsMaterial({size:0.1,color:h,sizeAttenuation:true,transparent:true,opacity:0.8,depthWrite:false,blending:THREE.AdditiveBlending}); starField=new THREE.Points(g,m); starField.userData.isStarfield=true; starField.renderOrder=-1; starField.visible=!document.body.classList.contains('light-mode'); scene.add(starField); }
-        function createBall() { if(ball)scene.remove(ball); const g=new THREE.SphereGeometry(0.25,32,32); const h=parseColorHex(getCssVariable('--ball-color')); const m=new THREE.MeshStandardMaterial({color:h,map:ballTexture,metalness:0.8,roughness:0.3,envMap:envMap,envMapIntensity:0.7}); ball=new THREE.Mesh(g,m); ball.userData.isBall=true; ball.position.set(ballStartX,initialBallY,ballStartZ); ballPreviousY=ball.position.y; scene.add(ball); }
+        function createStarfield() { if(starField) { scene.remove(starField); starField.geometry.dispose(); starField.material.dispose(); starField = null; } const c=7000; const p=new Float32Array(c*3); const g=new THREE.BufferGeometry(); const h=parseColorHex(getCssVariable('--star-color')); for(let i=0;i<c;i++){ const i3=i*3; const r=60+Math.random()*60; const ph=Math.acos(-1+(2*Math.random())); const th=Math.random()*Math.PI*2; p[i3]=r*Math.sin(ph)*Math.cos(th); p[i3+1]=r*Math.cos(ph); p[i3+2]=r*Math.sin(ph)*Math.sin(th); } g.setAttribute('position',new THREE.BufferAttribute(p,3)); const m=new THREE.PointsMaterial({size:0.1,color:h,sizeAttenuation:true,transparent:true,opacity:0.8,depthWrite:false,blending:THREE.AdditiveBlending}); starField=new THREE.Points(g,m); starField.userData.isStarfield=true; starField.renderOrder=-1; starField.visible=!document.body.classList.contains('light-mode'); scene.add(starField); }
+        function createBall() { if(ball) { scene.remove(ball); ball.geometry.dispose(); ball.material.dispose(); ball = null;} const g=new THREE.SphereGeometry(0.25,32,32); const h=parseColorHex(getCssVariable('--ball-color')); const m=new THREE.MeshStandardMaterial({color:h,map:ballTexture,metalness:0.8,roughness:0.3,envMap:envMap,envMapIntensity:0.7}); ball=new THREE.Mesh(g,m); ball.userData.isBall=true; ball.position.set(ballStartX,initialBallY,ballStartZ); ballPreviousY=ball.position.y; scene.add(ball); }
         function createPoleSegment(y) { const h=platformSpacingY; const g=new THREE.CylinderGeometry(poleRadius,poleRadius,h,16); const c=parseColorHex(getCssVariable('--pole-color')); const m=new THREE.MeshStandardMaterial({color:c,roughness:0.6,metalness:0.2,transparent:true,opacity:1.0}); const s=new THREE.Mesh(g,m); s.position.y=y; s.userData={y:y,isPoleSegment:true,fadeOut:false,fadeProgress:0,material:m}; poleGroup.add(s); activePoleSegments[y]=s; }
         function createPlatform(y) { const p=new THREE.Group(); p.position.y=y; p.rotation.y=Math.random()*Math.PI*2; const circ=2*Math.PI; if(platformSegments<=0)return; const segAng=(circ-gapSize)/platformSegments; const gapSt=Math.random()*circ; const gapEnd=(gapSt+gapSize)%circ; const hasD=Math.random()<0.25; const dIdx=hasD?Math.floor(Math.random()*platformSegments):-1; const sCol=platformColorPalette[platformColorIndex%platformColorPalette.length]; platformColorIndex++; p.userData={y:y,isSafe:!hasD,segmentAngles:[],isPlatformGroup:true,gapStartAngle:gapSt,gapEndAngle:gapEnd,gapSize:gapSize,fadeOut:false,fadeProgress:0,colorHex:sCol}; const iR=poleRadius+0.05; const oR=platformRadius; let currAng=gapEnd; const dColH=parseColorHex(getCssVariable('--danger-color')); const dEmH=parseColorHex(getCssVariable('--danger-glow')); for(let i=0;i<platformSegments;i++){ const isD=(i===dIdx); const matOpts={roughness:isD?0.5:0.7,metalness:0.1,side:THREE.DoubleSide,transparent:true,opacity:1.0}; if(isD){matOpts.color=new THREE.Color(dColH);matOpts.emissive=new THREE.Color(dEmH);matOpts.emissiveIntensity=0.7;}else{matOpts.color=new THREE.Color(sCol);} const segMat=new THREE.MeshStandardMaterial(matOpts); const segGeo=new THREE.RingGeometry(iR,oR,32,1,0,segAng); segGeo.rotateX(-Math.PI/2); const segMesh=new THREE.Mesh(segGeo,segMat); segMesh.rotation.y=currAng; const sSt=currAng%circ; const sEnd=(currAng+segAng)%circ; const segDat={type:'platform_segment',isDanger:isD,parentPlatform:p,index:i,startAngle:sSt,endAngle:sEnd,mesh:segMesh,material:segMat}; p.userData.segmentAngles.push(segDat); segMesh.userData=segDat; p.add(segMesh); currAng=(currAng+segAng)%circ; } platformGroup.add(p); activePlatforms.push(p); }
 
@@ -888,37 +1067,39 @@
                      console.log("Unsafe InitData:", tg.initDataUnsafe);
                      tg.expand(); // Expand the Mini App to full height
 
-                     // Basic check for user data existence
-                    if (tg.initDataUnsafe?.user?.id) {
-                        telegramUserData = tg.initDataUnsafe.user;
-                        telegramUserId = telegramUserData.id;
-                        console.log("Telegram User:", telegramUserId, telegramUserData);
-
-                        // Update profile overlay placeholders immediately
-                        if(userIdOverlay) userIdOverlay.textContent = telegramUserId || 'N/A';
-                        if(usernameOverlay) usernameOverlay.textContent = telegramUserData?.username ? `@${telegramUserData.username}` : '(Not Set)';
-
-                        initializeFirebaseApp(); // Initialize Firebase after getting user ID
-
-                        if (db) {
-                            listenToUserData(telegramUserId); // Start listening to user data
-                            await resetGame(); // Reset game state (awaiting might be optional here)
-                            // Delay slightly for UI to potentially settle after reset/data load
-                            setTimeout(() => {
-                                onWindowResize();
-                                animateCameraZoom(cameraZoomedInZ, cameraZoomDuration); // Start intro zoom
-                                resolve(); // Indicate successful initialization
-                            }, 150);
-                        } else {
-                            console.error("Firebase DB initialization failed!");
-                            showFatalError("Database connection error.");
-                            reject("FB DB Error");
-                        }
-                    } else {
+                    if (!tg.initDataUnsafe?.user?.id) {
                         console.error("Telegram user data is missing or incomplete!", tg.initDataUnsafe);
                         showFatalError("User verification failed. Please ensure you are running this inside Telegram.");
-                        reject("TG User Missing");
+                        return reject("TG User Missing"); // Reject the promise
                     }
+
+                    telegramUserData = tg.initDataUnsafe.user;
+                    telegramUserId = telegramUserData.id;
+                    console.log("Telegram User:", telegramUserId, telegramUserData);
+
+                    // Update profile overlay placeholders immediately
+                    if(userIdOverlay) userIdOverlay.textContent = telegramUserId || 'N/A';
+                    if(usernameOverlay) usernameOverlay.textContent = telegramUserData?.username ? `@${telegramUserData.username}` : '(Not Set)';
+
+                    initializeFirebaseApp(); // Initialize Firebase after getting user ID
+
+                    // Check if Firebase initialization was successful before proceeding
+                    if (!db) {
+                         // showFatalError should have been called by initializeFirebaseApp
+                         console.error("Firebase DB is not available after initialization attempt.");
+                         return reject("FB DB Error"); // Reject the promise
+                    }
+
+                    listenToUserData(telegramUserId); // Start listening to user data
+                    await resetGame(); // Reset game state
+
+                    // Delay slightly for UI to potentially settle after reset/data load
+                    setTimeout(() => {
+                        onWindowResize();
+                        animateCameraZoom(cameraZoomedInZ, cameraZoomDuration); // Start intro zoom
+                        resolve(); // Indicate successful initialization
+                    }, 150);
+
                  } catch (error) {
                     console.error("Error during Telegram initialization:", error);
                     showFatalError("An error occurred during initialization.");
@@ -939,6 +1120,7 @@
                 camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 150);
                 camera.position.z = cameraFixedZ; // Start zoomed out
                 const canvas = document.getElementById('game-canvas');
+                if (!canvas) throw new Error("Game canvas element not found!");
                 renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
                 renderer.setSize(gameContainer.clientWidth, gameContainer.clientHeight);
                 renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -964,21 +1146,23 @@
                 scene.add(new THREE.AmbientLight(0x404040, 0.6));
 
                 // Load Environment & Textures (can happen in parallel)
-                const hdrPromise = new Promise((resolve, reject) => {
+                const hdrPromise = new Promise((resolve) => { // No reject needed, continue anyway
                     new RGBELoader().load('back.hdr',
-                        (t) => { t.mapping = THREE.EquirectangularReflectionMapping; scene.environment = t; envMap = t; resolve(); },
-                        undefined,
-                        (e) => { console.warn("HDR load fail", e); resolve(); /* Continue even if HDR fails */ }
+                        (t) => { t.mapping = THREE.EquirectangularReflectionMapping; scene.environment = t; envMap = t; console.log("HDR loaded."); resolve(); },
+                        undefined, // onProgress (optional)
+                        (e) => { console.warn("HDR load fail", e); resolve(); /* Continue anyway */ }
                     );
                 });
-                const texturePromise = new Promise((resolve, reject) => {
+                const texturePromise = new Promise((resolve) => { // No reject needed
                     textureLoader.load('ball.jpg',
-                        (t) => { t.wrapS = t.wrapT = THREE.RepeatWrapping; ballTexture = t; resolve(); },
-                        undefined,
-                        (e) => { console.warn("Ball tex fail.", e); resolve(); /* Continue even if texture fails */ }
+                        (t) => { t.wrapS = t.wrapT = THREE.RepeatWrapping; ballTexture = t; console.log("Ball texture loaded."); resolve(); },
+                        undefined, // onProgress (optional)
+                        (e) => { console.warn("Ball tex fail.", e); resolve(); /* Continue anyway */ }
                     );
                  });
+                 console.log("Waiting for assets...");
                  await Promise.all([hdrPromise, texturePromise]); // Wait for assets
+                 console.log("Assets loaded or skipped.");
 
                 // Create initial game objects
                 createBall(); // Create ball after texture might be loaded
@@ -990,13 +1174,14 @@
                 document.addEventListener('pointerdown', onPointerDown, { passive: false });
                 document.addEventListener('pointermove', onPointerMove, { passive: false });
                 document.addEventListener('pointerup', onPointerUp, false);
-                document.addEventListener('pointerleave', onPointerUp, false); // Treat leaving canvas as pointer up
+                document.addEventListener('pointerleave', onPointerUp, false);
                 setupUIListeners(); // Setup button clicks etc.
 
                 // Initialize Telegram and Firebase (This is the critical async part)
-                await initializeTelegramIntegration();
+                console.log("Initializing Telegram Integration...");
+                await initializeTelegramIntegration(); // This now returns a Promise
 
-                console.log("Telegram/Firebase Init OK.");
+                console.log("Telegram/Firebase Init sequence completed in init function.");
                 onWindowResize(); // Ensure size is correct after init
                 animate(); // Start the main animation loop
                 console.log("Initialization complete. Starting game animation.");
@@ -1004,9 +1189,9 @@
             } catch (error) {
                 console.error("Initialization failed:", error);
                 // If initializeTelegramIntegration failed, showFatalError was likely already called.
-                // Add a fallback message just in case.
+                // Add a fallback message just in case the error originated elsewhere in init.
                 if (gameState !== 'error') {
-                     showFatalError("A critical error occurred during setup.");
+                     showFatalError(`A critical error occurred during setup: ${error.message || 'Unknown error'}`);
                 }
             }
         }
@@ -1018,13 +1203,19 @@
              settingsButton.addEventListener('click', (e) => { e.stopPropagation(); toggleSettingsPopup(); });
              menuItemButtons.forEach(b => { b.addEventListener('click', () => { const action = b.getAttribute('data-action'); closeSideMenu(); switch (action) { case 'show-profile': showOverlay(profileOverlay); break; case 'show-withdrawal': showOverlay(withdrawalOverlay); break; case 'show-friends': showOverlay(friendsOverlay); break; case 'show-tasks': showOverlay(tasksOverlay); break; case 'show-rewarded-tasks': showOverlay(rewardedTasksOverlay); break; } }); });
              overlayCloseButtons.forEach(b => { b.addEventListener('click', () => { const id = b.getAttribute('data-overlay-id'); const o = document.getElementById(id); if (o) hideOverlay(o); }); });
-             document.addEventListener('click', (e) => { if (sideMenu.classList.contains('open') && !sideMenu.contains(e.target) && !menuButton.contains(e.target)) { closeSideMenu(); } if (settingsPopup.style.display === 'block' && !settingsPopup.contains(e.target) && !settingsButton.contains(e.target)) { closeSettingsPopup(); } });
+             // Close menus/popups on click outside
+             document.addEventListener('click', (e) => {
+                if (sideMenu.classList.contains('open') && !sideMenu.contains(e.target) && e.target !== menuButton) { closeSideMenu(); }
+                if (settingsPopup.style.display === 'block' && !settingsPopup.contains(e.target) && e.target !== settingsButton) { closeSettingsPopup(); }
+             });
              menuOverlayDimmer.addEventListener('click', closeSideMenu);
-             settingsPopup.addEventListener('click', e => e.stopPropagation()); sideMenu.addEventListener('click', e => e.stopPropagation());
-             profileOverlay.addEventListener('click', e => { if (!e.target.closest('.overlay-close-button')) e.stopPropagation(); });
-             withdrawalOverlay.addEventListener('click', e => { if (!e.target.closest('.overlay-close-button') && !e.target.closest('button')) e.stopPropagation(); });
-             friendsOverlay.addEventListener('click', e => { if (!e.target.closest('.overlay-close-button') && !e.target.closest('#referral-list-container') && !e.target.closest('#copy-referral-link-button')) e.stopPropagation(); });
-             tasksOverlay.addEventListener('click', e => { if (!e.target.closest('.overlay-close-button') && !e.target.closest('a')) e.stopPropagation(); });
+             // Prevent propagation inside popups/menus unless it's a specific interactive element
+             settingsPopup.addEventListener('click', e => e.stopPropagation());
+             sideMenu.addEventListener('click', e => e.stopPropagation());
+             profileOverlay.addEventListener('click', e => { if (e.target !== profileOverlay && !e.target.closest('.overlay-content') && !e.target.closest('.overlay-close-button')) { /* Allow clicks outside content */ } else if (!e.target.closest('.overlay-close-button')) { e.stopPropagation(); } });
+             withdrawalOverlay.addEventListener('click', e => { if (e.target !== withdrawalOverlay && !e.target.closest('.overlay-content') && !e.target.closest('.overlay-close-button')) { /* Allow */ } else if (!e.target.closest('.overlay-close-button') && !e.target.closest('button')) { e.stopPropagation(); } });
+             friendsOverlay.addEventListener('click', e => { if (e.target !== friendsOverlay && !e.target.closest('.overlay-content') && !e.target.closest('.overlay-close-button')) { /* Allow */ } else if (!e.target.closest('.overlay-close-button') && !e.target.closest('#referral-list-container') && !e.target.closest('#copy-referral-link-button')) { e.stopPropagation(); } });
+             tasksOverlay.addEventListener('click', e => { if (e.target !== tasksOverlay && !e.target.closest('.overlay-content') && !e.target.closest('.overlay-close-button')) { /* Allow */ } else if (!e.target.closest('.overlay-close-button') && !e.target.closest('a')) { e.stopPropagation(); } });
              rewardedTasksOverlay.addEventListener('click', e => { // Listener on the container
                  const taskItem = e.target.closest('.rewarded-ad-item');
                  if (taskItem && !taskItem.classList.contains('disabled')) {
@@ -1032,15 +1223,17 @@
                      const config = REWARDED_AD_TASKS_CONFIG[taskId];
                      if (taskId && config) { handleWatchRewardedAd(taskId, config.reward, taskItem); }
                       else { console.error("Missing data/config for clicked rewarded ad item", taskItem); }
-                 } else if (!e.target.closest('.overlay-close-button')) { // Prevent closing if click is inside but not on task/close
+                 } else if (e.target !== rewardedTasksOverlay && !e.target.closest('.overlay-content') && !e.target.closest('.overlay-close-button')) { /* Allow */ } else if (!e.target.closest('.overlay-close-button')) { // Prevent closing if click is inside but not on task/close
                      e.stopPropagation();
                  }
              });
-             if (gameOverUI) gameOverUI.addEventListener('click', e => e.stopPropagation());
+             if (gameOverUI) gameOverUI.addEventListener('click', e => { if (e.target !== gameOverUI && !e.target.closest('.modal') && !e.target.closest('button')) { /* Allow */ } else if (!e.target.closest('button')) e.stopPropagation(); });
+
              restartButton.addEventListener('click', resetGame);
              if (watchAdButton) watchAdButton.addEventListener('click', handleWatchAd); // Game Over Ad uses its own handler
-             if (copyReferralLinkButton) { copyReferralLinkButton.addEventListener('click', async () => { const link = referralLinkDisplay.textContent; if (link && link !== "Generating link..." && link !== "Link Unavailable") { const success = await copyToClipboard(link); const message = success ? "Link Copied!" : "Copy Failed"; copyReferralLinkButton.textContent = message; if (window.Telegram?.WebApp?.showAlert) window.Telegram.WebApp.showAlert(message); else alert(message); } else { copyReferralLinkButton.textContent = "Error"; } setTimeout(() => { copyReferralLinkButton.textContent = "Copy"; }, 1500); }); }
+             if (copyReferralLinkButton) { copyReferralLinkButton.addEventListener('click', async () => { const link = referralLinkDisplay.textContent; if (link && link !== "Generating link..." && link !== "Link Unavailable") { const success = await copyToClipboard(link); const message = success ? "Link Copied!" : "Copy Failed"; copyReferralLinkButton.textContent = message; if (window.Telegram?.WebApp?.showAlert) window.Telegram.WebApp.showAlert(message); /* Avoid browser alert */ } else { copyReferralLinkButton.textContent = "Error"; } setTimeout(() => { copyReferralLinkButton.textContent = "Copy"; }, 1500); }); }
          }
+
 
         // --- Game Logic Functions ---
         function generatePlatforms() { if (!ball || !camera || internalPauseState || gameState !== 'playing') return; const generationTriggerY = nextPlatformY + platformSpacingY * 8; while (ball.position.y < generationTriggerY && nextPlatformY > -1000) { createPlatform(nextPlatformY); createPoleSegment(nextPlatformY); nextPlatformY -= platformSpacingY; } const removalThresholdY_Above = camera.position.y + 15; activePlatforms.forEach(p => { if (p.position.y > removalThresholdY_Above && !p.userData.fadeOut) startFadeOut(p); }); for (const yPos in activePoleSegments) { const seg = activePoleSegments[yPos]; if (parseFloat(yPos) > removalThresholdY_Above && seg && !seg.userData.fadeOut) startFadeOut(seg); } }
@@ -1050,8 +1243,10 @@
         function startFadeOut(object) { if (!object || !object.userData || object.userData.fadeOut) return; object.userData.fadeOut = true; object.userData.fadeProgress = 0; }
         function destroyPlatformAndPole(platform) { if (!platform || !platform.userData || platform.userData.fadeOut) return; const platformY = platform.userData.y; if (!scoreIncrementedForPlatform[platformY]) { currentScore++; updateScoreUI(); scoreIncrementedForPlatform[platformY] = true; } startFadeOut(platform); const poleSegment = activePoleSegments[platformY]; if (poleSegment) startFadeOut(poleSegment); }
         function updateFadingObjects(deltaTime) { if (internalPauseState || gameState === 'error') return; const fadeSpeed = 1.0 / (FADE_DURATION / 1000); const platformsToRemoveIndexes = []; const poleYPositionsToRemove = []; for (let i = activePlatforms.length - 1; i >= 0; i--) { const p = activePlatforms[i]; if (p.userData.fadeOut) { p.userData.fadeProgress += fadeSpeed * deltaTime; const progress = Math.min(p.userData.fadeProgress, 1); const scale = 1.0 - progress * 0.5; p.scale.set(scale, 1, scale); p.userData.segmentAngles.forEach(segmentData => { if (segmentData.material) segmentData.material.opacity = 1.0 - progress; }); if (progress >= 1) platformsToRemoveIndexes.push(i); } } for (let i = platformsToRemoveIndexes.length - 1; i >= 0; i--) { const index = platformsToRemoveIndexes[i]; disposePlatformSegments(activePlatforms[index]); activePlatforms.splice(index, 1); } for (const y in activePoleSegments) { const segment = activePoleSegments[y]; if (segment?.userData.fadeOut) { segment.userData.fadeProgress += fadeSpeed * deltaTime; const progress = Math.min(segment.userData.fadeProgress, 1); if (segment.material) segment.material.opacity = 1.0 - progress; const scale = 1.0 - progress; segment.scale.set(scale, scale, scale); if (progress >= 1) poleYPositionsToRemove.push(parseFloat(y)); } } poleYPositionsToRemove.forEach(y => disposePoleSegment(y)); }
-        function checkCollisions() { if (!ball || internalPauseState || gameState !== 'playing' || currentBallVelocityY >= 0) return; const ballRadius = 0.25; const ballBottomY = ball.position.y - ballRadius; let candidatePlatform = null; let highestCandidateY = -Infinity; for (let i = 0; i < activePlatforms.length; i++) { const platform = activePlatforms[i]; if (!platform || !platform.userData || platform.userData.fadeOut) continue; const platformSurfaceY = platform.position.y; if (ballPreviousY - ballRadius >= platformSurfaceY && ballBottomY <= platformSurfaceY) { if (platformSurfaceY > highestCandidateY) { highestCandidateY = platformSurfaceY; candidatePlatform = platform; } } } if (!candidatePlatform) return; const platformData = candidatePlatform.userData; const collisionY = platformData.y; const ballAngle = Math.atan2(ball.position.z - platformGroup.position.z, ball.position.x - platformGroup.position.x); const towerRotation = platformGroup.rotation.y; const platformInternalRotation = candidatePlatform.rotation.y; let angleRelativeToPlatform = THREE.MathUtils.euclideanModulo( ballAngle - towerRotation - platformInternalRotation, 2 * Math.PI ); const gapStart = platformData.gapStartAngle; const gapEnd = platformData.gapEndAngle; let isInGap; if (gapStart < gapEnd) { isInGap = angleRelativeToPlatform >= gapStart && angleRelativeToPlatform < gapEnd; } else { isInGap = angleRelativeToPlatform >= gapStart || angleRelativeToPlatform < gapEnd; } const ballDistFromCenter = Math.hypot(ball.position.x, ball.position.z); const isInsidePoleRadius = ballDistFromCenter < poleRadius; if (isInGap || isInsidePoleRadius) { destroyPlatformAndPole(candidatePlatform); } else { let hitSegmentData = null; for (const segmentData of platformData.segmentAngles) { let segStart = segmentData.startAngle; let segEnd = segmentData.endAngle; let angleFallsInSegment; if (segStart < segEnd) { angleFallsInSegment = angleRelativeToPlatform >= segStart && angleRelativeToPlatform < segEnd; } else { angleFallsInSegment = angleRelativeToPlatform >= segStart || angleRelativeToPlatform < segEnd; } if (angleFallsInSegment) { hitSegmentData = segmentData; break; } } if (hitSegmentData) { if (hitSegmentData.isDanger) { lastSafePlatformY = collisionY - platformSpacingY; handleGameOver(); startShake(0.7); } else { lastSafePlatformY = collisionY; ball.position.y = collisionY + ballRadius + 0.01; currentBallVelocityY = bounceSpeed; Object.keys(scoreIncrementedForPlatform).forEach(keyY => { if (parseFloat(keyY) < collisionY) delete scoreIncrementedForPlatform[keyY]; }); startShake(0.3); } } else { console.warn("Collision: Not in gap, but no segment hit?"); destroyPlatformAndPole(candidatePlatform); } } }
-        function handleGameOver() { if (gameState !== 'playing') return; console.log("Game Over!"); gameState = 'gameOver'; setInternalPause(true); finalScoreEl.textContent = formatNumber(currentScore); gameOverMessageP.innerHTML = `Score: <span id="final-score">${formatNumber(currentScore)}</span>`; gameOverUI.style.display = 'block'; if (restartButton) restartButton.disabled = false; if (watchAdButton) { if (telegramUserId && currentScore > 0) { watchAdButton.style.display = 'block'; watchAdButton.disabled = false; } else { watchAdButton.style.display = 'none'; } } startShake(0.5); }
+        function checkCollisions() { if (!ball || internalPauseState || gameState !== 'playing' || currentBallVelocityY >= 0) return; const ballRadius = 0.25; const ballBottomY = ball.position.y - ballRadius; let candidatePlatform = null; let highestCandidateY = -Infinity; for (let i = 0; i < activePlatforms.length; i++) { const platform = activePlatforms[i]; if (!platform || !platform.userData || platform.userData.fadeOut) continue; const platformSurfaceY = platform.position.y; // Bounce check slightly above surface
+                 if (ballPreviousY - ballRadius >= platformSurfaceY && ballBottomY <= platformSurfaceY + 0.05) { // Added tolerance
+                 if (platformSurfaceY > highestCandidateY) { highestCandidateY = platformSurfaceY; candidatePlatform = platform; } } } if (!candidatePlatform) return; const platformData = candidatePlatform.userData; const collisionY = platformData.y; // Use the platform's exact Y const ballAngle = Math.atan2(ball.position.z - platformGroup.position.z, ball.position.x - platformGroup.position.x); const towerRotation = platformGroup.rotation.y; const platformInternalRotation = candidatePlatform.rotation.y; let angleRelativeToPlatform = THREE.MathUtils.euclideanModulo( ballAngle - towerRotation - platformInternalRotation, 2 * Math.PI ); const gapStart = platformData.gapStartAngle; const gapEnd = platformData.gapEndAngle; let isInGap; if (gapStart < gapEnd) { isInGap = angleRelativeToPlatform >= gapStart && angleRelativeToPlatform < gapEnd; } else { isInGap = angleRelativeToPlatform >= gapStart || angleRelativeToPlatform < gapEnd; } const ballDistFromCenter = Math.hypot(ball.position.x, ball.position.z); const isInsidePoleRadius = ballDistFromCenter < poleRadius; if (isInGap || isInsidePoleRadius) { // Fall through gap or hit pole console.log("Fall through gap or hit pole"); destroyPlatformAndPole(candidatePlatform); } else { // Hit a platform segment let hitSegmentData = null; for (const segmentData of platformData.segmentAngles) { let segStart = segmentData.startAngle; let segEnd = segmentData.endAngle; let angleFallsInSegment; if (segStart < segEnd) { angleFallsInSegment = angleRelativeToPlatform >= segStart && angleRelativeToPlatform < segEnd; } else { angleFallsInSegment = angleRelativeToPlatform >= segStart || angleRelativeToPlatform < segEnd; } if (angleFallsInSegment) { hitSegmentData = segmentData; break; } } if (hitSegmentData) { if (hitSegmentData.isDanger) { console.log("Hit danger zone!"); lastSafePlatformY = collisionY - platformSpacingY; handleGameOver(); startShake(0.7); } else { console.log("Bounce!"); lastSafePlatformY = collisionY; ball.position.y = collisionY + ballRadius + 0.01; // Place slightly above surface currentBallVelocityY = bounceSpeed; // Apply bounce // Clear score flags for platforms below the bounced one Object.keys(scoreIncrementedForPlatform).forEach(keyY => { if (parseFloat(keyY) < collisionY) delete scoreIncrementedForPlatform[keyY]; }); startShake(0.3); } } else { // Edge case: Should have hit a segment if not in gap console.warn("Collision check inconsistency: Not in gap, but no segment hit? Treating as fall-through."); destroyPlatformAndPole(candidatePlatform); } } }
+        function handleGameOver() { if (gameState !== 'playing') return; console.log("Game Over!"); gameState = 'gameOver'; setInternalPause(true); finalScoreEl.textContent = formatNumber(currentScore); gameOverMessageP.innerHTML = `Score: <span id="final-score">${formatNumber(currentScore)}</span>`; gameOverUI.style.display = 'block'; if (restartButton) restartButton.disabled = false; if (watchAdButton) { if (telegramUserId && currentScore > 0) { watchAdButton.style.display = 'block'; watchAdButton.disabled = false; } else { watchAdButton.style.display = 'none'; } } startShake(0.5); // Trigger camera shake }
         // Game Over Ad Handler (uses the standard rewarded interstitial from whephiwums)
         function handleWatchAd() {
             if (gameState !== 'gameOver' || !telegramUserId || currentScore <= 0) return;
@@ -1069,7 +1264,8 @@
             // Using the default show_9292240() which implies rewardedInterstitial
             show_9292240().then(() => {
                  console.log("Ad watched successfully (Game Over). Saving score...");
-                 updateUserTotalScore(currentScore).then(() => {
+                 // Save score AFTER ad is confirmed watched
+                updateUserTotalScore(currentScore).then(() => {
                      console.log("Score save OK via Ad.");
                      let adCountdown = 3;
                      gameOverMessageP.textContent = `Score Saved! Restarting in ${adCountdown}s`;
@@ -1079,53 +1275,76 @@
                          if (adCountdown > 0) { gameOverMessageP.textContent = `Score Saved! Restarting in ${adCountdown}s`; }
                          else { clearInterval(adTimerIntervalId); adTimerIntervalId = null; console.log("Ad timer finish. Restarting."); resetGame(); }
                      }, 1000);
-                 }).catch((error) => {
+                 }).catch((error) => { // Catch score saving error
                      console.error("Failed score save after Ad:", error);
                      gameOverMessageP.textContent = "Error saving score. Please restart.";
                      if (restartButton) restartButton.disabled = false;
                      if (watchAdButton) watchAdButton.disabled = false; // Re-enable if save fails
                      if (adTimerIntervalId) { clearInterval(adTimerIntervalId); adTimerIntervalId = null; }
                  });
-            }).catch((error) => {
-                 console.error("Ad failed to show (Game Over):", error);
+            }).catch((error) => { // Catch ad loading/watching error
+                 console.error("Ad failed to show or was skipped (Game Over):", error);
                  const message = "Ad failed to load or was skipped. Score not saved.";
                  if (window.Telegram?.WebApp?.showAlert) window.Telegram.WebApp.showAlert(message); else alert(message);
-                 gameOverMessageP.textContent = `Score: ${formatNumber(currentScore)}`;
+                 gameOverMessageP.textContent = `Score: ${formatNumber(currentScore)}`; // Show score again
                  if (restartButton) restartButton.disabled = false;
                  if (watchAdButton) watchAdButton.disabled = false; // Re-enable if ad fails
             });
         }
         function startShake(intensity) { shakeIntensity = Math.max(shakeIntensity, intensity); }
         async function resetGame() {
-             console.log("Reset..."); if (adTimerIntervalId) { clearInterval(adTimerIntervalId); adTimerIntervalId = null; }
-             // No need to check telegramUserId here anymore, init should guarantee it or fail
-             // if (!telegramUserId) { ... }
-
              console.log("Resetting game...");
-             if (cameraZoomRequestId) cancelAnimationFrame(cameraZoomRequestId); cameraZoomRequestId = null; isCameraZooming = false;
+             if (gameState === 'error') {
+                console.warn("Cannot reset game from error state.");
+                return;
+             }
+             if (adTimerIntervalId) { clearInterval(adTimerIntervalId); adTimerIntervalId = null; }
 
-             if (!ball) createBall(); // Should exist, but safety check
-             else { const ballColorHex = parseColorHex(getCssVariable('--ball-color')); ball.material.color.setHex(ballColorHex); ball.material.needsUpdate = true; }
-             ball.position.set(ballStartX, initialBallY, ballStartZ); ballPreviousY = ball.position.y; currentBallVelocityY = 0;
+             // Stop any ongoing camera animation immediately
+             if (cameraZoomRequestId) cancelAnimationFrame(cameraZoomRequestId);
+             cameraZoomRequestId = null;
+             isCameraZooming = false;
 
-             // Clear existing platforms and poles more robustly
+             // Reset Game State Variables
+             currentScore = 0; updateScoreUI();
+             scoreIncrementedForPlatform = {};
+             platformColorIndex = 0;
+             shakeIntensity = 0;
+             currentBallVelocityY = 0;
+             nextPlatformY = initialBallY - platformSpacingY * 2; // Position for first new platform
+             lastSafePlatformY = nextPlatformY + platformSpacingY; // Initial safe Y
+
+
+             // Reset Ball
+             if (!ball) {
+                 createBall(); // Should exist, but create if missing
+             } else {
+                 const ballColorHex = parseColorHex(getCssVariable('--ball-color'));
+                 ball.material.color.setHex(ballColorHex);
+                 ball.material.needsUpdate = true;
+                 ball.position.set(ballStartX, initialBallY, ballStartZ); // Reset position
+                 ballPreviousY = ball.position.y;
+             }
+
+             // Clear existing platforms and poles
+             console.log(`Clearing ${activePlatforms.length} platforms and ${Object.keys(activePoleSegments).length} pole segments.`);
              activePlatforms.forEach(p => disposePlatformSegments(p)); activePlatforms = [];
              if (platformGroup) { while(platformGroup.children.length > 0) platformGroup.remove(platformGroup.children[0]); platformGroup.rotation.y = 0; }
-             else { platformGroup = new THREE.Group(); scene.add(platformGroup); }
+             else { platformGroup = new THREE.Group(); scene.add(platformGroup); } // Should exist
 
              Object.keys(activePoleSegments).forEach(y => disposePoleSegment(parseFloat(y))); activePoleSegments = {};
              if (poleGroup) { while(poleGroup.children.length > 0) poleGroup.remove(poleGroup.children[0]); }
-              else { poleGroup = new THREE.Group(); scene.add(poleGroup); }
-
-
-             currentScore = 0; updateScoreUI(); scoreIncrementedForPlatform = {}; platformColorIndex = 0; shakeIntensity = 0; nextPlatformY = initialBallY - platformSpacingY * 2; lastSafePlatformY = nextPlatformY + platformSpacingY;
+             else { poleGroup = new THREE.Group(); scene.add(poleGroup); } // Should exist
 
              // Regenerate initial platforms/poles
-             for (let i = 0; i < 15; i++) {
+             console.log("Generating initial platforms...");
+             for (let i = 0; i < 15; i++) { // Generate enough platforms to start
                  createPlatform(nextPlatformY);
                  createPoleSegment(nextPlatformY);
                  nextPlatformY -= platformSpacingY;
              }
+             console.log("Initial platforms generated.");
+
 
              // Reset UI states
              gameOverUI.style.display = 'none';
@@ -1133,122 +1352,159 @@
              closeSideMenu();
              closeSettingsPopup();
 
-             // Reset camera position and lookAt
+             // Reset camera position (keep Z zoom level) and lookAt
              if (camera && ball) {
                  const camY = ball.position.y + cameraVerticalOffset;
                  const lookY = ball.position.y + cameraLookAtOffset;
-                 // Don't reset Z here, keep the zoomed-in view after first init
-                 camera.position.set(0, camY, camera.position.z); // Z remains as is (likely zoomed in)
+                 camera.position.set(0, camY, camera.position.z); // Keep current Z
                  camera.lookAt(0, lookY, 0);
-                 camera.updateProjectionMatrix(); // Important after position/lookAt changes
+                 camera.updateProjectionMatrix();
              }
 
+             // Set game state and resume
              gameState = 'playing';
-             setInternalPause(false); // Resume game logic
-             console.log("Reset complete:", gameState);
-             setTimeout(onWindowResize, 50); // Ensure canvas size is correct after UI changes
+             setInternalPause(false); // Resume game logic immediately
+             console.log("Reset complete. Game state:", gameState);
+             setTimeout(onWindowResize, 50); // Adjust layout after potential UI flashes
         }
 
 
         // --- Input Handling ---
         function onPointerDown(e){
-            let target = e.target; let isUI = false;
-            // Added check for rewarded ad item click
-            if (headerBar.contains(target) || (sideMenu.classList.contains('open') && sideMenu.contains(target)) || (menuOverlayDimmer.classList.contains('visible') && target === menuOverlayDimmer) || (settingsPopup.style.display === 'block' && settingsPopup.contains(target)) || (profileOverlay.style.display === 'flex' && profileOverlay.contains(target)) || (withdrawalOverlay.style.display === 'flex' && withdrawalOverlay.contains(target)) || (friendsOverlay.style.display === 'flex' && friendsOverlay.contains(target)) || (tasksOverlay.style.display === 'flex' && tasksOverlay.contains(target)) || (rewardedTasksOverlay.style.display === 'flex' && rewardedTasksOverlay.contains(target)) || (gameOverUI.style.display === 'block' && gameOverUI.contains(target)) || target.closest('.icon-button') || target.closest('button') || target.closest('a') || target.closest('input') || target.closest('.theme-switch') || target.closest('#referral-list-container') || target.closest('.rewarded-ad-item')) { isUI = true; }
-            if (target === renderer?.domElement && gameState === 'playing' && !isAnyUIOverlayOpen()) { isUI = false; } else if (target === renderer?.domElement) { isUI = true; } // Catch clicks on canvas when UI is open
-            if (isUI || gameState !== 'playing' || internalPauseState) { // Added internalPauseState check
-                 isPointerDown = false;
+            // Allow interaction only if game is playing and not paused internally
+            if (gameState !== 'playing' || internalPauseState) {
+                 isPointerDown = false; // Ensure pointer is considered "up" if game isn't active
                  return;
+             }
+
+            let target = e.target;
+            let isUIInteraction = false;
+
+            // Check if the click originated within any UI element that should block game input
+            if (headerBar.contains(target) ||
+                (sideMenu.classList.contains('open') && sideMenu.contains(target)) ||
+                (menuOverlayDimmer.classList.contains('visible') && target === menuOverlayDimmer) ||
+                (settingsPopup.style.display === 'block' && settingsPopup.contains(target)) ||
+                (profileOverlay.style.display === 'flex' && profileOverlay.contains(target)) ||
+                (withdrawalOverlay.style.display === 'flex' && withdrawalOverlay.contains(target)) ||
+                (friendsOverlay.style.display === 'flex' && friendsOverlay.contains(target)) ||
+                (tasksOverlay.style.display === 'flex' && tasksOverlay.contains(target)) ||
+                (rewardedTasksOverlay.style.display === 'flex' && rewardedTasksOverlay.contains(target)) ||
+                (gameOverUI.style.display === 'block' && gameOverUI.contains(target)) ||
+                target.closest('.icon-button, button, a, input, .theme-switch, #referral-list-container, .rewarded-ad-item')) {
+                isUIInteraction = true;
             }
+
+            // If the click is on the canvas itself AND no UI overlay is blocking it
+            if (target === renderer?.domElement && !isAnyUIOverlayOpen()) {
+                 isUIInteraction = false; // Explicitly allow game interaction
+            } else if (target === renderer?.domElement) {
+                 isUIInteraction = true; // Block if UI is open, even if click is on canvas
+            }
+
+            if (isUIInteraction) {
+                isPointerDown = false; // Don't initiate game drag
+                return;
+            }
+
+            // If it's a valid game interaction start
             isPointerDown = true;
             previousPointerX = e.clientX ?? e.touches?.[0]?.clientX;
             if (previousPointerX === undefined) { isPointerDown = false; return; } // No valid coordinate
             document.body.style.cursor = 'grabbing';
-             // Prevent default only for touch events on the game container to allow scrolling elsewhere
+             // Prevent default only for touch events *directly* on the game container during active play
             if (e.cancelable && e.touches && gameContainer.contains(target)) {
                  e.preventDefault();
             }
         }
-        function onPointerMove(e){ if (!isPointerDown || internalPauseState || gameState !== 'playing') return; const currentX = e.clientX ?? e.touches?.[0]?.clientX; if (currentX === undefined) return; const deltaX = currentX - previousPointerX; if (platformGroup) { platformGroup.rotation.y += deltaX * rotationSensitivity; } previousPointerX = currentX; // Prevent default only for touch events to allow scrolling page when not grabbing
-             if (e.cancelable && e.touches) {
-                 e.preventDefault();
-            } }
+        function onPointerMove(e){ if (!isPointerDown || internalPauseState || gameState !== 'playing') return; const currentX = e.clientX ?? e.touches?.[0]?.clientX; if (currentX === undefined) return; const deltaX = currentX - previousPointerX; if (platformGroup) { platformGroup.rotation.y += deltaX * rotationSensitivity; } previousPointerX = currentX; // Prevent default only for touch events to allow scrolling page when not grabbing if (e.cancelable && e.touches) { e.preventDefault(); } }
         function onPointerUp(e){ if (isPointerDown) { isPointerDown = false; document.body.style.cursor = 'default'; } }
 
         // --- Window Resize ---
-        function onWindowResize() { if (!camera || !renderer || !gameContainer || !composer) return; const w = gameContainer.clientWidth; const h = gameContainer.clientHeight; if (w > 0 && h > 0) { camera.aspect = w / h; camera.updateProjectionMatrix(); renderer.setSize(w, h); composer.setSize(w, h); } }
+        function onWindowResize() { if (!camera || !renderer || !gameContainer || !composer || gameState === 'error') return; const w = gameContainer.clientWidth; const h = gameContainer.clientHeight; if (w > 0 && h > 0) { camera.aspect = w / h; camera.updateProjectionMatrix(); renderer.setSize(w, h); composer.setSize(w, h); console.log(`Resized to ${w}x${h}`); } else { console.warn("Resize ignored, invalid dimensions:", w, h); } }
 
         // --- Camera Zoom ---
-        function animateCameraZoom(targetZ, duration) { if (!camera || isCameraZooming) return; if (cameraZoomRequestId) cancelAnimationFrame(cameraZoomRequestId); isCameraZooming = true; const startZ = camera.position.z; const startTime = performance.now(); function step(now) { const elapsed = now - startTime; const prog = Math.min(elapsed / duration, 1); const ease = t => t * (2 - t); // Ease out quad const newZ = startZ + (targetZ - startZ) * ease(prog); camera.position.z = newZ; camera.updateProjectionMatrix(); // Update projection matrix during zoom if (prog < 1) { cameraZoomRequestId = requestAnimationFrame(step); } else { camera.position.z = targetZ; isCameraZooming = false; cameraZoomRequestId = null; camera.updateProjectionMatrix(); } } cameraZoomRequestId = requestAnimationFrame(step); }
+        function animateCameraZoom(targetZ, duration) { if (!camera || isCameraZooming || gameState === 'error') return; if (cameraZoomRequestId) cancelAnimationFrame(cameraZoomRequestId); isCameraZooming = true; const startZ = camera.position.z; const startTime = performance.now(); function step(now) { if (gameState === 'error') { cancelAnimationFrame(cameraZoomRequestId); isCameraZooming = false; return; } // Stop if error occurs const elapsed = now - startTime; const prog = Math.min(elapsed / duration, 1); const ease = t => t * (2 - t); // Ease out quad const newZ = startZ + (targetZ - startZ) * ease(prog); camera.position.z = newZ; camera.updateProjectionMatrix(); if (prog < 1) { cameraZoomRequestId = requestAnimationFrame(step); } else { camera.position.z = targetZ; isCameraZooming = false; cameraZoomRequestId = null; camera.updateProjectionMatrix(); console.log("Camera zoom finished."); } } cameraZoomRequestId = requestAnimationFrame(step); console.log("Camera zoom started."); }
 
         // --- Animation Loop ---
         function animate() {
-            if (gameState === 'error') {
-                 console.log("Animation loop stopped due to error state.");
-                 return; // Stop the loop if in error state
+            // Stop the loop if the game has entered an error state
+             if (gameState === 'error') {
+                 console.log("Animation loop terminated due to error state.");
+                 return;
              }
-            requestAnimationFrame(animate);
-            const dt = clock.getDelta();
 
-            // Only run game logic if not initializing or paused
+            requestAnimationFrame(animate); // Request next frame first
+            const dt = clock.getDelta(); // Get time delta
+
+            // --- Game Logic (Run only when playing and not paused) ---
             if (gameState === 'playing' && !internalPauseState) {
-                if (starField && starField.visible) starField.rotation.y += dt * 0.01;
-                updateBallPosition();
-                checkCollisions();
-                generatePlatforms();
-                updateFadingObjects(dt);
-                if (ball) { ballPreviousY = ball.position.y; } // Update previous Y after position update
+                if (starField && starField.visible) {
+                    starField.rotation.y += dt * 0.01; // Slow star rotation
+                }
+                updateBallPosition(); // Update ball physics
+                checkCollisions(); // Check for bounces or game over
+                generatePlatforms(); // Add new platforms if needed
+                updateFadingObjects(dt); // Handle object fade-out animations
+                if (ball) { ballPreviousY = ball.position.y; } // Store previous Y for collision detection
             }
 
-            // Camera follow logic (runs even if paused, but based on current ball pos)
+            // --- Camera Logic (Runs regardless of pause state, adjusts based on it) ---
             if (ball && camera) {
                 let targetCamY = ball.position.y + cameraVerticalOffset;
-                 let targetLookY = ball.position.y + cameraLookAtOffset;
-                let lerpedY = camera.position.y;
+                let targetLookY = ball.position.y + cameraLookAtOffset;
 
-                // Apply lerp only if game is playing and ball is moving up or camera needs to catch down
-                if (gameState === 'playing' && !internalPauseState) {
-                     lerpedY = THREE.MathUtils.lerp(camera.position.y, targetCamY, cameraFollowLerpFactor);
-                     // Allow camera to move down freely, but lerp upwards
-                     if (lerpedY < camera.position.y || currentBallVelocityY > 0.01) {
-                         camera.position.y = lerpedY;
-                    } else {
-                         // If target is lower than current and ball isn't bouncing up, snap down
-                         camera.position.y = Math.min(camera.position.y, targetCamY);
-                     }
+                // Smooth camera follow using Lerp, but allow faster downward movement
+                 if (gameState === 'playing' && !internalPauseState) {
+                    let lerpedY = THREE.MathUtils.lerp(camera.position.y, targetCamY, cameraFollowLerpFactor);
+                     // If target is lower, or ball is moving up, lerp smoothly.
+                     // Otherwise (ball falling, target higher), snap down faster or keep up.
+                     camera.position.y = Math.min(lerpedY, targetCamY); // Move down quickly, lerp up slowly
                 } else {
-                     // If paused or game over, snap camera to the current ball position + offset
-                    // camera.position.y = targetCamY; // This might feel jerky, lerping might be better even when paused? Let's keep lerp but slow it down? No, let's snap for pause.
+                    // If paused or game over, directly set camera Y relative to ball's current position
                      camera.position.y = targetCamY;
                  }
 
-                // Camera Shake (apply only if game is active)
+                // Camera Shake (Apply only if shake is active)
                  let shakeX = 0, shakeY = 0;
                  if (shakeIntensity > 0.01) {
                     shakeX = (Math.random() - 0.5) * 2 * maxShakeOffset * shakeIntensity;
                     shakeY = (Math.random() - 0.5) * 2 * maxShakeOffset * shakeIntensity;
-                     if (gameState === 'playing' && !internalPauseState) { // Only decrease shake if playing
+                     // Decrease shake intensity only when game is actively playing
+                     if (gameState === 'playing' && !internalPauseState) {
                          shakeIntensity *= shakeDecreaseFactor;
                      }
                  } else {
-                     shakeIntensity = 0;
+                     shakeIntensity = 0; // Ensure shake stops fully
                  }
 
-                camera.position.x = 0 + shakeX;
-                 // Update Y position considering shake, but based on calculated camY (lerped or snapped)
-                camera.position.y += shakeY;
-                camera.lookAt(0 + shakeX, targetLookY + shakeY, 0); // Look target is always relative to ball
+                 // Apply shake offset to final camera position and lookAt target
+                 camera.position.x = 0 + shakeX;
+                 camera.position.y += shakeY; // Apply shake offset AFTER lerp/snap calculation
+                camera.lookAt(0 + shakeX, targetLookY + shakeY, 0);
             }
 
-            // Render using composer
-            if (composer) { composer.render(dt); }
-            else if (renderer && scene && camera) { renderer.render(scene, camera); } // Fallback direct render
-        }
+            // --- Rendering ---
+            if (composer) {
+                 composer.render(dt); // Render scene via post-processing composer
+             } else if (renderer && scene && camera) {
+                 renderer.render(scene, camera); // Fallback direct render if composer isn't set up
+            }
+        } // End animate function
 
 
         // --- Start ---
         // Use DOMContentLoaded to ensure HTML is parsed before running JS
-        document.addEventListener('DOMContentLoaded', init);
+        // Wrap the init call in a try-catch block as a last resort for initialization errors
+        document.addEventListener('DOMContentLoaded', () => {
+             console.log("DOM Content Loaded. Starting initialization...");
+             try {
+                 init(); // Call the main async initialization function
+             } catch (error) {
+                 console.error("Synchronous error during init call:", error);
+                 showFatalError(`Initialization failed: ${error.message || 'Unknown error'}`);
+            }
+        });
 
     </script>
 
