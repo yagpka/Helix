@@ -1,13 +1,14 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Helix Point Drop - Telegram Mini App</title> <!-- Changed Title -->
+    <title>Helix Point Drop - Telegram Mini App</title> <!-- Removed (Local Test) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
-    <!-- Telegram Web App Script (Should be included when deploying) -->
+    <!-- ADDED: Real Telegram Web App Script -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         /* --- Theming Variables --- */
@@ -21,6 +22,7 @@
             --bg-menu: rgba(20, 20, 45, 0.97);
             --bg-modal: rgba(15, 15, 35, 0.95);
             --bg-input: rgba(255, 255, 255, 0.08);
+            --bg-select: var(--bg-input); /* Style select like input */
             --bg-button-info: #00cfde;
             --bg-button-info-hover: #00b3bf;
             --bg-button-action: #ff4081;
@@ -37,14 +39,16 @@
             --bg-link-button-hover: rgba(255, 255, 255, 0.1);
             --bg-copy-button: rgba(255, 255, 255, 0.1);
             --bg-copy-button-hover: rgba(255, 255, 255, 0.2);
-            --bg-reward-task-icon: rgba(255, 255, 255, 0.08);
-            --bg-reward-task-arrow: rgba(255, 255, 255, 0.1);
-            --bg-reward-task-arrow-hover: rgba(255, 255, 255, 0.18);
+            --bg-timer-button: rgba(255, 255, 255, 0.08);
+            --bg-timer-button-active: var(--accent-cyan);
+            --bg-timer-button-hover: rgba(255, 255, 255, 0.15);
+            --bg-initial-controls: rgba(15, 15, 35, 0.92);
+            --bg-withdrawal-section: rgba(255, 255, 255, 0.03); /* Subtle background for sections */
 
 
             --text-light: #ffffff;
             --text-medium: #cccccc;
-            --text-dark: #111122; /* Text on buttons */
+            --text-dark: #111122;
             --text-link: var(--accent-cyan);
             --text-link-hover: var(--accent-cyan-hover);
             --text-heading-accent: var(--accent-yellow);
@@ -52,18 +56,19 @@
             --text-placeholder: rgba(255, 255, 255, 0.4);
             --text-copy-button: var(--text-medium);
             --text-copy-button-hover: var(--text-light);
-            --text-reward-task-primary: var(--text-light);
-            --text-reward-task-secondary: var(--text-medium);
-            --text-reward-task-points: var(--accent-yellow);
-            --icon-reward-task: var(--text-light);
-            --icon-reward-task-arrow: var(--text-light);
+            --text-timer-button: var(--text-medium);
+            --text-timer-button-active: var(--text-dark);
+            --text-label: var(--text-medium);
 
             --border-color: rgba(255, 255, 255, 0.15);
             --border-input: rgba(255, 255, 255, 0.15);
+            --border-select: var(--border-input);
             --border-menu-item: rgba(255, 255, 255, 0.1);
             --border-link-button: rgba(255, 255, 255, 0.1);
             --border-copy-button: rgba(255, 255, 255, 0.2);
-            --border-reward-task: rgba(255, 255, 255, 0.1);
+            --border-timer-button: rgba(255, 255, 255, 0.15);
+            --border-initial-controls: rgba(255, 255, 255, 0.1);
+            --border-withdrawal-section: rgba(255, 255, 255, 0.1);
 
 
             --shadow-color: rgba(0, 0, 0, 0.4);
@@ -72,6 +77,7 @@
             --shadow-modal: 0 8px 25px var(--shadow-color);
             --shadow-button: 0 2px 5px rgba(0, 0, 0, 0.2);
             --shadow-button-hover: 0 4px 8px rgba(0, 0, 0, 0.25);
+            --shadow-initial-controls: 0 6px 20px var(--shadow-color);
 
             --backdrop-blur: 4px;
             --backdrop-blur-heavy: 6px;
@@ -108,6 +114,7 @@
             --bg-menu: rgba(250, 250, 255, 0.97);
             --bg-modal: rgba(250, 250, 255, 0.95);
             --bg-input: rgba(0, 0, 0, 0.05);
+            --bg-select: var(--bg-input);
             --bg-button-info: #00a8b5;
             --bg-button-info-hover: #008a96;
             --bg-button-action: #e91e63;
@@ -124,9 +131,11 @@
             --bg-link-button-hover: rgba(0, 0, 0, 0.06);
             --bg-copy-button: rgba(0, 0, 0, 0.05);
             --bg-copy-button-hover: rgba(0, 0, 0, 0.1);
-            --bg-reward-task-icon: rgba(0, 0, 0, 0.04);
-            --bg-reward-task-arrow: rgba(0, 0, 0, 0.06);
-            --bg-reward-task-arrow-hover: rgba(0, 0, 0, 0.12);
+            --bg-timer-button: rgba(0, 0, 0, 0.05);
+            --bg-timer-button-active: var(--accent-cyan);
+            --bg-timer-button-hover: rgba(0, 0, 0, 0.1);
+            --bg-initial-controls: rgba(250, 250, 255, 0.92);
+            --bg-withdrawal-section: rgba(0, 0, 0, 0.03);
 
             --text-light: #212121;
             --text-medium: #555555;
@@ -138,19 +147,19 @@
             --text-placeholder: rgba(0, 0, 0, 0.4);
              --text-copy-button: var(--text-medium);
              --text-copy-button-hover: var(--text-light);
-            --text-reward-task-primary: var(--text-light);
-            --text-reward-task-secondary: var(--text-medium);
-            --text-reward-task-points: #E65100;
-            --icon-reward-task: var(--text-light);
-            --icon-reward-task-arrow: var(--text-light);
+            --text-timer-button: var(--text-medium);
+            --text-timer-button-active: var(--text-light);
+            --text-label: var(--text-medium);
 
             --border-color: rgba(0, 0, 0, 0.1);
             --border-input: rgba(0, 0, 0, 0.15);
+            --border-select: var(--border-input);
             --border-menu-item: rgba(0, 0, 0, 0.08);
             --border-link-button: rgba(0, 0, 0, 0.1);
             --border-copy-button: rgba(0, 0, 0, 0.15);
-            --border-reward-task: rgba(0, 0, 0, 0.08);
-
+            --border-timer-button: rgba(0, 0, 0, 0.1);
+            --border-initial-controls: rgba(0, 0, 0, 0.1);
+            --border-withdrawal-section: rgba(0, 0, 0, 0.1);
 
             --shadow-color: rgba(0, 0, 0, 0.1);
             --shadow-header-bar: 0 3px 12px var(--shadow-color);
@@ -158,6 +167,7 @@
             --shadow-modal: 0 8px 25px var(--shadow-color);
             --shadow-button: 0 2px 5px rgba(0, 0, 0, 0.1);
             --shadow-button-hover: 0 4px 8px rgba(0, 0, 0, 0.15);
+            --shadow-initial-controls: 0 6px 20px var(--shadow-color);
 
             --star-color: rgba(170, 170, 238, 0.3);
         }
@@ -173,19 +183,88 @@
             justify-content: flex-start;
             transition: background var(--transition-speed) var(--transition-timing),
                         color var(--transition-speed) var(--transition-timing);
+            position: relative;
         }
 
-        #header-bar, #side-menu, #settings-popup, .fullscreen-overlay, .modal, input, button, a.link-button, .score-display, h2, h3, p, #game-canvas, .task-group, .task-item, #referral-list-container, #referral-link-container, .rewarded-ad-item {
+        #header-bar, #side-menu, #settings-popup, .fullscreen-overlay, .modal, input, button, a.link-button, .score-display, h2, h3, p, #game-canvas, .task-group, .task-item, #referral-list-container, #referral-link-container, #initial-controls-container, #header-timer-display, select {
              transition: background-color var(--transition-speed) var(--transition-timing),
                          color var(--transition-speed) var(--transition-timing),
                          border-color var(--transition-speed) var(--transition-timing),
                          box-shadow var(--transition-speed) var(--transition-timing),
                          opacity var(--transition-speed) var(--transition-timing),
-                         fill var(--transition-speed) var(--transition-timing);
+                         fill var(--transition-speed) var(--transition-timing),
+                         display var(--transition-speed) var(--transition-timing),
+                         transform var(--transition-speed) var(--transition-timing);
         }
         .star-color-target {}
 
-        #header-bar { padding: 10px 15px 5px 15px; background-color: var(--bg-header-bar); backdrop-filter: blur(var(--backdrop-blur)); color: var(--text-light); z-index: 200; box-shadow: var(--shadow-header-bar); display: flex; flex-direction: column; align-items: center; position: static; border-radius: 0 0 10px 10px; width: 100%; max-width: 500px; margin: 0 auto; flex-shrink: 0; position: relative; min-height: 55px; }
+        #header-bar { padding: 10px 15px 5px 15px; background-color: var(--bg-header-bar); backdrop-filter: blur(var(--backdrop-blur)); color: var(--text-light); z-index: 200; box-shadow: var(--shadow-header-bar); display: flex; flex-direction: column; align-items: center; position: static; border-radius: 0 0 10px 10px; width: 100%; max-width: 500px; margin: 0 auto; flex-shrink: 0; position: relative; }
+        #score-wrapper { display: flex; width: 100%; max-width: 350px; justify-content: space-around; align-items: center; padding: 8px 0 4px 0; }
+        .score-display { font-size: 1.8em; font-weight: 700; text-shadow: 0 1px 2px var(--shadow-color); text-align: center; color: var(--text-light); }
+        .score-label { font-size: 0.55em; display: block; opacity: 0.7; font-weight: 400; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-medium); }
+
+        /* --- Centered Initial Game Controls --- */
+        #initial-controls-container {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(1);
+            width: 90%; max-width: 350px; display: flex; flex-direction: column; align-items: center;
+            padding: 25px 20px; background-color: var(--bg-initial-controls); border: 1px solid var(--border-initial-controls);
+            border-radius: 15px; box-shadow: var(--shadow-initial-controls); z-index: 150; opacity: 1;
+            pointer-events: auto; backdrop-filter: blur(var(--backdrop-blur));
+            transition: opacity 0.3s ease, transform 0.3s ease, visibility 0s linear 0s; visibility: visible;
+        }
+        #initial-controls-container.hidden {
+            opacity: 0; transform: translate(-50%, -50%) scale(0.8); pointer-events: none; visibility: hidden;
+            transition: opacity 0.3s ease, transform 0.3s ease, visibility 0s linear 0.3s;
+        }
+        #initial-controls-container h3 { font-size: 1.4em; color: var(--text-heading-accent); margin-top: 0; margin-bottom: 20px; font-weight: 700; }
+        #timer-options { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
+        .timer-button {
+            padding: 8px 15px; border: 1px solid var(--border-timer-button); border-radius: 20px; background-color: var(--bg-timer-button);
+            color: var(--text-timer-button); font-family: inherit; font-size: 0.9em; font-weight: 600; cursor: pointer;
+            transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
+        }
+        .timer-button:hover { background-color: var(--bg-timer-button-hover); transform: translateY(-1px); }
+        .timer-button.active { background-color: var(--bg-timer-button-active); color: var(--text-timer-button-active); border-color: var(--bg-timer-button-active); font-weight: 700; }
+        #start-game-button {
+            padding: 12px 30px; border: none; border-radius: 8px; background-color: var(--bg-button-special); color: var(--text-dark);
+            font-family: inherit; font-weight: 700; font-size: 1.1em; cursor: pointer; transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+            box-shadow: var(--shadow-button); width: 70%; max-width: 250px; text-transform: uppercase; letter-spacing: 1px;
+        }
+        #start-game-button:hover:not(:disabled) { background-color: var(--bg-button-special-hover); transform: scale(1.03); box-shadow: var(--shadow-button-hover); }
+        #start-game-button:active:not(:disabled) { transform: scale(0.98); }
+        #start-game-button:disabled { background-color: #777; color: #bbb; cursor: not-allowed; transform: none; box-shadow: none; }
+        /* --- END: Centered Initial Game Controls --- */
+
+        /* --- Header Timer Display --- */
+         #header-timer-display {
+             font-size: 1.6em; font-weight: 700; color: var(--text-heading-accent); margin-top: 5px; margin-bottom: 5px; display: block;
+             opacity: 0; text-shadow: 0 1px 2px var(--shadow-color); transition: opacity 0.3s ease, visibility 0s linear 0.3s, height 0s linear 0.3s;
+             visibility: hidden; height: 0; overflow: hidden;
+         }
+         #header-timer-display.visible { opacity: 1; visibility: visible; height: auto; transition: opacity 0.3s ease, height 0s linear 0s, visibility 0s linear 0s; }
+        /* --- END: Header Timer Display --- */
+
+        /* --- Input/Select/Label Styles (Used in Withdrawal) --- */
+        .input-group { margin-bottom: 15px; text-align: left; }
+        .input-group label { display: block; margin-bottom: 5px; font-size: 0.9em; font-weight: 600; color: var(--text-label); }
+        .input-group input[type="number"],
+        .input-group input[type="text"],
+        .input-group select {
+            display: block; width: 100%; padding: 10px 12px; border: 1px solid var(--border-input); background-color: var(--bg-input);
+            color: var(--text-light); border-radius: 5px; font-family: inherit; font-size: 1em; appearance: none; -webkit-appearance: none; -moz-appearance: none;
+        }
+        .input-group input::placeholder { color: var(--text-placeholder); opacity: 1; }
+        .input-group select {
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23cccccc%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
+            background-repeat: no-repeat; background-position: right 10px center; background-size: 10px 10px; padding-right: 30px;
+            cursor: pointer;
+        }
+        body.light-mode .input-group select {
+             background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23555555%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
+        }
+        /* --- End Input Styles --- */
+
+
         .modal input[type="number"] { display: block; width: 100%; padding: 10px 12px; margin-bottom: 10px; border: 1px solid var(--border-input); background-color: var(--bg-input); color: var(--text-light); border-radius: 5px; font-family: inherit; font-size: 1em; }
         .modal input::placeholder { color: var(--text-placeholder); opacity: 1; }
         .standard-button { padding: 10px 15px; border: none; border-radius: 5px; background-color: var(--bg-button-info); color: var(--text-dark); font-family: inherit; font-weight: 700; font-size: 1em; cursor: pointer; transition: background-color 0.2s ease, transform 0.1s ease; display: inline-block; margin-top: 5px; }
@@ -196,14 +275,12 @@
         .standard-button.special-button { background-color: var(--bg-button-special); }
         .standard-button.special-button:hover:not(:disabled) { background-color: var(--bg-button-special-hover); }
         .standard-button:disabled { background-color: #777; color: #bbb; cursor: not-allowed; transform: none; }
-        #score-wrapper { display: flex; width: 100%; max-width: 350px; justify-content: space-around; align-items: center; padding: 8px 0 4px 0; margin-top: 5px; }
-        .score-display { font-size: 1.8em; font-weight: 700; text-shadow: 0 1px 2px var(--shadow-color); text-align: center; color: var(--text-light); }
-        .score-label { font-size: 0.55em; display: block; opacity: 0.7; font-weight: 400; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-medium); }
+
         .icon-button { position: absolute; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--accent-cyan); cursor: pointer; padding: 5px; border-radius: 50%; width: 40px; height: 40px; transition: background-color 0.2s ease, transform 0.2s ease, color 0.2s ease; z-index: 210; display: block; font-size: 24px; line-height: 30px; text-align: center; }
         .icon-button:hover { background-color: rgba(128, 128, 128, 0.1); transform: translateY(-50%) scale(1.1); }
         .icon-button svg { width: 100%; height: 100%; vertical-align: middle; fill: var(--accent-cyan); transition: fill var(--transition-speed) var(--transition-timing); }
-        #menu-button { left: 15px; }
-        #settings-button { right: 15px; color: var(--accent-cyan); }
+        #menu-button { left: 15px; top: 27.5px; }
+        #settings-button { right: 15px; top: 27.5px; color: var(--accent-cyan); }
         #side-menu { position: fixed; top: 0; left: calc(var(--menu-width) * -1); width: var(--menu-width); height: 100%; background-color: var(--bg-menu); backdrop-filter: blur(var(--backdrop-blur-heavy)); box-shadow: 4px 0 15px var(--shadow-color); z-index: 400; transition: left var(--transition-speed) cubic-bezier(0.25, 0.8, 0.25, 1), background-color var(--transition-speed) var(--transition-timing); padding: 60px 0 20px 0; display: flex; flex-direction: column; overflow-y: auto; }
         #side-menu.open { left: 0; }
         .menu-item-button { display: block; width: 100%; padding: 15px 25px; text-align: left; background: none; border: none; border-bottom: 1px solid var(--border-menu-item); color: var(--text-light); font-family: inherit; font-size: 1.1em; font-weight: 400; cursor: pointer; transition: background-color 0.2s ease, color 0.2s ease, border-color var(--transition-speed) var(--transition-timing); }
@@ -248,9 +325,28 @@
         .task-item .link-button.submit-link { background-color: var(--bg-button-special); color: var(--text-dark); }
         .task-item .link-button.submit-link:hover { background-color: var(--bg-button-special-hover); }
         #sponsor-contact-button { display: block; width: fit-content; margin: 10px auto 0 auto; padding: 10px 20px; }
-        #withdrawal-overlay .overlay-content p { font-size: 1.1em; margin-bottom: 10px; }
-        #withdrawal-overlay .overlay-content strong { color: var(--accent-yellow); }
-        #withdrawal-overlay .overlay-content button#withdraw-main-button { padding: 12px 25px; border: none; border-radius: 8px; background-color: #999; color: #eee; font-family: inherit; font-weight: 700; font-size: 1.1em; cursor: not-allowed; opacity: 0.6; margin-top: 10px; display: block; width: 100%; }
+
+        /* --- Withdrawal Overlay Styles --- */
+        #withdrawal-overlay .overlay-content { gap: 25px; }
+        .withdrawal-section {
+            background-color: var(--bg-withdrawal-section); border: 1px solid var(--border-withdrawal-section);
+            border-radius: 8px; padding: 20px; text-align: left;
+        }
+        .withdrawal-section h3 {
+            font-size: 1.3em; color: var(--text-heading-accent); margin-top: 0; margin-bottom: 15px; text-align: center; font-weight: 700;
+        }
+        .withdrawal-section ul { list-style: none; padding-left: 0; margin: 0; }
+        .withdrawal-section li {
+            font-size: 1em; color: var(--text-medium); margin-bottom: 10px; line-height: 1.5; padding-left: 20px; position: relative;
+        }
+        .withdrawal-section li::before { content: "•"; position: absolute; left: 0; color: var(--accent-cyan); font-weight: bold; display: inline-block; width: 20px; }
+        .withdrawal-section li strong { color: var(--accent-yellow); font-weight: 600; }
+        #withdraw-main-button {
+            padding: 12px 25px; border: none; border-radius: 8px; background-color: #999; color: #eee; font-family: inherit;
+            font-weight: 700; font-size: 1.1em; cursor: not-allowed; opacity: 0.6; margin-top: 20px; display: block; width: 100%;
+        }
+        /* --- End Withdrawal Overlay Styles --- */
+
         #friends-overlay .overlay-content { gap: 20px; }
         #friends-overlay .referral-info { display: flex; flex-direction: column; gap: 10px; text-align: center; margin-bottom: 15px; }
         #referral-link-container { display: flex; align-items: center; gap: 10px; background-color: var(--bg-input); padding: 8px 12px; border-radius: 6px; margin-top: 10px; border: 1px solid var(--border-input); }
@@ -267,44 +363,142 @@
         .referral-item { display: flex; align-items: center; justify-content: space-between; background-color: var(--bg-link-button); padding: 10px 15px; border-radius: 6px; border: 1px solid var(--border-link-button); }
         .referral-item span { font-size: 1em; color: var(--text-medium); flex-grow: 1; margin-right: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-        /* Rewarded Tasks Section - NEW FORMAT */
-        #rewarded-tasks-overlay .overlay-content { gap: 10px; padding: 15px; max-width: 500px; }
-        .rewarded-ad-item { display: flex; align-items: center; justify-content: space-between; background-color: var(--bg-link-button); padding: 12px; border-radius: 10px; border: 1px solid var(--border-reward-task); cursor: pointer; transition: background-color 0.2s ease; }
-        .rewarded-ad-item.disabled { opacity: 0.6; cursor: not-allowed; pointer-events: none; }
-        .rewarded-ad-item:not(.disabled):hover { background-color: var(--bg-link-button-hover); }
-        .rewarded-ad-icon { width: 40px; height: 40px; flex-shrink: 0; background-color: var(--bg-reward-task-icon); border-radius: 8px; margin-right: 15px; display: flex; align-items: center; justify-content: center; }
-        .rewarded-ad-icon svg { width: 24px; height: 24px; fill: var(--icon-reward-task); }
-        .rewarded-ad-text { flex-grow: 1; display: flex; flex-direction: column; text-align: left; }
-        .rewarded-ad-text .title { font-size: 1em; font-weight: 500; color: var(--text-reward-task-primary); margin-bottom: 2px; }
-        .rewarded-ad-text .progress { font-size: 0.8em; color: var(--text-reward-task-secondary); margin-bottom: 4px; }
-        .rewarded-ad-text .reward { font-size: 0.9em; font-weight: 700; color: var(--text-reward-task-points); }
-        .rewarded-ad-text .reward svg { width: 12px; height: 12px; fill: currentColor; margin-right: 3px; vertical-align: -1px; }
-        .rewarded-ad-action { width: 36px; height: 36px; flex-shrink: 0; background-color: var(--bg-reward-task-arrow); border-radius: 50%; margin-left: 15px; display: flex; align-items: center; justify-content: center; transition: background-color 0.2s ease; }
-        .rewarded-ad-item:not(.disabled):hover .rewarded-ad-action { background-color: var(--bg-reward-task-arrow-hover); }
-        .rewarded-ad-action svg { width: 20px; height: 20px; fill: var(--icon-reward-task-arrow); }
-
-
-        #game-container { position: relative; order: 1; flex-grow: 1; width: 100%; min-height: 150px; overflow: hidden; z-index: 1; }
+        #game-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; order: -1; z-index: 1; }
         #game-canvas { display: block; width: 100%; height: 100%; image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges; }
-        #game-over-ui { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: var(--bg-modal); backdrop-filter: blur(var(--backdrop-blur-heavy)); padding: 30px 40px; border-radius: 15px; text-align: center; z-index: 300; display: none; box-shadow: var(--shadow-modal); width: 90%; max-width: 400px; border: 1px solid var(--border-color); pointer-events: auto; color: var(--text-light); }
-        #game-over-ui h2 { margin: 0 0 15px 0; font-size: 2.1em; color: var(--text-heading-accent); font-weight: 700; }
-        #game-over-ui p#game-over-message { font-size: 1.4em; margin-bottom: 25px; font-weight: 400; min-height: 1.5em; color: var(--text-medium); }
-        #game-over-buttons { margin-top: 20px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
-        .game-over-button { padding: 12px 20px; cursor: pointer; border: none; border-radius: 8px; background-color: var(--bg-button-info); color: var(--text-dark); font-size: 1.1em; font-weight: 700; transition: all .2s ease; pointer-events: auto; width: auto; text-transform: uppercase; letter-spacing: 1px; box-shadow: var(--shadow-button); flex-grow: 1; min-width: 120px; text-align: center; }
-        .game-over-button:disabled { opacity: 0.5; cursor: not-allowed; background-color: #999; color: #eee; transform: none; box-shadow: none; }
-        .game-over-button:hover:not(:disabled) { background-color: var(--bg-button-info-hover); transform: translateY(-2px) scale(1.02); box-shadow: var(--shadow-button-hover); }
-        .game-over-button:active:not(:disabled) { transform: translateY(0px) scale(0.98); box-shadow: 0 1px 3px var(--shadow-color); }
-        #watch-ad-button { background-color: var(--bg-button-special); color: var(--text-dark); }
-        #watch-ad-button:hover:not(:disabled) { background-color: var(--bg-button-special-hover); }
-        .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: var(--bg-modal); backdrop-filter: blur(var(--backdrop-blur-heavy)); padding: 30px 40px; border-radius: 15px; text-align: center; z-index: 600; display: none; box-shadow: var(--shadow-modal); width: 90%; max-width: 400px; border: 1px solid var(--border-color); pointer-events: auto; color: var(--text-light); }
-        .modal h2 { margin: 0 0 15px 0; font-size: 1.8em; font-weight: 700; color: var(--text-heading-accent);}
-        .modal p { font-size: 1.1em; margin-bottom: 20px; font-weight: 400; color: var(--text-medium); line-height: 1.5;}
-        .modal-buttons { margin-top: 20px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
-        .modal-button { padding: 12px 20px; font-size: 1.05em; }
+
+
+        /* --- Generic Modal Styles (Apply First) --- */
+        .modal {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background-color: var(--bg-modal); backdrop-filter: blur(var(--backdrop-blur-heavy));
+            padding: 30px 40px; border-radius: 15px; text-align: center;
+            z-index: 600; display: none; box-shadow: var(--shadow-modal);
+            width: 90%; max-width: 400px; border: 1px solid var(--border-color);
+            pointer-events: auto; color: var(--text-light);
+        }
+        /* Generic Title Style (Top, Centered) */
+        .modal h2 {
+            margin: 0 0 20px 0; /* Space below title */
+            font-size: 2.1em; /* Larger title */
+            font-weight: 700;
+            color: var(--text-heading-accent);
+            text-align: center; /* Explicitly center */
+        }
+        /* Generic Paragraph Style (Below Title, Centered) */
+        .modal p {
+            font-size: 1.1em;
+            margin-bottom: 25px; /* Space below paragraph, above buttons */
+            font-weight: 400;
+            color: var(--text-medium);
+            line-height: 1.5;
+            text-align: center; /* Explicitly center */
+        }
+        /* Generic Button Container (Bottom) */
+        .modal-buttons {
+            margin-top: 20px; /* Space above buttons */
+            display: flex;
+            justify-content: space-between; /* Buttons pushed to left/right */
+            gap: 15px; /* Space between buttons */
+            flex-wrap: nowrap; /* Prevent wrapping */
+        }
+        /* Generic Button Style (Inside Container) */
+        .modal-button {
+            padding: 12px 15px; /* Adjust padding */
+            font-size: 1em; /* Adjust font size */
+            flex-grow: 1; /* Allow buttons to take available space */
+            flex-basis: 0; /* Distribute space evenly */
+            min-width: 100px; /* Minimum button width */
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            background-color: var(--bg-button-info);
+            color: var(--text-dark);
+            font-weight: 700;
+            transition: all .2s ease;
+            pointer-events: auto;
+            text-transform: uppercase;
+            letter-spacing: 0.5px; /* Adjust letter spacing */
+            box-shadow: var(--shadow-button);
+        }
+        .modal-button:disabled {
+            opacity: 0.5; cursor: not-allowed; background-color: #999; color: #eee;
+            transform: none; box-shadow: none;
+        }
+        .modal-button:hover:not(:disabled) {
+            background-color: var(--bg-button-info-hover);
+            transform: translateY(-2px) scale(1.02); box-shadow: var(--shadow-button-hover);
+        }
+        .modal-button:active:not(:disabled) {
+            transform: translateY(0px) scale(0.98); box-shadow: 0 1px 3px var(--shadow-color);
+        }
+        .modal-button.boost-button { background-color: var(--bg-button-watch-ad); }
+        .modal-button.boost-button:hover:not(:disabled) { background-color: var(--bg-button-watch-ad-hover); }
+        .modal-button.special-button { background-color: var(--bg-button-special); } /* Added for Watch Ad */
+        .modal-button.special-button:hover:not(:disabled) { background-color: var(--bg-button-special-hover); }
+
+
+        /* --- Game Over Modal Specific Styles --- */
+        #game-over-ui h2 {
+             /* Inherits general .modal h2 styles */
+             margin-bottom: 15px; /* Less space below Game Over title */
+        }
+        #game-over-ui p#game-over-message {
+            /* Inherits general .modal p styles */
+            font-size: 1.2em; /* Slightly larger than generic p */
+            min-height: 1.5em; /* Prevent collapsing if message is short */
+            margin-bottom: 25px; /* Space between message and buttons */
+        }
+        #game-over-buttons {
+            /* Inherits general .modal-buttons styles (flex, space-between, gap, nowrap) */
+             margin-top: 0; /* Override generic margin as message provides space */
+        }
+        #game-over-ui .game-over-button {
+            /* Inherits general .modal-button styles (flex grow/basis, min-width, etc.) */
+            /* Add specific Game Over button colors */
+            background-color: var(--bg-button-info); /* Default Play Again */
+        }
+        #game-over-ui .game-over-button:hover:not(:disabled) {
+             background-color: var(--bg-button-info-hover);
+        }
+        #watch-ad-button.game-over-button {
+             background-color: var(--bg-button-special); /* Watch Ad yellow */
+        }
+        #watch-ad-button.game-over-button:hover:not(:disabled) {
+             background-color: var(--bg-button-special-hover);
+        }
+
+
+        /* --- Start Game Modal Specific Styles --- */
+        #start-game-modal h2 {
+            /* Inherits general .modal h2 styles */
+             margin-bottom: 25px; /* More space below Start Game title */
+        }
+        #start-game-modal p {
+            display: none; /* Hide the paragraph */
+        }
+        #start-game-modal .modal-buttons {
+            /* Inherits general .modal-buttons styles (flex, space-between, gap, nowrap) */
+            margin-top: 0; /* Place buttons directly below title */
+        }
+        #start-game-modal .modal-button {
+            /* Inherits general .modal-button styles (flex grow/basis, min-width, etc.) */
+             /* Specific colors are handled by boost-button class */
+        }
+        /* Style for the "Normally" button in start game */
+        #start-normal-button.modal-button {
+             background-color: var(--bg-button-info);
+        }
+         #start-normal-button.modal-button:hover:not(:disabled) {
+             background-color: var(--bg-button-info-hover);
+        }
+
+
         #menu-overlay-dimmer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 399; display: none; opacity: 0; transition: opacity var(--transition-speed) ease-in-out; }
         #menu-overlay-dimmer.visible { display: block; opacity: 1; }
     </style>
-    <!-- Ad SDK Script Tag -->
+
+    <!-- Ad SDK Script Tag (Only for Game Over "Watch Ad & Save" AND Start Game "2x Boost") -->
     <script src='//whephiwums.com/sdk.js' data-zone='9292240' data-sdk='show_9292240'></script>
 </head>
 <body>
@@ -315,6 +509,9 @@
             <div class="score-display"> <span class="score-label">Current</span> <span id="current-score">0</span> </div>
             <div class="score-display"> <span class="score-label">Total</span> <span id="total-score">...</span> </div>
         </div>
+        <!-- Header Timer Display -->
+        <div id="header-timer-display">0:00</div>
+        <!-- Menu/Settings Buttons -->
         <button id="menu-button" class="icon-button" aria-label="Open Menu">
              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"> <path fill-rule="evenodd" d="M3 6.75A.75.75 0 0 1 3.75 6h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 6.75ZM3 12a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 12Zm0 5.25a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75a.75.75 0 0 1-.75-.75Z" clip-rule="evenodd" /> </svg>
         </button>
@@ -333,7 +530,6 @@
         <button class="menu-item-button" data-action="show-withdrawal">Withdrawal</button>
         <button class="menu-item-button" data-action="show-friends">Friends</button>
         <button class="menu-item-button" data-action="show-tasks">Tasks</button>
-        <button class="menu-item-button" data-action="show-rewarded-tasks">Rewarded Tasks</button>
     </div>
     <div id="menu-overlay-dimmer"></div>
 
@@ -347,36 +543,65 @@
              <div class="profile-info-item"> <span>Total Score:</span> <strong id="profile-total-score-display">...</strong> </div>
         </div>
     </div>
+
+    <!-- Withdrawal Overlay (Revised Structure) -->
     <div id="withdrawal-overlay" class="fullscreen-overlay">
         <button class="overlay-close-button" data-overlay-id="withdrawal-overlay">Close</button>
         <h2 class="overlay-title">Withdrawal</h2>
-        <div class="overlay-content">
-            <!-- MODIFIED: Updated withdrawal condition text -->
-            <p>Withdrawal functionality will be activated from <strong>early or late July</strong>. You must have at least <strong class="highlight">5 referrals</strong> to be eligible. Other conditions may apply and will be announced later. Stay tuned!</p>
-            <button id="withdraw-main-button" disabled>Withdrawal (Coming Soon)</button>
+        <div class="overlay-content"> <!-- Single overlay content container -->
+
+            <!-- Rules Section -->
+            <div class="withdrawal-section" id="withdrawal-rules-section">
+                <h3>Rules</h3>
+                <ul>
+                    <li>Withdrawals will be enabled in <strong>early or late July</strong>.</li>
+                    <li>Minimum <strong>10 referrals</strong> required.</li>
+                    <li>Withdrawal amount: Min <strong>100,000</strong> points, Max <strong>10,000,000</strong> points per request.</li>
+                    <li>Conversion: <strong>1000</strong> points = <strong>0.001 TON</strong> | <strong>1000</strong> points = <strong>0.00004 SOL</strong>.</li>
+                    <li>Provide your <strong>TON</strong> (The Open Network) address for TON withdrawals.</li>
+                    <li>Provide your <strong>SOL</strong> (BEP-20 Network) address for SOL withdrawals.</li>
+                </ul>
+            </div>
+
+            <!-- Withdrawal Details Section -->
+            <div class="withdrawal-section" id="withdrawal-details-section">
+                 <h3>Withdrawal Details</h3>
+                 <div class="input-group">
+                     <label for="withdrawal-points">Points to Withdraw:</label>
+                     <input type="number" id="withdrawal-points" name="withdrawal-points" placeholder="100,000 - 10,000,000" min="100000" max="10000000" step="1">
+                 </div>
+                 <div class="input-group">
+                     <label for="withdrawal-crypto">Select Crypto:</label>
+                     <select id="withdrawal-crypto" name="withdrawal-crypto">
+                         <option value="ton">TON (The Open Network)</option>
+                         <option value="sol">SOL (BEP-20 Network)</option>
+                     </select>
+                 </div>
+                 <div class="input-group">
+                     <label for="withdrawal-address">Wallet Address:</label>
+                     <input type="text" id="withdrawal-address" name="withdrawal-address" placeholder="Enter your wallet address">
+                 </div>
+                 <button id="withdraw-main-button" disabled>Withdraw (Coming Soon)</button>
+            </div>
+
         </div>
     </div>
+    <!-- End Withdrawal Overlay -->
+
     <div id="friends-overlay" class="fullscreen-overlay">
         <button class="overlay-close-button" data-overlay-id="friends-overlay">Close</button>
         <h2 class="overlay-title">Friends</h2>
         <div class="overlay-content">
             <div class="referral-info">
                 <p>Invite your friends using your unique referral link!</p>
-                <!-- MODIFIED: Removed point bonus info, added withdrawal requirement info -->
-                <p>You need at least <strong class="highlight">5 referrals</strong> to be eligible for withdrawal.</p>
                  <div id="referral-link-container">
                      <span id="referral-link-display">Generating link...</span>
                      <button id="copy-referral-link-button">Copy</button>
                  </div>
             </div>
-
-            <div class="referral-count">
-                Total Referrals: <strong id="referral-count-display">0</strong>
-            </div>
+            <div class="referral-count"> Total Referrals: <strong id="referral-count-display">0</strong> </div>
             <div id="referral-list-container">
-                <div id="referral-list">
-                    <p style="text-align: center; opacity: 0.7;">Your referrals will appear here.</p>
-                </div>
+                <div id="referral-list"> <p style="text-align: center; opacity: 0.7;">Your referrals will appear here.</p> </div>
             </div>
         </div>
     </div>
@@ -407,29 +632,44 @@
              </div>
          </div>
      </div>
-    <div id="rewarded-tasks-overlay" class="fullscreen-overlay">
-        <button class="overlay-close-button" data-overlay-id="rewarded-tasks-overlay">Close</button>
-        <h2 class="overlay-title">Rewarded Tasks</h2>
-        <div class="overlay-content" id="rewarded-tasks-list">
-             <p style="text-align: center; opacity: 0.7;">Loading tasks...</p>
-             <!-- Task items will be generated here by JS -->
-        </div>
-    </div>
 
     <!-- Game Over UI -->
     <div id="game-over-ui" class="modal">
         <h2>Game Over!</h2>
         <p id="game-over-message">Score: <span id="final-score">0</span></p>
-        <div id="game-over-buttons">
-            <button id="watch-ad-button" class="game-over-button">Watch Ad & Save</button>
-            <button id="restart-button" class="game-over-button">Restart</button>
+        <div id="game-over-buttons" class="modal-buttons"> <!-- Use generic class -->
+            <button id="watch-ad-button" class="game-over-button modal-button special-button">Watch Ad & Save</button> <!-- Use generic + specific class -->
+            <button id="restart-button" class="game-over-button modal-button">Play Again</button> <!-- Use generic + specific class -->
+        </div>
+    </div>
+
+    <!-- Start Game Modal -->
+    <div id="start-game-modal" class="modal">
+        <h2>Start Game</h2>
+        <p>Start normally or watch an ad for a points boost!</p> <!-- This is hidden by CSS -->
+        <div class="modal-buttons"> <!-- Use generic class -->
+            <button id="start-boost-button" class="modal-button boost-button">2x Points</button> <!-- Use generic + boost class -->
+            <button id="start-normal-button" class="modal-button">Normally</button> <!-- Use generic class -->
         </div>
     </div>
 
     <!-- Game Container -->
     <div id="game-container"> <canvas id="game-canvas"></canvas> </div>
 
-    <!-- REMOVED MOCK TELEGRAM OBJECT SCRIPT BLOCK -->
+    <!-- Initial Controls Container (Centered) -->
+    <div id="initial-controls-container">
+        <h3>Select Duration & Start</h3>
+         <div id="timer-options">
+             <button class="timer-button active" data-duration="60">1 Min</button>
+             <button class="timer-button" data-duration="120">2 Min</button>
+             <button class="timer-button" data-duration="300">5 Min</button>
+         </div>
+         <button id="start-game-button">Start Game</button>
+    </div>
+
+    <!-- *********************************************************** -->
+    <!-- * REMOVED MOCK TELEGRAM OBJECT FOR LOCAL TESTING          * -->
+    <!-- *********************************************************** -->
 
     <!-- Libraries & SDKs -->
     <script type="importmap">{ "imports": { "three": "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.min.js", "three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/" } }</script>
@@ -450,22 +690,14 @@
 
         // --- Constants ---
         const BOT_USERNAME = "Crypto_drop_ya_bot";
-        const MINI_APP_NAME = "";
-        // REMOVED: Referral bonus point constants
-        const REWARDED_AD_TASKS_CONFIG = {
-            'task_1': { title: "Watch video", reward: 50, limit: 50, icon: 'video', adType: 'rewardedInterstitial' },
-            'task_2': { title: "Watch video", reward: 40, limit: 40, icon: 'video', adType: 'rewardedPopup' },
-            'task_3': { title: "Watch video", reward: 30, limit: 30, icon: 'video', adType: 'inAppInterstitial' },
-            'task_4': { title: "Watch video", reward: 20, limit: 20, icon: 'video', adType: 'rewardedInterstitial' }, // Changed from 'simulation' to match Task 1
-            'task_5': { title: "Watch video", reward: 10, limit: 10, icon: 'video', adType: 'inAppInterstitial' }  // Changed from 'simulation' to match Task 3
-        };
-
+        const MINI_APP_NAME = ""; // Adjust if your app has a name in the URL path after the bot username
+        const FADE_DURATION = 500;
 
         // --- Global Variables ---
         let scene, camera, renderer, composer, bloomPass;
         let ball, platformGroup, poleGroup, starField;
         let currentScore = 0;
-        let gameState = 'initializing';
+        let gameState = 'initializing'; // States: initializing, ready, playing, gameOver, error
         let internalPauseState = false;
         let rotationSensitivity = 0.02, bounceSpeed = 0.11;
         let currentBallVelocityY = 0, ballPreviousY = 0, lastSafePlatformY = 0;
@@ -488,8 +720,14 @@
         let platformColorIndex = 0;
         let shakeIntensity = 0; const shakeDecreaseFactor = 0.9; const maxShakeOffset = 0.15;
         let isPointerDown = false; let previousPointerX = 0;
-        let adTimerIntervalId = null; // Only for game over countdown
-        const FADE_DURATION = 500;
+        let adTimerIntervalId = null;
+
+        // --- Timer & Game Start Variables ---
+        let selectedGameDuration = 60;
+        let currentGameCountdown = 0;
+        let gameTimerIntervalId = null;
+        let scoreMultiplier = 1;
+        let isTimedGameActive = false;
 
         // --- Element References ---
         const currentScoreEl = document.getElementById('current-score');
@@ -514,7 +752,6 @@
         const withdrawalOverlay = document.getElementById('withdrawal-overlay');
         const friendsOverlay = document.getElementById('friends-overlay');
         const tasksOverlay = document.getElementById('tasks-overlay');
-        const rewardedTasksOverlay = document.getElementById('rewarded-tasks-overlay');
         const sponsorContactButton = document.getElementById('sponsor-contact-button');
         const overlayCloseButtons = document.querySelectorAll('.overlay-close-button');
         const menuItemButtons = sideMenu.querySelectorAll('.menu-item-button');
@@ -523,11 +760,22 @@
         const copyReferralLinkButton = document.getElementById('copy-referral-link-button');
         const referralCountDisplay = document.getElementById('referral-count-display');
         const referralList = document.getElementById('referral-list');
-        const rewardedTasksListContainer = document.getElementById('rewarded-tasks-list');
+        // --- Control and Timer Elements ---
+        const initialControlsContainer = document.getElementById('initial-controls-container');
+        const timerOptionsDiv = initialControlsContainer.querySelector('#timer-options');
+        const timerButtons = timerOptionsDiv.querySelectorAll('.timer-button');
+        const startGameButton = initialControlsContainer.querySelector('#start-game-button');
+        const headerTimerDisplayEl = document.getElementById('header-timer-display');
+        const startGameModal = document.getElementById('start-game-modal');
+        const startNormalButton = document.getElementById('start-normal-button');
+        const startBoostButton = document.getElementById('start-boost-button');
+        // --- Withdrawal Elements ---
+        const withdrawMainButton = document.getElementById('withdraw-main-button'); // Reference the button
+
 
         // --- Firebase Setup ---
          const firebaseConfig = {
-             apiKey: "AIzaSyCIYBPkVduy16dcYQ9PaSIc58BsNVamsO0",
+             apiKey: "AIzaSyCIYBPkVduy16dcYQ9PaSIc58BsNVamsO0", // Replace with your actual config
              authDomain: "helix-cryptodrop.firebaseapp.com",
              databaseURL: "https://helix-cryptodrop-default-rtdb.firebaseio.com",
              projectId: "helix-cryptodrop",
@@ -541,7 +789,6 @@
          let currentUserTotalScore = 0;
          let currentUserReferralCount = 0;
          let currentUserReferrals = {};
-         let currentUserAdTasks = {};
          let userRef = null;
          let userDataListener = null;
          let hasProcessedReferral = false;
@@ -551,8 +798,14 @@
         function parseColorHex(colorString) { if (colorString.startsWith('#')) { return parseInt(colorString.substring(1), 16); } console.warn(`Could not parse color hex: ${colorString}`); return 0xffffff; }
         function formatNumber(num) { if (typeof num !== 'number') return num; return num.toLocaleString(); }
         function maskUsername(username) { if (!username || username.length <= 3) return "***"; return username.substring(0, 3) + '*'.repeat(username.length - 3); }
-        function generateReferralLink(userId) { if (!userId || BOT_USERNAME === "YOUR_BOT_USERNAME") { if (BOT_USERNAME === "YOUR_BOT_USERNAME") console.warn("Set BOT_USERNAME"); return "Link Unavailable"; } const appPath = MINI_APP_NAME ? `/${MINI_APP_NAME}` : ''; return `https://t.me/${BOT_USERNAME}${appPath}?startapp=${userId}`; }
+        function generateReferralLink(userId) { if (!userId || BOT_USERNAME === "Crypto_drop_ya_bot") { if (BOT_USERNAME === "Crypto_drop_ya_bot") console.warn("Set BOT_USERNAME"); return "Link Unavailable"; } const appPath = MINI_APP_NAME ? `/${MINI_APP_NAME}` : ''; return `https://t.me/${BOT_USERNAME}${appPath}?startapp=${userId}`; }
         async function copyToClipboard(text) { if (!navigator.clipboard) { console.warn("Clipboard API missing"); return false; } try { await navigator.clipboard.writeText(text); return true; } catch (err) { console.error('Copy fail: ', err); return false; } }
+        function formatTime(seconds) {
+            if (typeof seconds !== 'number' || seconds < 0) seconds = 0;
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
 
 
         // --- UI Update & State Management ---
@@ -565,53 +818,50 @@
              if (!referralsData || Object.keys(referralsData).length === 0) { referralList.innerHTML = '<p style="text-align: center; opacity: 0.7;">No referrals yet.</p>'; return; }
              Object.keys(referralsData).forEach(refId => { const d = referralsData[refId]; const li = document.createElement('div'); li.className = 'referral-item'; const span = document.createElement('span'); span.textContent = maskUsername(d.username || 'User'); li.appendChild(span); referralList.appendChild(li); });
          }
-         function generateAndPopulateRewardedTasksUI(userTaskData) {
-             if (!rewardedTasksListContainer) return;
-             rewardedTasksListContainer.innerHTML = '';
 
-             Object.entries(REWARDED_AD_TASKS_CONFIG).forEach(([taskId, config]) => {
-                 const userData = userTaskData[taskId] || { completed: 0 };
-                 const completed = userData.completed || 0;
-                 const limit = config.limit;
-                 const remaining = limit - completed;
-                 const isDisabled = remaining <= 0;
-
-                 const item = document.createElement('div');
-                 item.className = `rewarded-ad-item ${isDisabled ? 'disabled' : ''}`;
-                 item.id = `rewarded-ad-${taskId}`;
-                 item.dataset.taskId = taskId;
-
-                 const iconContainer = document.createElement('div');
-                 iconContainer.className = 'rewarded-ad-icon';
-                 if (config.icon === 'video') { iconContainer.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 6.47C4 5.66 4.66 5 5.47 5h13.06c.81 0 1.47.66 1.47 1.47v11.06c0 .81-.66 1.47-1.47 1.47H5.47C4.66 19 4 18.34 4 17.53V6.47zm8.38 7.14l4.39-2.63c.36-.21.36-.71 0-.92l-4.39-2.63c-.35-.21-.79.04-.79.46v5.26c0 .42.44.67.79.46z"/></svg>`; }
-                 else { iconContainer.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 4H6C4.9 4 4 4.9 4 6v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-4 12h-4v-2h4v2zm0-4h-4v-2h4v2zm0-4h-4V6h4v2z"/></svg>`; }
-
-                 const textContainer = document.createElement('div');
-                 textContainer.className = 'rewarded-ad-text';
-                 const titleSpan = document.createElement('span'); titleSpan.className = 'title'; titleSpan.textContent = config.title;
-                 const progressSpan = document.createElement('span'); progressSpan.className = 'progress'; progressSpan.textContent = `${completed} / ${limit}`;
-                 const rewardSpan = document.createElement('span'); rewardSpan.className = 'reward'; rewardSpan.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M5.52.832a.5.5 0 0 1 .756.056l8 15a.5.5 0 0 1-.812.387L8.21 13H2.5a.5.5 0 0 1-.4-.8L5.52.832z"/></svg>+${config.reward}`;
-                 textContainer.appendChild(titleSpan); textContainer.appendChild(progressSpan); textContainer.appendChild(rewardSpan);
-
-                 const actionContainer = document.createElement('div'); actionContainer.className = 'rewarded-ad-action';
-                 actionContainer.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m13.293 12-4.647-4.646a.75.75 0 0 1 1.06-1.06L15.414 12l-5.708 5.707a.75.75 0 1 1-1.06-1.06L13.293 12Z"/></svg>`;
-
-                 item.appendChild(iconContainer); item.appendChild(textContainer); item.appendChild(actionContainer);
-
-                 if (!isDisabled) { item.addEventListener('click', () => { handleWatchRewardedAd(taskId, config.reward, item); }); }
-                 rewardedTasksListContainer.appendChild(item);
-             });
+        function setInternalPause(pause) {
+            if (internalPauseState === pause) return;
+            internalPauseState = pause;
+            if (!pause && gameState === 'playing' && isTimedGameActive) {
+                 clock.getDelta(); // Reset delta time after resuming
+            }
+            console.log("Internal Pause State:", internalPauseState);
          }
+        function isAnyUIOverlayOpen() {
+             return sideMenu.classList.contains('open') ||
+                    settingsPopup.style.display === 'block' ||
+                    profileOverlay.style.display === 'flex' ||
+                    withdrawalOverlay.style.display === 'flex' ||
+                    friendsOverlay.style.display === 'flex' ||
+                    tasksOverlay.style.display === 'flex' ||
+                    gameOverUI.style.display === 'block' ||
+                    startGameModal.style.display === 'block' ||
+                    (initialControlsContainer && !initialControlsContainer.classList.contains('hidden'));
+         }
+        function pauseGameForUI() {
+            if (gameState === 'playing') {
+                 setInternalPause(true);
+                 console.log("Paused for UI (Physics/Input only)");
+            }
+        }
+        function resumeGameFromUI() {
+            // Resume only if NO overlays/UI are open
+            if (!isAnyUIOverlayOpen()) {
+                if (gameState === 'playing' && internalPauseState) {
+                    setInternalPause(false);
+                    console.log("Resumed from UI (Physics/Input only)");
+                } else if (gameState === 'ready') {
+                    // If going back to ready state, ensure initial controls are shown
+                    showInitialControls();
+                }
+            }
+        }
 
-        function setInternalPause(pause) { if (internalPauseState === pause) return; internalPauseState = pause; if (!pause && gameState === 'playing') { clock.getDelta(); } }
-        function isAnyUIOverlayOpen() { return sideMenu.classList.contains('open') || settingsPopup.style.display === 'block' || profileOverlay.style.display === 'flex' || withdrawalOverlay.style.display === 'flex' || friendsOverlay.style.display === 'flex' || tasksOverlay.style.display === 'flex' || rewardedTasksOverlay.style.display === 'flex' || gameOverUI.style.display === 'block'; }
-        function pauseGameForUI() { if (gameState === 'playing') { gameState = 'paused_by_ui'; setInternalPause(true); console.log("Paused for UI"); } }
-        function resumeGameFromUI() { if (!isAnyUIOverlayOpen() && gameState === 'paused_by_ui') { gameState = 'playing'; setInternalPause(false); console.log("Resumed from UI"); } }
 
         // --- Firebase Functions ---
         function initializeFirebaseApp() {
             try { if (!firebaseConfig.apiKey || !firebaseConfig.databaseURL) { throw new Error("Firebase config missing."); } if (!firebase.apps.length) { app = firebase.initializeApp(firebaseConfig); } else { app = firebase.app(); } db = firebase.database(); console.log("Firebase Initialized OK"); }
-            catch (e) { console.error("Firebase Init Failed:", e); alert("Service Error."); updateTotalScoreUI("Error"); updateReferralCountUI("Error"); gameState='error'; setInternalPause(true); }
+            catch (e) { console.error("Firebase Init Failed:", e); try{window.Telegram.WebApp.showAlert("Service Error.");} catch(tgErr){alert("Service Error.");} updateTotalScoreUI("Error"); updateReferralCountUI("Error"); gameState='error'; setInternalPause(true); }
         }
 
         function listenToUserData(tgUserId) {
@@ -621,9 +871,7 @@
              const dbPath = `users/tg_${tgUserId}`; console.log("Listening:", dbPath); userRef = db.ref(dbPath);
 
              userDataListener = userRef.on('value', (snapshot) => {
-                 let score = 0, refCount = 0, refs = {}, refBy = null, adTasks = {};
-                 const defaultAdTaskData = {};
-                 Object.keys(REWARDED_AD_TASKS_CONFIG).forEach(key => { defaultAdTaskData[key] = { completed: 0 }; });
+                 let score = 0, refCount = 0, refs = {}, refBy = null;
 
                  if (snapshot.exists()) {
                      const data = snapshot.val();
@@ -631,40 +879,29 @@
                      refCount = data.referrals?.count || 0;
                      refs = data.referrals?.list || {};
                      refBy = data.referredBy || null;
-                     adTasks = { ...defaultAdTaskData, ...(data.adTasks || {}) };
                      if (typeof data.totalScore !== 'number') snapshot.ref.child('totalScore').set(0).catch(e=>console.warn("Fix score err", e));
                      if (!data.referrals) snapshot.ref.child('referrals').set({ count: 0, list: {} }).catch(e=>console.warn("Fix ref err", e));
                      if (typeof data.referrals?.count !== 'number' && data.referrals) snapshot.ref.child('referrals/count').set(0).catch(e=>console.warn("Fix ref count err", e));
-                     if (!data.adTasks) snapshot.ref.child('adTasks').set(defaultAdTaskData).catch(e=>console.warn("Init adTasks err", e));
-                     // Ensure all tasks from config exist in user data, prevents errors if config changes
-                     Object.keys(REWARDED_AD_TASKS_CONFIG).forEach(taskId => {
-                        if (!adTasks[taskId]) {
-                            adTasks[taskId] = { completed: 0 };
-                             snapshot.ref.child(`adTasks/${taskId}`).set({ completed: 0 }).catch(e=>console.warn(`Fix missing task ${taskId} err`, e));
-                        }
-                     });
 
                  } else {
                      console.log("User data missing, initializing...");
-                     const initialData = { totalScore: 0, referrals: { count: 0, list: {} }, firstSeen: firebase.database.ServerValue.TIMESTAMP, firstName: telegramUserData?.first_name || 'User', username: telegramUserData?.username || null, referredBy: null, adTasks: defaultAdTaskData };
+                     const initialData = { totalScore: 0, referrals: { count: 0, list: {} }, firstSeen: firebase.database.ServerValue.TIMESTAMP, firstName: telegramUserData?.first_name || 'User', username: telegramUserData?.username || null, referredBy: null };
                      userRef.set(initialData).then(() => { console.log("Initialized user data."); processReferralOnLoad(tgUserId); }).catch(e => console.error("Init user err", e));
-                     score = 0; refCount = 0; refs = {}; refBy = null; adTasks = defaultAdTaskData;
+                     score = 0; refCount = 0; refs = {}; refBy = null;
                  }
                  currentUserTotalScore = score;
                  currentUserReferralCount = refCount;
                  currentUserReferrals = refs;
-                 currentUserAdTasks = adTasks;
 
                  updateTotalScoreUI(score);
                  updateReferralCountUI(refCount);
                  populateReferralListUI(refs);
                  updateReferralLinkUI(tgUserId);
-                 generateAndPopulateRewardedTasksUI(adTasks);
 
                  if (!hasProcessedReferral && refBy === null && snapshot.exists()) { processReferralOnLoad(tgUserId); }
                  else if (refBy !== null) { hasProcessedReferral = true; }
 
-             }, (error) => { console.error("User data listener error:", error); updateTotalScoreUI("DB Err"); updateReferralCountUI("DB Err"); userRef = null; userDataListener = null; });
+             }, (error) => { console.error("User data listener error:", error); try{window.Telegram.WebApp.showAlert("Database Error.");}catch(tgErr){alert("Database Error.");} updateTotalScoreUI("DB Err"); updateReferralCountUI("DB Err"); userRef = null; userDataListener = null; });
          }
 
          async function processReferralOnLoad(currentUserId) {
@@ -685,20 +922,15 @@
                  const currentUsername = window.Telegram.WebApp.initDataUnsafe.user?.username || `User_${currentUserId}`;
                  const refListPath = `users/tg_${referrerId}/referrals/list/tg_${currentUserId}`;
                  const refCountPath = `users/tg_${referrerId}/referrals/count`;
-                 // REMOVED: const newUserScorePath = `users/tg_${currentUserId}/totalScore`;
                  const newUserRefByPath = `users/tg_${currentUserId}/referredBy`;
-                 // REMOVED: const referrerScorePath = `users/tg_${referrerId}/totalScore`;
 
                  updates[refListPath] = { username: currentUsername, timestamp: firebase.database.ServerValue.TIMESTAMP };
                  updates[refCountPath] = firebase.database.ServerValue.increment(1);
-                 // REMOVED: updates[newUserScorePath] = firebase.database.ServerValue.increment(INITIAL_REFERRAL_BONUS);
                  updates[newUserRefByPath] = referrerId;
-                 // REMOVED: updates[referrerScorePath] = firebase.database.ServerValue.increment(REFERRER_BONUS_POINTS);
 
                  console.log("Performing referral update (no point bonus):", updates);
                  await db.ref().update(updates);
                  console.log("Referral processed successfully (no point bonus)!");
-                 // REMOVED: Point bonus notification
              } catch (error) { console.error("Error checking/processing referral:", error); hasProcessedReferral = false; }
          }
 
@@ -707,12 +939,12 @@
              if (scoreToAdd <= 0) return Promise.resolve();
              const ref = db.ref(`users/tg_${telegramUserId}/totalScore`);
              return ref.transaction(curr => (curr || 0) + Math.floor(scoreToAdd))
-                .then(()=>console.log(`Score updated by ${scoreToAdd}`))
+                .then(()=>console.log(`Total score updated by ${scoreToAdd}`))
                 .catch((e)=>{console.error("Score update tx err:", e); return Promise.reject(e);});
          }
 
         // --- Theme Handling ---
-        function applyTheme(theme) { const isLight = theme === 'light'; document.body.classList.toggle('light-mode', isLight); themeToggleCheckbox.checked = isLight; localStorage.setItem('theme', theme); updateMaterialsTheme(); try { if (window.Telegram?.WebApp) { const hc = getCssVariable('--bg-header-bar'); window.Telegram.WebApp.setHeaderColor(hc); } } catch (e) { console.warn("TG theme color set fail:", e); } console.log(`Theme: ${theme}`); }
+        function applyTheme(theme) { const isLight = theme === 'light'; document.body.classList.toggle('light-mode', isLight); themeToggleCheckbox.checked = isLight; localStorage.setItem('theme', theme); updateMaterialsTheme(); try { if (window.Telegram?.WebApp) { const hc = getCssVariable('--bg-header-bar'); const bgc = getCssVariable('--bg-gradient-start'); window.Telegram.WebApp.setHeaderColor(hc); window.Telegram.WebApp.setBackgroundColor(bgc); } } catch (e) { console.warn("TG theme color set fail:", e); } console.log(`Theme: ${theme}`); }
         function updateMaterialsTheme() { const isLight = document.body.classList.contains('light-mode'); if (ball?.material) { const bc = parseColorHex(getCssVariable('--ball-color')); ball.material.color.setHex(bc); } const pc = parseColorHex(getCssVariable('--pole-color')); for (const y in activePoleSegments) { const s = activePoleSegments[y]; if (s?.material) { s.material.color.setHex(pc); } } const dCol = parseColorHex(getCssVariable('--danger-color')); const dEm = parseColorHex(getCssVariable('--danger-glow')); activePlatforms.forEach(p => { if (p?.userData?.segmentAngles) { p.userData.segmentAngles.forEach(sd => { if (sd.isDanger && sd.material) { sd.material.color.setHex(dCol); sd.material.emissive.setHex(dEm); } else if (!sd.isDanger && sd.material && p.userData.colorHex) { sd.material.color.setHex(p.userData.colorHex); } }); } }); if (scene) { if (isLight) { scene.background = null; if (starField) starField.visible = false; } else { scene.background = null; if (starField) { starField.visible = true; const sc = parseColorHex(getCssVariable('--star-color')); starField.material.color.setHex(sc); starField.material.needsUpdate = true; } else { createStarfield(); } } } }
         function setupTheme() { let initTheme = 'dark'; try { initTheme = window.Telegram?.WebApp?.colorScheme || localStorage.getItem('theme') || 'dark'; console.log(`Init theme from TG/LS: ${initTheme}`); } catch (e) { console.warn("Theme fetch err:", e); initTheme = localStorage.getItem('theme') || 'dark'; } applyTheme(initTheme); themeToggleCheckbox.addEventListener('change', () => applyTheme(themeToggleCheckbox.checked ? 'light' : 'dark')); try { window.Telegram?.WebApp?.onEvent('themeChanged', () => { console.log('TG theme changed event'); applyTheme(window.Telegram.WebApp.colorScheme); }); } catch(e) { console.warn("TG theme listener err:", e); } }
 
@@ -722,99 +954,40 @@
         function toggleSettingsPopup() { const vis=settingsPopup.style.display==='block'; if(vis){ closeSettingsPopup(); } else { openSettingsPopup(); }}
         function openSettingsPopup() { closeSideMenu(); settingsPopup.style.display = 'block'; pauseGameForUI(); }
         function closeSettingsPopup() { if(settingsPopup.style.display === 'block'){ settingsPopup.style.display = 'none'; resumeGameFromUI(); }}
-        function showOverlay(el) { if(!el) return; closeSideMenu(); closeSettingsPopup(); closeAllOverlays(el); el.style.display = 'flex'; pauseGameForUI(); if(el===profileOverlay){ updateTotalScoreUI(currentUserTotalScore); } if(el===friendsOverlay){ updateReferralCountUI(currentUserReferralCount); populateReferralListUI(currentUserReferrals); updateReferralLinkUI(telegramUserId); } if (el === rewardedTasksOverlay) { generateAndPopulateRewardedTasksUI(currentUserAdTasks); } }
-        function hideOverlay(el) { if(!el || el.style.display === 'none') return; el.style.display = 'none'; resumeGameFromUI(); }
-        function closeAllOverlays(exclude=null) { [profileOverlay, withdrawalOverlay, friendsOverlay, tasksOverlay, rewardedTasksOverlay].forEach(o => { if (o && o !== exclude) hideOverlay(o); }); }
 
-        // --- Rewarded Ad Task Logic (Using Ad SDK) ---
-        function handleWatchRewardedAd(taskId, reward, taskElement) {
-            if (!db || !telegramUserId || !taskElement) { alert("Cannot process task."); return; }
-            // Check if the SDK function is globally available
-             if (typeof show_9292240 !== 'function') {
-                console.error("Ad SDK function 'show_9292240' not found.");
-                alert("Ad SDK not loaded. Please try again later.");
-                return;
-            }
+        function showOverlay(el) {
+             if (!el) return;
+             closeSideMenu();
+             closeSettingsPopup();
+             closeAllOverlays(el);
+             hideInitialControls(); // Hide centered controls when showing any overlay
+             el.style.display = 'block'; // Use block for modals now
+             // For fullscreen overlays, switch back to flex if needed (or keep block if design allows)
+             if (el.classList.contains('fullscreen-overlay')) {
+                 el.style.display = 'flex';
+             }
+             pauseGameForUI();
+             if (el === profileOverlay) { updateTotalScoreUI(currentUserTotalScore); }
+             if (el === friendsOverlay) { updateReferralCountUI(currentUserReferralCount); populateReferralListUI(currentUserReferrals); updateReferralLinkUI(telegramUserId); }
+         }
+        function hideOverlay(el) {
+            if(!el || el.style.display === 'none') return;
+            el.style.display = 'none';
+            // Resume game logic only if no other UI element is open
+            resumeGameFromUI();
+         }
 
-            const config = REWARDED_AD_TASKS_CONFIG[taskId];
-            const currentData = currentUserAdTasks[taskId] || { completed: 0 };
-            const completed = currentData.completed || 0;
-
-            if (completed >= config.limit) { alert("No more ads available for this task today."); return; }
-
-            taskElement.classList.add('disabled'); // Visually disable immediately
-            console.log(`Attempting rewarded ad task: ${taskId}, Reward: ${reward}, Ad Type: ${config.adType}`);
-
-            // Define the reward logic as a reusable function
-            const grantReward = () => {
-                console.log(`Ad success callback triggered for task ${taskId}.`);
-                const adTaskRef = db.ref(`users/tg_${telegramUserId}/adTasks/${taskId}/completed`);
-                const scoreRef = db.ref(`users/tg_${telegramUserId}/totalScore`);
-
-                adTaskRef.transaction(currentCompleted => {
-                    if (currentCompleted === null) currentCompleted = 0;
-                    if (currentCompleted >= config.limit) { return; } // Abort if limit reached
-                    return currentCompleted + 1;
-                }).then(result => {
-                    if (result.committed && result.snapshot.exists()) {
-                        const newCompleted = result.snapshot.val();
-                        console.log(`Task ${taskId} count updated to ${newCompleted}. Awarding points.`);
-                        return scoreRef.transaction(currentScore => (currentScore || 0) + reward);
-                    } else {
-                        console.warn(`Failed to update count for task ${taskId}. Aborting reward.`);
-                        if (!result.committed) alert("Could not update task count. Please try again.");
-                        return Promise.reject("Count update failed");
-                    }
-                }).then(() => {
-                    console.log(`Successfully awarded ${reward} points for task ${taskId}`);
-                    alert(`You received ${reward} points!`);
-                    // UI update happens via listener
-                }).catch(error => {
-                    if (error !== "Count update failed") { console.error(`Error processing task ${taskId} reward:`, error); alert("An error occurred processing the reward."); }
-                    // Let listener handle UI update based on actual DB state
-                });
-            };
-
-            // Call the appropriate Ad SDK function based on config
-            if (config.adType === 'rewardedInterstitial') {
-                 show_929240().then(grantReward).catch(error => { // Note: Ensure show_9292240 is correct function name from SDK
-                     console.error(`Rewarded Interstitial Ad SDK failed for task ${taskId}:`, error);
-                     alert("Ad failed or skipped. No reward.");
-                     const latestCount = currentUserAdTasks[taskId]?.completed || 0;
-                     if (latestCount < config.limit) taskElement.classList.remove('disabled');
-                 });
-            } else if (config.adType === 'rewardedPopup') {
-                 show_929240('pop').then(grantReward).catch(error => { // Note: Ensure show_9292240 is correct function name from SDK
-                     console.error(`Rewarded Popup Ad SDK failed for task ${taskId}:`, error);
-                     alert("Ad failed or skipped. No reward.");
-                     const latestCount = currentUserAdTasks[taskId]?.completed || 0;
-                     if (latestCount < config.limit) taskElement.classList.remove('disabled');
-                 });
-            } else if (config.adType === 'inAppInterstitial') {
-                // In-App doesn't have a direct reward callback like the others.
-                // We'll *simulate* the reward after calling the function,
-                // but ideally, this ad type isn't used for direct "click-to-reward".
-                console.warn("Using In-App Interstitial for a rewarded task. Reward might not be guaranteed by SDK.");
-                try {
-                    show_929240({ type: 'inApp', inAppSettings: { frequency: 1, capping: 24, interval: 0, timeout: 0, everyPage: false } }); // Note: Ensure show_9292240 is correct function name from SDK
-                    console.log(`In-App Interstitial initiated for task ${taskId}. Simulating reward.`);
-                    // Simulate reward after a short delay, assuming initiation means success for this task type
-                    setTimeout(() => grantReward(), 500);
-                } catch (error) {
-                     console.error(`In-App Interstitial Ad SDK failed for task ${taskId}:`, error);
-                     alert("Ad failed to show.");
-                     const latestCount = currentUserAdTasks[taskId]?.completed || 0;
-                     if (latestCount < config.limit) taskElement.classList.remove('disabled');
-                }
-
-            } else { // Should not happen with current config
-                console.error(`Unexpected adType '${config.adType}' for task ${taskId}`);
-                alert(`Configuration error for task: ${config.title}`);
-                 const latestCount = currentUserAdTasks[taskId]?.completed || 0;
-                 if (latestCount < config.limit) taskElement.classList.remove('disabled'); // Re-enable if error
-            }
-        }
-
+        function closeAllOverlays(exclude=null) {
+             [profileOverlay, withdrawalOverlay, friendsOverlay, tasksOverlay, startGameModal, gameOverUI].forEach(o => {
+                 if (o && o !== exclude && o.style.display !== 'none') {
+                     o.style.display = 'none'; // Just hide, don't call hideOverlay which has resume logic
+                 }
+             });
+             // After potentially closing everything, check if we should return to 'ready' state display
+             if (gameState === 'ready' && !isAnyUIOverlayOpen()) {
+                 showInitialControls();
+             }
+         }
 
         // --- Game Object Creation ---
         function createStarfield() { if(starField)scene.remove(starField); const c=7000; const p=new Float32Array(c*3); const g=new THREE.BufferGeometry(); const h=parseColorHex(getCssVariable('--star-color')); for(let i=0;i<c;i++){ const i3=i*3; const r=60+Math.random()*60; const ph=Math.acos(-1+(2*Math.random())); const th=Math.random()*Math.PI*2; p[i3]=r*Math.sin(ph)*Math.cos(th); p[i3+1]=r*Math.cos(ph); p[i3+2]=r*Math.sin(ph)*Math.sin(th); } g.setAttribute('position',new THREE.BufferAttribute(p,3)); const m=new THREE.PointsMaterial({size:0.1,color:h,sizeAttenuation:true,transparent:true,opacity:0.8,depthWrite:false,blending:THREE.AdditiveBlending}); starField=new THREE.Points(g,m); starField.userData.isStarfield=true; starField.renderOrder=-1; starField.visible=!document.body.classList.contains('light-mode'); scene.add(starField); }
@@ -825,172 +998,564 @@
         // --- Telegram Integration ---
         async function initializeTelegramIntegration() {
              hasProcessedReferral = false;
-             if (!window.Telegram?.WebApp) {
+             if (!window.Telegram || !window.Telegram.WebApp) {
                  console.error("Telegram WebApp object not found!");
-                 alert("Initialization Error: Could not load Telegram environment.");
-                 gameState = 'error';
-                 setInternalPause(true);
-                 return Promise.reject("TG Env Missing"); // Use a more generic error
+                 alert("Initialization Error: Cannot connect to Telegram.");
+                 gameState = 'error'; setInternalPause(true); return Promise.reject("Telegram Env Missing");
              }
              const tg = window.Telegram.WebApp;
              return new Promise(async (resolve, reject) => {
-                 tg.ready();
-                 console.log("TG Ready. Data:", tg.initDataUnsafe);
-                 tg.expand();
-                 if (tg.initDataUnsafe?.user?.id) {
-                     telegramUserData = tg.initDataUnsafe.user;
-                     telegramUserId = telegramUserData.id;
-                     console.log("TG User:", telegramUserId, telegramUserData);
-                     if(userIdOverlay) userIdOverlay.textContent = telegramUserId || 'N/A';
-                     if(usernameOverlay) usernameOverlay.textContent = telegramUserData?.username ? `@${telegramUserData.username}` : '(Not Set)';
-                     initializeFirebaseApp();
-                     if (db) {
-                         listenToUserData(telegramUserId);
-                         await resetGame();
-                         setTimeout(() => {
-                             onWindowResize();
-                             animateCameraZoom(cameraZoomedInZ, cameraZoomDuration);
-                             resolve();
-                         }, 100);
+                 try {
+                     tg.ready();
+                     console.log("TG Ready. Data:", tg.initDataUnsafe);
+                     tg.expand();
+                     tg.enableClosingConfirmation(); // Optional: Prevent accidental closure
+
+                     if (tg.initDataUnsafe?.user?.id) {
+                         telegramUserData = tg.initDataUnsafe.user;
+                         telegramUserId = telegramUserData.id;
+                         console.log("TG User:", telegramUserId, telegramUserData);
+                         if(userIdOverlay) userIdOverlay.textContent=telegramUserId||'N/A';
+                         if(usernameOverlay) usernameOverlay.textContent=telegramUserData?.username?`@${telegramUserData.username}`:'(Not Set)';
+
+                         initializeFirebaseApp(); // Must happen after getting user ID
+
+                         if (db) {
+                             listenToUserData(telegramUserId); // Listen to user data only after DB init
+                             gameState = 'ready';
+                             setInternalPause(false);
+                             showInitialControls(); // Show game start controls
+                             updateScoreUI();
+                             setTimeout(() => { onWindowResize(); resolve(); }, 100); // Allow UI to settle
+                         } else {
+                             console.error("Firebase DB Initialization Failed!");
+                             gameState = 'error';
+                             setInternalPause(true);
+                             tg.showAlert("Database connection error. Please try again later.");
+                             reject("Firebase DB Error");
+                         }
                      } else {
-                         console.error("FB DB fail!");
+                         console.error("Telegram user data missing!");
                          gameState = 'error';
                          setInternalPause(true);
-                         alert("Database connection error.");
-                         reject("FB DB Error");
+                         tg.showAlert("Could not retrieve user information. Please try relaunching the app.");
+                         reject("Telegram User Missing");
                      }
-                 } else {
-                     console.error("TG user info missing!");
+                 } catch (e) {
+                     console.error("Telegram Initialization Error:", e);
                      gameState = 'error';
                      setInternalPause(true);
-                     alert("User information could not be retrieved.");
-                     reject("TG User Missing"); // Use a more generic error
+                     // Use a generic alert if TG alert fails
+                     try { tg.showAlert(`Initialization Error: ${e.message}`); } catch(tgErr) { alert(`Initialization Error: ${e.message}`); }
+                     reject(e);
                  }
              });
          }
-
 
         // --- Core Game Initialization ---
         async function init() {
             console.log("Initializing App..."); gameState = 'initializing'; setInternalPause(true);
             scene = new THREE.Scene(); camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 150); camera.position.z = cameraFixedZ; renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('game-canvas'), antialias: true, alpha: true }); renderer.setSize(gameContainer.clientWidth, gameContainer.clientHeight); renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0; renderer.outputEncoding = THREE.sRGBEncoding; renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); renderer.setClearColor(0x000000, 0);
-            setupTheme();
+            setupTheme(); // Setup theme before potentially using TG theme
             composer = new EffectComposer(renderer); composer.addPass(new RenderPass(scene, camera)); bloomPass = new UnrealBloomPass(new THREE.Vector2(gameContainer.clientWidth, gameContainer.clientHeight), 0.6, 0.5, 0.8); composer.addPass(bloomPass);
             scene.add(new THREE.HemisphereLight(0xccccff, 0x555599, 0.7)); const dirLight = new THREE.DirectionalLight(0xffffff, 0.9); dirLight.position.set(5, 8, 6); scene.add(dirLight); scene.add(new THREE.AmbientLight(0x404040, 0.6));
             new RGBELoader().load('back.hdr', (t) => { t.mapping = THREE.EquirectangularReflectionMapping; scene.environment = t; envMap = t; if (ball?.material) ball.material.needsUpdate = true; }, undefined, e => console.warn("HDR load fail", e));
             textureLoader.load('ball.jpg', (t) => { t.wrapS = t.wrapT = THREE.RepeatWrapping; ballTexture = t; if (ball?.material) { ball.material.map = t; ball.material.needsUpdate = true; } }, undefined, e => console.warn("Ball tex fail.", e));
-            createBall(); platformGroup = new THREE.Group(); scene.add(platformGroup); poleGroup = new THREE.Group(); scene.add(poleGroup);
+            createBall();
+            platformGroup = new THREE.Group(); scene.add(platformGroup); poleGroup = new THREE.Group(); scene.add(poleGroup);
             window.addEventListener('resize', onWindowResize, false); document.addEventListener('pointerdown', onPointerDown, { passive: false }); document.addEventListener('pointermove', onPointerMove, { passive: false }); document.addEventListener('pointerup', onPointerUp, false); document.addEventListener('pointerleave', onPointerUp, false);
             setupUIListeners();
-            try { await initializeTelegramIntegration(); console.log("TG Init OK."); } catch (e) { console.error("Initialization failed:", e); gameState = 'error'; setInternalPause(true); /* Potentially show user-friendly error message */ return; }
-            onWindowResize(); animate(); console.log("Init complete.");
+            try { await initializeTelegramIntegration(); console.log("TG Init OK."); } catch (e) { console.error("Init fail:", e); gameState = 'error'; setInternalPause(true); return; } // Error handling within TG init now
+            onWindowResize(); animate(); console.log("Init complete. Ready for user to start.");
         }
 
         // --- UI Listeners Setup ---
          function setupUIListeners() {
              menuButton.addEventListener('click', (e) => { e.stopPropagation(); toggleSideMenu(); });
              settingsButton.addEventListener('click', (e) => { e.stopPropagation(); toggleSettingsPopup(); });
-             menuItemButtons.forEach(b => { b.addEventListener('click', () => { const action = b.getAttribute('data-action'); closeSideMenu(); switch (action) { case 'show-profile': showOverlay(profileOverlay); break; case 'show-withdrawal': showOverlay(withdrawalOverlay); break; case 'show-friends': showOverlay(friendsOverlay); break; case 'show-tasks': showOverlay(tasksOverlay); break; case 'show-rewarded-tasks': showOverlay(rewardedTasksOverlay); break; } }); });
-             overlayCloseButtons.forEach(b => { b.addEventListener('click', () => { const id = b.getAttribute('data-overlay-id'); const o = document.getElementById(id); if (o) hideOverlay(o); }); });
+             menuItemButtons.forEach(b => { b.addEventListener('click', () => {
+                 const action = b.getAttribute('data-action');
+                 closeSideMenu();
+                 switch (action) {
+                     case 'show-profile': showOverlay(profileOverlay); break;
+                     case 'show-withdrawal': showOverlay(withdrawalOverlay); break;
+                     case 'show-friends': showOverlay(friendsOverlay); break;
+                     case 'show-tasks': showOverlay(tasksOverlay); break;
+                 }
+             }); });
+             overlayCloseButtons.forEach(b => {
+                 b.addEventListener('click', () => {
+                     const id = b.getAttribute('data-overlay-id');
+                     const o = document.getElementById(id);
+                     if (o) {
+                        hideOverlay(o);
+                        // Special handling for game over close button to behave like Play Again
+                        if (id === 'game-over-ui') {
+                            handlePlayAgain();
+                        }
+                     }
+                 });
+             });
              document.addEventListener('click', (e) => { if (sideMenu.classList.contains('open') && !sideMenu.contains(e.target) && !menuButton.contains(e.target)) { closeSideMenu(); } if (settingsPopup.style.display === 'block' && !settingsPopup.contains(e.target) && !settingsButton.contains(e.target)) { closeSettingsPopup(); } });
              menuOverlayDimmer.addEventListener('click', closeSideMenu);
              settingsPopup.addEventListener('click', e => e.stopPropagation()); sideMenu.addEventListener('click', e => e.stopPropagation());
-             profileOverlay.addEventListener('click', e => { if (!e.target.closest('.overlay-close-button')) e.stopPropagation(); });
-             withdrawalOverlay.addEventListener('click', e => { if (!e.target.closest('.overlay-close-button') && !e.target.closest('button')) e.stopPropagation(); });
-             friendsOverlay.addEventListener('click', e => { if (!e.target.closest('.overlay-close-button') && !e.target.closest('#referral-list-container') && !e.target.closest('#copy-referral-link-button')) e.stopPropagation(); });
-             tasksOverlay.addEventListener('click', e => { if (!e.target.closest('.overlay-close-button') && !e.target.closest('a')) e.stopPropagation(); });
-             rewardedTasksOverlay.addEventListener('click', e => { // Listener on the container
-                 const taskItem = e.target.closest('.rewarded-ad-item');
-                 if (taskItem && !taskItem.classList.contains('disabled')) {
-                     const taskId = taskItem.dataset.taskId;
-                     const config = REWARDED_AD_TASKS_CONFIG[taskId];
-                     if (taskId && config) { handleWatchRewardedAd(taskId, config.reward, taskItem); }
-                      else { console.error("Missing data/config for clicked rewarded ad item", taskItem); }
-                 } else if (!e.target.closest('.overlay-close-button')) { // Prevent closing if click is inside but not on task/close
-                     e.stopPropagation();
+
+             // Prevent clicks inside overlays/modals from closing them (unless it's a close button)
+             [profileOverlay, withdrawalOverlay, friendsOverlay, tasksOverlay, gameOverUI, startGameModal].forEach(overlay => {
+                 if (overlay) {
+                     overlay.addEventListener('click', e => {
+                        // Allow clicks on buttons, links, inputs, selects within the overlay
+                        if (e.target.closest('button') || e.target.closest('a') || e.target.closest('input') || e.target.closest('select') || e.target.closest('.theme-switch')) {
+                            // Don't stop propagation if it's an interactive element
+                        } else {
+                           e.stopPropagation(); // Stop propagation for clicks on the overlay background itself
+                        }
+                     });
                  }
              });
-             if (gameOverUI) gameOverUI.addEventListener('click', e => e.stopPropagation());
-             restartButton.addEventListener('click', resetGame);
-             if (watchAdButton) watchAdButton.addEventListener('click', handleWatchAd); // Game Over Ad uses its own handler
+             if (initialControlsContainer) initialControlsContainer.addEventListener('click', e => e.stopPropagation());
+
+
+             restartButton.addEventListener('click', handlePlayAgain);
+             if (watchAdButton) watchAdButton.addEventListener('click', handleWatchAdForSave);
+
+             // Listeners for buttons inside #initial-controls-container
+             timerButtons.forEach(button => {
+                 button.addEventListener('click', () => {
+                     if (isTimedGameActive || gameState === 'playing') return;
+                     const duration = parseInt(button.getAttribute('data-duration'), 10);
+                     handleTimerSelection(duration);
+                 });
+             });
+             startGameButton.addEventListener('click', () => {
+                 if (gameState === 'ready') {
+                     startNormalButton.disabled = false;
+                     startBoostButton.disabled = false;
+                     startBoostButton.textContent = '2x Points';
+                     showOverlay(startGameModal);
+                 }
+             });
+
+             // Listeners for buttons inside #start-game-modal
+             startNormalButton.addEventListener('click', () => {
+                 hideOverlay(startGameModal);
+                 startGame(1);
+             });
+             startBoostButton.addEventListener('click', handleWatchAdForBoost);
+
              if (copyReferralLinkButton) { copyReferralLinkButton.addEventListener('click', async () => { const link = referralLinkDisplay.textContent; if (link && link !== "Generating link..." && link !== "Link Unavailable") { const success = await copyToClipboard(link); copyReferralLinkButton.textContent = success ? "Copied!" : "Failed"; } else { copyReferralLinkButton.textContent = "Error"; } setTimeout(() => { copyReferralLinkButton.textContent = "Copy"; }, 1500); }); }
+
+             // Withdrawal button listener (optional, as it's disabled)
+             // if (withdrawMainButton) {
+             //    withdrawMainButton.addEventListener('click', () => {
+             //        if(!withdrawMainButton.disabled) {
+             //            // Handle withdrawal logic here
+             //             console.log("Withdraw button clicked (currently disabled)");
+             //         }
+             //     });
+             // }
          }
 
+        // --- Timer and Game Start/End Functions ---
+        function handleTimerSelection(duration) {
+            selectedGameDuration = duration;
+            timerButtons.forEach(btn => {
+                btn.classList.toggle('active', parseInt(btn.getAttribute('data-duration'), 10) === duration);
+            });
+            console.log("Selected duration:", selectedGameDuration);
+        }
+
+        function showInitialControls() {
+            if (initialControlsContainer) initialControlsContainer.classList.remove('hidden');
+            if (headerTimerDisplayEl) headerTimerDisplayEl.classList.remove('visible');
+            if (startGameButton) startGameButton.disabled = false;
+            updateScoreUI(); // Refresh current score display which might be 0
+        }
+
+        function hideInitialControls() {
+             if (initialControlsContainer) initialControlsContainer.classList.add('hidden');
+        }
+
+        function hideInitialControlsAndShowTimer() {
+            hideInitialControls();
+            if (headerTimerDisplayEl) headerTimerDisplayEl.classList.add('visible');
+        }
+
+
+        function updateHeaderTimerDisplay() {
+            if (headerTimerDisplayEl) {
+                headerTimerDisplayEl.textContent = formatTime(currentGameCountdown);
+            }
+        }
+
+        function updateGameTimer() {
+            if (currentGameCountdown > 0 && isTimedGameActive && gameState === 'playing' && !internalPauseState) { // Check for internalPauseState here
+                currentGameCountdown--;
+                updateHeaderTimerDisplay();
+            }
+
+            if (currentGameCountdown <= 0 && isTimedGameActive && gameState === 'playing') {
+                console.log("Timer ended!");
+                handleGameOver("Time's Up!");
+            }
+        }
+
+        async function startGame(multiplier) {
+             console.log(`Starting game with duration ${selectedGameDuration}s and multiplier ${multiplier}x`);
+             if (gameState !== 'ready') {
+                 console.warn("Cannot start game, not in ready state.");
+                 return;
+             }
+
+             scoreMultiplier = multiplier;
+             currentGameCountdown = selectedGameDuration;
+             isTimedGameActive = true;
+
+             hideInitialControlsAndShowTimer();
+             updateHeaderTimerDisplay();
+
+             await prepareGameForStart();
+
+             gameState = 'playing';
+             setInternalPause(false); // Ensure game is not paused internally
+
+             if (gameTimerIntervalId) clearInterval(gameTimerIntervalId);
+             gameTimerIntervalId = setInterval(updateGameTimer, 1000);
+
+             clock.getDelta(); // Reset clock delta
+
+             animateCameraZoom(cameraZoomedInZ, cameraZoomDuration);
+             console.log("Game started!");
+         }
+
+        async function prepareGameForStart() {
+             console.log("Preparing game board...");
+             if (adTimerIntervalId) { clearInterval(adTimerIntervalId); adTimerIntervalId = null; }
+             if (gameTimerIntervalId) { clearInterval(gameTimerIntervalId); gameTimerIntervalId = null; }
+
+             if (!telegramUserId) {
+                 console.error("Prepare skip: No TG ID.");
+                 gameState = 'error';
+                 setInternalPause(true);
+                 showInitialControls(); // Show controls again
+                 hideOverlay(gameOverUI);
+                 hideOverlay(startGameModal);
+                 closeAllOverlays();
+                 closeSideMenu();
+                 closeSettingsPopup();
+                 if(cameraZoomRequestId) cancelAnimationFrame(cameraZoomRequestId); cameraZoomRequestId = null; if(camera) camera.position.z = cameraFixedZ; isCameraZooming = false; if (platformGroup) { while(platformGroup.children.length > 0) disposePlatformSegments(platformGroup.children[0]); } Object.keys(activePoleSegments).forEach(y => disposePoleSegment(parseFloat(y))); activePlatforms = []; activePoleSegments = {};
+                 try { window.Telegram.WebApp.showAlert("User identification failed. Please restart."); } catch(e) { alert("User identification failed. Please restart."); }
+                 return Promise.reject("No User ID");
+             }
+
+             console.log("Resetting for timed game:", `tg_${telegramUserId}`);
+             if (cameraZoomRequestId) cancelAnimationFrame(cameraZoomRequestId); cameraZoomRequestId = null; isCameraZooming = false;
+
+             if (!ball) createBall(); else { const ballColorHex = parseColorHex(getCssVariable('--ball-color')); ball.material.color.setHex(ballColorHex); }
+             ball.position.set(ballStartX, initialBallY, ballStartZ);
+             ballPreviousY = ball.position.y;
+             currentBallVelocityY = 0;
+
+             // Clear old platforms and poles thoroughly
+             activePlatforms.forEach(p => disposePlatformSegments(p));
+             activePlatforms = [];
+             if (platformGroup) {
+                 while(platformGroup.children.length > 0) {
+                    const child = platformGroup.children[0];
+                    platformGroup.remove(child); // Remove from group first
+                    disposePlatformSegments(child); // Then dispose
+                 }
+                 platformGroup.rotation.y = 0;
+             } else { platformGroup = new THREE.Group(); scene.add(platformGroup); }
+
+             Object.keys(activePoleSegments).forEach(y => disposePoleSegment(parseFloat(y)));
+             activePoleSegments = {};
+             if (poleGroup) {
+                 while(poleGroup.children.length > 0) {
+                    const child = poleGroup.children[0];
+                    poleGroup.remove(child); // Remove from group first
+                    if(child.geometry) child.geometry.dispose();
+                    if(child.material) child.material.dispose();
+                 }
+             } else { poleGroup = new THREE.Group(); scene.add(poleGroup); }
+
+             currentScore = 0; updateScoreUI();
+             scoreIncrementedForPlatform = {};
+             platformColorIndex = 0;
+             shakeIntensity = 0;
+             nextPlatformY = initialBallY - platformSpacingY * 2;
+             lastSafePlatformY = nextPlatformY + platformSpacingY;
+
+             // Generate initial platforms
+             for (let i = 0; i < 15; i++) {
+                 createPlatform(nextPlatformY);
+                 createPoleSegment(nextPlatformY);
+                 nextPlatformY -= platformSpacingY;
+             }
+
+             hideOverlay(gameOverUI); // Ensure these are hidden
+             hideOverlay(startGameModal);
+
+             // Reset camera position immediately
+             if (camera && ball) {
+                 const camY = ball.position.y + cameraVerticalOffset;
+                 const lookY = ball.position.y + cameraLookAtOffset;
+                 camera.position.set(0, camY, cameraFixedZ); // Start zoomed out
+                 camera.lookAt(0, lookY, 0);
+             }
+
+             console.log("Game board prepared.");
+             setTimeout(onWindowResize, 50); // Adjust aspect ratio if needed
+             return Promise.resolve();
+        }
+
+        function handlePlayAgain() {
+             console.log("Play Again clicked.");
+             hideOverlay(gameOverUI);
+             gameState = 'ready';
+             setInternalPause(false);
+             isTimedGameActive = false;
+             scoreMultiplier = 1;
+             currentGameCountdown = 0;
+             showInitialControls(); // Show the start options again
+             // Optionally reset camera immediately to fixed position
+             if (camera) {
+                if (cameraZoomRequestId) cancelAnimationFrame(cameraZoomRequestId);
+                cameraZoomRequestId = null;
+                isCameraZooming = false;
+                camera.position.z = cameraFixedZ;
+             }
+        }
+
+
         // --- Game Logic Functions ---
-        function generatePlatforms() { if (!ball || !camera || internalPauseState || gameState !== 'playing') return; const generationTriggerY = nextPlatformY + platformSpacingY * 8; while (ball.position.y < generationTriggerY && nextPlatformY > -1000) { createPlatform(nextPlatformY); createPoleSegment(nextPlatformY); nextPlatformY -= platformSpacingY; } const removalThresholdY_Above = camera.position.y + 15; activePlatforms.forEach(p => { if (p.position.y > removalThresholdY_Above && !p.userData.fadeOut) startFadeOut(p); }); for (const yPos in activePoleSegments) { const seg = activePoleSegments[yPos]; if (parseFloat(yPos) > removalThresholdY_Above && seg && !seg.userData.fadeOut) startFadeOut(seg); } }
-        function updateBallPosition() { if (!ball || internalPauseState || gameState !== 'playing') return; currentBallVelocityY += gravity; ball.position.y += currentBallVelocityY; ball.position.x = ballStartX; ball.position.z = ballStartZ; if (ball.position.y < nextPlatformY - platformSpacingY * 5) { handleGameOver(); } }
+        function generatePlatforms() { if (!ball || !camera || internalPauseState || gameState !== 'playing' || !isTimedGameActive) return; const generationTriggerY = nextPlatformY + platformSpacingY * 8; while (ball.position.y < generationTriggerY && nextPlatformY > -1000) { createPlatform(nextPlatformY); createPoleSegment(nextPlatformY); nextPlatformY -= platformSpacingY; } const removalThresholdY_Above = camera.position.y + 15; activePlatforms.forEach(p => { if (p.position.y > removalThresholdY_Above && !p.userData.fadeOut) startFadeOut(p); }); for (const yPos in activePoleSegments) { const seg = activePoleSegments[yPos]; if (parseFloat(yPos) > removalThresholdY_Above && seg && !seg.userData.fadeOut) startFadeOut(seg); } }
+        function updateBallPosition() { if (!ball || internalPauseState || gameState !== 'playing' || !isTimedGameActive) return; currentBallVelocityY += gravity; ball.position.y += currentBallVelocityY; ball.position.x = ballStartX; ball.position.z = ballStartZ; if (ball.position.y < nextPlatformY - platformSpacingY * 5) { handleGameOver("Fell Off!"); } }
         function disposePlatformSegments(platform) { if (!platform) return; platform.traverse(object => { if (object.isMesh) { if (object.geometry) object.geometry.dispose(); if (object.material) { ['map', 'emissiveMap', 'aoMap', 'metalnessMap', 'roughnessMap', 'normalMap', 'displacementMap', 'alphaMap', 'envMap'].forEach(prop => { if (object.material[prop]?.dispose) object.material[prop].dispose(); }); if (Array.isArray(object.material)) { object.material.forEach(m => m.dispose()); } else { object.material.dispose(); } } } }); if (platform.parent) platform.parent.remove(platform); }
         function disposePoleSegment(yPos) { const segment = activePoleSegments[yPos]; if (segment) { if (segment.geometry) segment.geometry.dispose(); if (segment.material) segment.material.dispose(); if (segment.parent) segment.parent.remove(segment); delete activePoleSegments[yPos]; return true; } return false; }
         function startFadeOut(object) { if (!object || !object.userData || object.userData.fadeOut) return; object.userData.fadeOut = true; object.userData.fadeProgress = 0; }
-        function destroyPlatformAndPole(platform) { if (!platform || !platform.userData || platform.userData.fadeOut) return; const platformY = platform.userData.y; if (!scoreIncrementedForPlatform[platformY]) { currentScore++; updateScoreUI(); scoreIncrementedForPlatform[platformY] = true; } startFadeOut(platform); const poleSegment = activePoleSegments[platformY]; if (poleSegment) startFadeOut(poleSegment); }
-        function updateFadingObjects(deltaTime) { if (internalPauseState || gameState === 'error') return; const fadeSpeed = 1.0 / (FADE_DURATION / 1000); const platformsToRemoveIndexes = []; const poleYPositionsToRemove = []; for (let i = activePlatforms.length - 1; i >= 0; i--) { const p = activePlatforms[i]; if (p.userData.fadeOut) { p.userData.fadeProgress += fadeSpeed * deltaTime; const progress = Math.min(p.userData.fadeProgress, 1); const scale = 1.0 - progress * 0.5; p.scale.set(scale, 1, scale); p.userData.segmentAngles.forEach(segmentData => { if (segmentData.material) segmentData.material.opacity = 1.0 - progress; }); if (progress >= 1) platformsToRemoveIndexes.push(i); } } for (let i = platformsToRemoveIndexes.length - 1; i >= 0; i--) { const index = platformsToRemoveIndexes[i]; disposePlatformSegments(activePlatforms[index]); activePlatforms.splice(index, 1); } for (const y in activePoleSegments) { const segment = activePoleSegments[y]; if (segment?.userData.fadeOut) { segment.userData.fadeProgress += fadeSpeed * deltaTime; const progress = Math.min(segment.userData.fadeProgress, 1); if (segment.material) segment.material.opacity = 1.0 - progress; const scale = 1.0 - progress; segment.scale.set(scale, scale, scale); if (progress >= 1) poleYPositionsToRemove.push(parseFloat(y)); } } poleYPositionsToRemove.forEach(y => disposePoleSegment(y)); }
-        function checkCollisions() { if (!ball || internalPauseState || gameState !== 'playing' || currentBallVelocityY >= 0) return; const ballRadius = 0.25; const ballBottomY = ball.position.y - ballRadius; let candidatePlatform = null; let highestCandidateY = -Infinity; for (let i = 0; i < activePlatforms.length; i++) { const platform = activePlatforms[i]; if (!platform || !platform.userData || platform.userData.fadeOut) continue; const platformSurfaceY = platform.position.y; if (ballPreviousY - ballRadius >= platformSurfaceY && ballBottomY <= platformSurfaceY) { if (platformSurfaceY > highestCandidateY) { highestCandidateY = platformSurfaceY; candidatePlatform = platform; } } } if (!candidatePlatform) return; const platformData = candidatePlatform.userData; const collisionY = platformData.y; const ballAngle = Math.atan2(ball.position.z - platformGroup.position.z, ball.position.x - platformGroup.position.x); const towerRotation = platformGroup.rotation.y; const platformInternalRotation = candidatePlatform.rotation.y; let angleRelativeToPlatform = THREE.MathUtils.euclideanModulo( ballAngle - towerRotation - platformInternalRotation, 2 * Math.PI ); const gapStart = platformData.gapStartAngle; const gapEnd = platformData.gapEndAngle; let isInGap; if (gapStart < gapEnd) { isInGap = angleRelativeToPlatform >= gapStart && angleRelativeToPlatform < gapEnd; } else { isInGap = angleRelativeToPlatform >= gapStart || angleRelativeToPlatform < gapEnd; } const ballDistFromCenter = Math.hypot(ball.position.x, ball.position.z); const isInsidePoleRadius = ballDistFromCenter < poleRadius; if (isInGap || isInsidePoleRadius) { destroyPlatformAndPole(candidatePlatform); } else { let hitSegmentData = null; for (const segmentData of platformData.segmentAngles) { let segStart = segmentData.startAngle; let segEnd = segmentData.endAngle; let angleFallsInSegment; if (segStart < segEnd) { angleFallsInSegment = angleRelativeToPlatform >= segStart && angleRelativeToPlatform < segEnd; } else { angleFallsInSegment = angleRelativeToPlatform >= segStart || angleRelativeToPlatform < segEnd; } if (angleFallsInSegment) { hitSegmentData = segmentData; break; } } if (hitSegmentData) { if (hitSegmentData.isDanger) { lastSafePlatformY = collisionY - platformSpacingY; handleGameOver(); startShake(0.7); } else { lastSafePlatformY = collisionY; ball.position.y = collisionY + ballRadius + 0.01; currentBallVelocityY = bounceSpeed; Object.keys(scoreIncrementedForPlatform).forEach(keyY => { if (parseFloat(keyY) < collisionY) delete scoreIncrementedForPlatform[keyY]; }); startShake(0.3); } } else { console.warn("Collision: Not in gap, but no segment hit?"); destroyPlatformAndPole(candidatePlatform); } } }
-        function handleGameOver() { if (gameState !== 'playing') return; console.log("Game Over!"); gameState = 'gameOver'; setInternalPause(true); finalScoreEl.textContent = formatNumber(currentScore); gameOverMessageP.innerHTML = `Score: <span id="final-score">${formatNumber(currentScore)}</span>`; gameOverUI.style.display = 'block'; if (restartButton) restartButton.disabled = false; if (watchAdButton) { if (telegramUserId && currentScore > 0) { watchAdButton.style.display = 'block'; watchAdButton.disabled = false; } else { watchAdButton.style.display = 'none'; } } startShake(0.5); }
-        // Game Over Ad Handler (uses the standard rewarded interstitial)
-        function handleWatchAd() {
-            if (gameState !== 'gameOver' || !telegramUserId || currentScore <= 0) return;
-             if (typeof show_9292240 !== 'function') { alert("Ad SDK not ready. Please try again later."); return; } // Ensure correct function name
+        function destroyPlatformAndPole(platform) {
+            if (!platform || !platform.userData || platform.userData.fadeOut) return;
+            const platformY = platform.userData.y;
+            if (!scoreIncrementedForPlatform[platformY]) {
+                currentScore += (1 * scoreMultiplier);
+                updateScoreUI();
+                scoreIncrementedForPlatform[platformY] = true;
+            }
+            startFadeOut(platform);
+            const poleSegment = activePoleSegments[platformY];
+            if (poleSegment) startFadeOut(poleSegment);
+        }
+        function updateFadingObjects(deltaTime) {
+             if ( !(isTimedGameActive || gameState === 'gameOver') || gameState === 'error') return;
 
-            console.log("Watch Ad & Save clicked.");
-            if (restartButton) restartButton.disabled = true;
-            if (watchAdButton) watchAdButton.disabled = true;
-            gameOverMessageP.textContent = `Loading Ad...`;
+             const fadeSpeed = 1.0 / (FADE_DURATION / 1000);
+             const platformsToRemoveIndexes = []; const poleYPositionsToRemove = [];
+             for (let i = activePlatforms.length - 1; i >= 0; i--) { const p = activePlatforms[i]; if (p.userData.fadeOut) { p.userData.fadeProgress += fadeSpeed * deltaTime; const progress = Math.min(p.userData.fadeProgress, 1); const scale = 1.0 - progress * 0.5; p.scale.set(scale, 1, scale); p.userData.segmentAngles.forEach(segmentData => { if (segmentData.material) segmentData.material.opacity = 1.0 - progress; }); if (progress >= 1) platformsToRemoveIndexes.push(i); } }
+             for (let i = platformsToRemoveIndexes.length - 1; i >= 0; i--) { const index = platformsToRemoveIndexes[i]; disposePlatformSegments(activePlatforms[index]); activePlatforms.splice(index, 1); }
+             for (const y in activePoleSegments) { const segment = activePoleSegments[y]; if (segment?.userData.fadeOut) { segment.userData.fadeProgress += fadeSpeed * deltaTime; const progress = Math.min(segment.userData.fadeProgress, 1); if (segment.material) segment.material.opacity = 1.0 - progress; const scale = 1.0 - progress; segment.scale.set(scale, scale, scale); if (progress >= 1) poleYPositionsToRemove.push(parseFloat(y)); } }
+             poleYPositionsToRemove.forEach(y => disposePoleSegment(y));
+        }
+        function checkCollisions() { if (!ball || internalPauseState || gameState !== 'playing' || !isTimedGameActive || currentBallVelocityY >= 0) return; const ballRadius = 0.25; const ballBottomY = ball.position.y - ballRadius; let candidatePlatform = null; let highestCandidateY = -Infinity; for (let i = 0; i < activePlatforms.length; i++) { const platform = activePlatforms[i]; if (!platform || !platform.userData || platform.userData.fadeOut) continue; const platformSurfaceY = platform.position.y; if (ballPreviousY - ballRadius >= platformSurfaceY && ballBottomY <= platformSurfaceY) { if (platformSurfaceY > highestCandidateY) { highestCandidateY = platformSurfaceY; candidatePlatform = platform; } } } if (!candidatePlatform) return; const platformData = candidatePlatform.userData; const collisionY = platformData.y; const ballAngle = Math.atan2(ball.position.z - platformGroup.position.z, ball.position.x - platformGroup.position.x); const towerRotation = platformGroup.rotation.y; const platformInternalRotation = candidatePlatform.rotation.y; let angleRelativeToPlatform = THREE.MathUtils.euclideanModulo( ballAngle - towerRotation - platformInternalRotation, 2 * Math.PI ); const gapStart = platformData.gapStartAngle; const gapEnd = platformData.gapEndAngle; let isInGap; if (gapStart < gapEnd) { isInGap = angleRelativeToPlatform >= gapStart && angleRelativeToPlatform < gapEnd; } else { isInGap = angleRelativeToPlatform >= gapStart || angleRelativeToPlatform < gapEnd; } const ballDistFromCenter = Math.hypot(ball.position.x, ball.position.z); const isInsidePoleRadius = ballDistFromCenter < poleRadius; if (isInGap || isInsidePoleRadius) { destroyPlatformAndPole(candidatePlatform); } else { let hitSegmentData = null; for (const segmentData of platformData.segmentAngles) { let segStart = segmentData.startAngle; let segEnd = segmentData.endAngle; let angleFallsInSegment; if (segStart < segEnd) { angleFallsInSegment = angleRelativeToPlatform >= segStart && angleRelativeToPlatform < segEnd; } else { angleFallsInSegment = angleRelativeToPlatform >= segStart || angleRelativeToPlatform < segEnd; } if (angleFallsInSegment) { hitSegmentData = segmentData; break; } } if (hitSegmentData) { if (hitSegmentData.isDanger) { lastSafePlatformY = collisionY - platformSpacingY; handleGameOver("Hit Danger Zone!"); startShake(0.7); } else { lastSafePlatformY = collisionY; ball.position.y = collisionY + ballRadius + 0.01; currentBallVelocityY = bounceSpeed; Object.keys(scoreIncrementedForPlatform).forEach(keyY => { if (parseFloat(keyY) < collisionY) delete scoreIncrementedForPlatform[keyY]; }); startShake(0.3); } } else { console.warn("Collision: Not in gap, but no segment hit?"); destroyPlatformAndPole(candidatePlatform); } } }
 
-            show_9292240().then(() => { // Ensure correct function name
-                 console.log("Ad watched successfully (Game Over). Saving score...");
-                 updateUserTotalScore(currentScore).then(() => {
-                     console.log("Score save OK via Ad.");
-                     let adCountdown = 3;
-                     gameOverMessageP.textContent = `Score Saved! Restarting in ${adCountdown}s`;
-                     adTimerIntervalId = setInterval(() => {
-                         adCountdown--;
-                         if (adCountdown > 0) { gameOverMessageP.textContent = `Score Saved! Restarting in ${adCountdown}s`; }
-                         else { clearInterval(adTimerIntervalId); adTimerIntervalId = null; console.log("Ad timer finish. Restarting."); resetGame(); }
-                     }, 1000);
-                 }).catch((error) => {
-                     console.error("Failed score save after Ad:", error);
-                     gameOverMessageP.textContent = "Error saving score. Please restart.";
-                     if (restartButton) restartButton.disabled = false;
-                     if (watchAdButton) watchAdButton.disabled = false;
-                     if (adTimerIntervalId) { clearInterval(adTimerIntervalId); adTimerIntervalId = null; }
-                 });
+        function handleGameOver(reason = "Unknown Reason") {
+             if (gameState !== 'playing') return; // Prevent double game over
+
+             console.log(`Game Over! Reason: ${reason}`);
+             gameState = 'gameOver';
+             setInternalPause(true);
+             isTimedGameActive = false;
+
+             if (gameTimerIntervalId) {
+                 clearInterval(gameTimerIntervalId);
+                 gameTimerIntervalId = null;
+                 console.log("Game Timer stopped.");
+             }
+
+             headerTimerDisplayEl.classList.remove('visible'); // Hide timer
+
+             // Update Game Over message
+             gameOverMessageP.innerHTML = `${reason}<br>Score: <span id="final-score">${formatNumber(currentScore)}</span>`;
+
+             showOverlay(gameOverUI); // Display the modal
+
+             if (restartButton) restartButton.disabled = false; // Enable play again
+
+             // Determine if Watch Ad button should be shown
+             const canShowAd = telegramUserId && currentScore > 0 && typeof show_9292240 === 'function';
+             if (watchAdButton) {
+                 watchAdButton.style.display = canShowAd ? 'block' : 'none'; // Show block for flex
+                 watchAdButton.disabled = !canShowAd;
+             }
+
+             // Only save score IF NOT WATCHING AD to save it
+             // (Ad function will handle saving if watched)
+             if (currentScore > 0 && !canShowAd) { // Save score automatically if ad isn't an option
+                 updateUserTotalScore(currentScore)
+                     .then(() => console.log("Score saved automatically (no ad option)."))
+                     .catch(e => console.error("Auto score save failed:", e));
+             } else if (currentScore <= 0) {
+                console.log("Score is 0, not saving.");
+             }
+
+             startShake(0.5);
+         }
+
+        function handleWatchAdForBoost() {
+            if (gameState !== 'ready') return;
+
+            if (typeof show_9292240 !== 'function') {
+                console.error("Ad SDK function 'show_9292240' not found for Boost Ad.");
+                try{window.Telegram.WebApp.showAlert("Ad service not available right now. Please try starting normally.");} catch(e){alert("Ad service not available right now.");}
+                 startNormalButton.disabled = false;
+                 startBoostButton.disabled = false;
+                return;
+            }
+
+            console.log("Watch Ad for Boost clicked (Using show_9292240).");
+            startNormalButton.disabled = true;
+            startBoostButton.disabled = true;
+            startBoostButton.textContent = 'Loading Ad...';
+
+            show_9292240().then(() => {
+                 console.log("Ad watched successfully (Boost - show_9292240). Starting game with 2x.");
+                 hideOverlay(startGameModal);
+                 startGame(2); // Start game with 2x multiplier
             }).catch((error) => {
-                 console.error("Ad failed to show (Game Over):", error);
-                 alert("Ad failed to load or was skipped. Score not saved.");
-                 gameOverMessageP.textContent = `Score: ${formatNumber(currentScore)}`;
-                 if (restartButton) restartButton.disabled = false;
-                 if (watchAdButton) watchAdButton.disabled = false;
+                 console.error("Ad failed to show or skipped (Boost - show_9292240):", error);
+                 try{window.Telegram.WebApp.showAlert("Ad failed or was skipped. Starting game normally (1x points).");}catch(e){alert("Ad failed or was skipped.");}
+                 startNormalButton.disabled = false;
+                 startBoostButton.disabled = false;
+                 startBoostButton.textContent = '2x Points';
+                 hideOverlay(startGameModal);
+                 startGame(1); // Start game normally if ad fails
             });
         }
-        function startShake(intensity) { shakeIntensity = Math.max(shakeIntensity, intensity); }
-        async function resetGame() {
-             console.log("Reset..."); if (adTimerIntervalId) { clearInterval(adTimerIntervalId); adTimerIntervalId = null; }
-             if (!telegramUserId) { console.log("Reset skip: No TG ID."); gameState = 'initializing'; setInternalPause(true); gameOverUI.style.display = 'none'; closeAllOverlays(); closeSideMenu(); closeSettingsPopup(); if(restartButton) restartButton.disabled = true; if(watchAdButton) watchAdButton.style.display = 'none'; if(cameraZoomRequestId) cancelAnimationFrame(cameraZoomRequestId); cameraZoomRequestId = null; if(camera) camera.position.z = cameraFixedZ; isCameraZooming = false; if (platformGroup) { while(platformGroup.children.length > 0) disposePlatformSegments(platformGroup.children[0]); } Object.keys(activePoleSegments).forEach(y => disposePoleSegment(parseFloat(y))); activePlatforms = []; activePoleSegments = {}; return; }
-             console.log("Resetting for:", `tg_${telegramUserId}`); if (cameraZoomRequestId) cancelAnimationFrame(cameraZoomRequestId); cameraZoomRequestId = null; isCameraZooming = false;
-             if (!ball) createBall(); else { const ballColorHex = parseColorHex(getCssVariable('--ball-color')); ball.material.color.setHex(ballColorHex); } ball.position.set(ballStartX, initialBallY, ballStartZ); ballPreviousY = ball.position.y; currentBallVelocityY = 0;
-             activePlatforms.forEach(p => disposePlatformSegments(p)); activePlatforms = []; if (platformGroup) { while(platformGroup.children.length > 0) platformGroup.remove(platformGroup.children[0]); platformGroup.rotation.y = 0; } else { platformGroup = new THREE.Group(); scene.add(platformGroup); }
-             Object.keys(activePoleSegments).forEach(y => disposePoleSegment(parseFloat(y))); activePoleSegments = {}; if (poleGroup) { while(poleGroup.children.length > 0) poleGroup.remove(poleGroup.children[0]); } else { poleGroup = new THREE.Group(); scene.add(poleGroup); }
-             currentScore = 0; updateScoreUI(); scoreIncrementedForPlatform = {}; platformColorIndex = 0; shakeIntensity = 0; nextPlatformY = initialBallY - platformSpacingY * 2; lastSafePlatformY = nextPlatformY + platformSpacingY;
-             for (let i = 0; i < 15; i++) { createPlatform(nextPlatformY); createPoleSegment(nextPlatformY); nextPlatformY -= platformSpacingY; }
-             gameOverUI.style.display = 'none'; closeAllOverlays(); closeSideMenu(); closeSettingsPopup();
-             if (camera && ball) { const camY = ball.position.y + cameraVerticalOffset; const lookY = ball.position.y + cameraLookAtOffset; camera.position.set(0, camY, camera.position.z); camera.lookAt(0, lookY, 0); }
-             gameState = 'playing'; setInternalPause(false); console.log("Reset complete:", gameState); setTimeout(onWindowResize, 50);
+
+
+        function handleWatchAdForSave() {
+            if (gameState !== 'gameOver' || !telegramUserId || currentScore <= 0) return;
+
+             if (typeof show_9292240 !== 'function') {
+                console.error("Original Ad SDK function 'show_9292240' not found for Game Over Save Ad.");
+                 try{window.Telegram.WebApp.showAlert("Ad service not ready. Score cannot be saved via Ad.");}catch(e){alert("Ad service not ready.");}
+                return;
+            }
+
+            console.log("Watch Ad & Save clicked (Using show_9292240).");
+            if (restartButton) restartButton.disabled = true;
+            if (watchAdButton) watchAdButton.disabled = true;
+            gameOverMessageP.textContent = `Loading Ad to Save Score...`; // Temporarily change message
+
+            show_9292240().then(() => {
+                 console.log("Ad watched successfully (Game Over Save - show_9292240). Saving score...");
+                 updateUserTotalScore(currentScore).then(() => {
+                     console.log("Score save OK via Ad.");
+                     gameOverMessageP.textContent = `Score Saved!`; // Update message on success
+                     if (restartButton) restartButton.disabled = false;
+                     if (watchAdButton) watchAdButton.style.display = 'none'; // Hide after use
+                 }).catch((error) => {
+                     console.error("Failed score save after Ad:", error);
+                     // Restore original message on failure
+                     const originalReason = gameOverMessageP.innerHTML.split('<br>')[0]; // Attempt to get reason if possible
+                     gameOverMessageP.innerHTML = `${originalReason || 'Error saving'}<br>Score: <span id="final-score">${formatNumber(currentScore)}</span>`;
+                     if (restartButton) restartButton.disabled = false;
+                     if (watchAdButton) { // Re-enable on failure if it was shown
+                        watchAdButton.disabled = false;
+                        watchAdButton.style.display = 'block';
+                     }
+                     if (adTimerIntervalId) { clearInterval(adTimerIntervalId); adTimerIntervalId = null; } // Clean up just in case
+                 });
+            }).catch((error) => {
+                 console.error("Ad failed to show (Game Over Save - show_9292240):", error);
+                 try{window.Telegram.WebApp.showAlert("Ad failed to load or was skipped. Score not saved.");}catch(e){alert("Ad failed or skipped.");}
+                  // Restore original game over message including reason
+                  const reason = gameOverMessageP.innerHTML.includes('<br>') ? gameOverMessageP.innerHTML.split('<br>')[0] : "Game Over!"; // Extract reason if available
+                  gameOverMessageP.innerHTML = `${reason}<br>Score: <span id="final-score">${formatNumber(currentScore)}</span>`;
+                 if (restartButton) restartButton.disabled = false;
+                 if (watchAdButton) { // Re-enable on failure
+                    watchAdButton.disabled = false;
+                    watchAdButton.style.display = 'block';
+                 }
+            });
         }
 
+        function startShake(intensity) { shakeIntensity = Math.max(shakeIntensity, intensity); }
 
         // --- Input Handling ---
         function onPointerDown(e){
-            let target = e.target; let isUI = false;
-            // Added check for rewarded ad item click
-            if (headerBar.contains(target) || (sideMenu.classList.contains('open') && sideMenu.contains(target)) || (menuOverlayDimmer.classList.contains('visible') && target === menuOverlayDimmer) || (settingsPopup.style.display === 'block' && settingsPopup.contains(target)) || (profileOverlay.style.display === 'flex' && profileOverlay.contains(target)) || (withdrawalOverlay.style.display === 'flex' && withdrawalOverlay.contains(target)) || (friendsOverlay.style.display === 'flex' && friendsOverlay.contains(target)) || (tasksOverlay.style.display === 'flex' && tasksOverlay.contains(target)) || (rewardedTasksOverlay.style.display === 'flex' && rewardedTasksOverlay.contains(target)) || (gameOverUI.style.display === 'block' && gameOverUI.contains(target)) || target.closest('.icon-button') || target.closest('button') || target.closest('a') || target.closest('input') || target.closest('.theme-switch') || target.closest('#referral-list-container') || target.closest('.rewarded-ad-item')) { isUI = true; }
-            if (target === renderer?.domElement && gameState === 'playing' && !isAnyUIOverlayOpen()) { isUI = false; } else if (target === renderer?.domElement) { isUI = true; }
-            if (isUI || gameState !== 'playing') { isPointerDown = false; return; } isPointerDown = true; previousPointerX = e.clientX ?? e.touches?.[0]?.clientX; if (previousPointerX === undefined) { isPointerDown = false; return; } document.body.style.cursor = 'grabbing'; if (e.cancelable && e.touches && gameContainer.contains(target)) { e.preventDefault(); }
+             let target = e.target; let isUI = false;
+              // Check if the click is on any UI element that should block game input
+              if (headerBar.contains(target) ||
+                  (sideMenu.classList.contains('open') && sideMenu.contains(target)) ||
+                  (menuOverlayDimmer.classList.contains('visible') && target === menuOverlayDimmer) ||
+                  (settingsPopup.style.display === 'block' && settingsPopup.contains(target)) ||
+                  (profileOverlay.style.display === 'flex' && profileOverlay.contains(target)) ||
+                  (withdrawalOverlay.style.display === 'flex' && withdrawalOverlay.contains(target)) ||
+                  (friendsOverlay.style.display === 'flex' && friendsOverlay.contains(target)) ||
+                  (tasksOverlay.style.display === 'flex' && tasksOverlay.contains(target)) ||
+                  (gameOverUI.style.display === 'block' && gameOverUI.contains(target)) ||
+                  (startGameModal.style.display === 'block' && startGameModal.contains(target)) ||
+                  (initialControlsContainer && !initialControlsContainer.classList.contains('hidden') && initialControlsContainer.contains(target)) ||
+                  target.closest('.icon-button') || target.closest('button') || target.closest('a') || target.closest('input') || target.closest('select') || target.closest('.theme-switch') || target.closest('#referral-list-container')
+             ) { isUI = true; }
+
+             // Allow pointer down on canvas ONLY if game is actively playing and not paused
+             if (target === renderer?.domElement && gameState === 'playing' && isTimedGameActive && !internalPauseState) {
+                 isUI = false;
+             } else if (target === renderer?.domElement) { // Block canvas clicks otherwise
+                 isUI = true;
+             }
+
+             if (isUI) {
+                 isPointerDown = false; // Don't track pointer if it's a UI click
+                 return;
+             }
+
+             // If it's not a UI click and game is playable, start tracking
+             isPointerDown = true;
+             previousPointerX = e.clientX ?? e.touches?.[0]?.clientX;
+             if (previousPointerX === undefined) { isPointerDown = false; return; } // Handle case where coordinates aren't available
+             document.body.style.cursor = 'grabbing';
+
+             // Prevent default only for touch events on the game container to allow scrolling elsewhere
+             if (e.cancelable && e.touches && gameContainer.contains(target)) {
+                 e.preventDefault();
+             }
+         }
+        function onPointerMove(e){
+             if (!isPointerDown || gameState !== 'playing' || !isTimedGameActive || internalPauseState) return; // Only rotate during active gameplay
+             const currentX = e.clientX ?? e.touches?.[0]?.clientX; if (currentX === undefined) return; const deltaX = currentX - previousPointerX; if (platformGroup) { platformGroup.rotation.y += deltaX * rotationSensitivity; } previousPointerX = currentX;
+             // Prevent default for touchmove on the game container
+             if (e.cancelable && e.touches && gameContainer.contains(e.target)) {
+                e.preventDefault();
+             }
         }
-        function onPointerMove(e){ if (!isPointerDown || internalPauseState || gameState !== 'playing') return; const currentX = e.clientX ?? e.touches?.[0]?.clientX; if (currentX === undefined) return; const deltaX = currentX - previousPointerX; if (platformGroup) { platformGroup.rotation.y += deltaX * rotationSensitivity; } previousPointerX = currentX; if (e.cancelable && e.touches) { e.preventDefault(); } }
-        function onPointerUp(e){ if (isPointerDown) { isPointerDown = false; document.body.style.cursor = 'default'; } }
+        function onPointerUp(e){ if (isPointerDown) { isPointerDown = false; document.body.style.cursor = 'default'; } } // Reset pointer state and cursor
 
         // --- Window Resize ---
-        function onWindowResize() { if (!camera || !renderer || !gameContainer || !composer) return; const w = gameContainer.clientWidth; const h = gameContainer.clientHeight; if (w > 0 && h > 0) { camera.aspect = w / h; camera.updateProjectionMatrix(); renderer.setSize(w, h); composer.setSize(w, h); } }
+        function onWindowResize() {
+            if (!camera || !renderer || !gameContainer || !composer) return;
+            const w = window.innerWidth;
+            const h = window.innerHeight;
+
+            if (w > 0 && h > 0) {
+                camera.aspect = w / h;
+                camera.updateProjectionMatrix();
+                renderer.setSize(w, h);
+                composer.setSize(w, h);
+                // Update Telegram viewport info if available
+                try {
+                    if(window.Telegram?.WebApp) {
+                        // Optionally inform TG about the viewport size if needed by internal components
+                        // window.Telegram.WebApp.setViewportHeight(h); // Be careful with this, might cause issues
+                    }
+                } catch (e) {
+                    console.warn("Error accessing TG WebApp during resize:", e);
+                }
+            }
+        }
+
 
         // --- Camera Zoom ---
         function animateCameraZoom(targetZ, duration) { if (!camera || isCameraZooming) return; if (cameraZoomRequestId) cancelAnimationFrame(cameraZoomRequestId); isCameraZooming = true; const startZ = camera.position.z; const startTime = performance.now(); function step(now) { const elapsed = now - startTime; const prog = Math.min(elapsed / duration, 1); const ease = t => t * (2 - t); const newZ = startZ + (targetZ - startZ) * ease(prog); camera.position.z = newZ; if (prog < 1) { cameraZoomRequestId = requestAnimationFrame(step); } else { camera.position.z = targetZ; isCameraZooming = false; cameraZoomRequestId = null; } } cameraZoomRequestId = requestAnimationFrame(step); }
@@ -998,16 +1563,77 @@
         // --- Animation Loop ---
         function animate() {
             requestAnimationFrame(animate); const dt = clock.getDelta();
-            if (gameState !== 'initializing' && gameState !== 'error') {
-                if (starField && starField.visible) starField.rotation.y += dt * 0.01;
-                let camY = camera ? camera.position.y : (initialBallY + cameraVerticalOffset);
-                let lookY = ball ? (ball.position.y + cameraLookAtOffset) : (initialBallY + cameraLookAtOffset);
-                if (!internalPauseState && gameState === 'playing') { updateBallPosition(); checkCollisions(); generatePlatforms(); updateFadingObjects(dt); if (ball) { ballPreviousY = ball.position.y; } }
-                if (ball && camera) { const targetCamY = ball.position.y + cameraVerticalOffset; const lerpedY = THREE.MathUtils.lerp(camera.position.y, targetCamY, cameraFollowLerpFactor); if (lerpedY < camera.position.y || (!internalPauseState && currentBallVelocityY > 0.01)) { camY = lerpedY; } else if (targetCamY < camera.position.y) { camY = targetCamY; } lookY = ball.position.y + cameraLookAtOffset; }
-                let shakeX = 0, shakeY = 0; if (shakeIntensity > 0.01) { shakeX = (Math.random() - 0.5) * 2 * maxShakeOffset * shakeIntensity; shakeY = (Math.random() - 0.5) * 2 * maxShakeOffset * shakeIntensity; if (!internalPauseState) { shakeIntensity *= shakeDecreaseFactor; } } else { shakeIntensity = 0; }
-                if (camera) { camera.position.y = camY + shakeY; camera.position.x = 0 + shakeX; camera.lookAt(0 + shakeX, lookY + shakeY, 0); }
-            }
-            if (composer) { composer.render(dt); } else if (renderer && scene && camera) { renderer.render(scene, camera); }
+
+             // Update background stars if visible
+             if (starField && starField.visible) starField.rotation.y += dt * 0.01;
+
+             // Update game physics and logic only when playing and not paused internally
+             if (gameState === 'playing' && isTimedGameActive && !internalPauseState) {
+                 updateBallPosition();
+                 checkCollisions();
+                 generatePlatforms();
+                 if (ball) { ballPreviousY = ball.position.y; } // Update previous Y after movement
+             }
+
+             // Update object fading (platforms/poles disappearing)
+             if (isTimedGameActive || gameState === 'gameOver') { // Allow fading during game over screen
+                 updateFadingObjects(dt);
+             }
+
+             // --- Camera Movement Logic ---
+             let camY = camera ? camera.position.y : (initialBallY + cameraVerticalOffset);
+             let lookY = ball ? (ball.position.y + cameraLookAtOffset) : (initialBallY + cameraLookAtOffset);
+
+             if (ball && camera && (gameState === 'playing' || gameState === 'gameOver')) {
+                 // Smoothly follow the ball downwards
+                 const targetCamY = ball.position.y + cameraVerticalOffset;
+                 const lerpedY = THREE.MathUtils.lerp(camera.position.y, targetCamY, cameraFollowLerpFactor);
+
+                 // Follow downwards smoothly, but snap upwards instantly if ball bounces high
+                 // Or if ball falls below camera view
+                 if (lerpedY < camera.position.y || (!internalPauseState && currentBallVelocityY > 0.01 && isTimedGameActive)) {
+                     camY = lerpedY;
+                 } else if (targetCamY < camera.position.y) { // If ball falls below camera view quickly
+                     camY = targetCamY;
+                 }
+                 lookY = ball.position.y + cameraLookAtOffset; // Look slightly above the ball
+             } else if (camera && gameState === 'ready') {
+                 // Reset camera to starting position when ready
+                 camY = initialBallY + cameraVerticalOffset;
+                 lookY = initialBallY + cameraLookAtOffset;
+                 camera.position.y = camY;
+                 // camera.position.z is handled by handlePlayAgain/prepareGame
+                 camera.lookAt(0, lookY, 0);
+             }
+
+             // --- Camera Shake Logic ---
+             let shakeX = 0, shakeY = 0;
+             if (shakeIntensity > 0.01) {
+                 shakeX = (Math.random() - 0.5) * 2 * maxShakeOffset * shakeIntensity;
+                 shakeY = (Math.random() - 0.5) * 2 * maxShakeOffset * shakeIntensity;
+                 // Decrease shake only during active play
+                 if (gameState === 'playing' && isTimedGameActive && !internalPauseState) {
+                     shakeIntensity *= shakeDecreaseFactor;
+                 }
+             } else {
+                 shakeIntensity = 0; // Reset shake when intensity is low
+             }
+
+             // Apply camera position and lookAt, including shake
+             if (camera && gameState !== 'ready') {
+                 camera.position.y = camY + shakeY;
+                 camera.position.x = 0 + shakeX; // Apply shake to X
+                 camera.lookAt(0 + shakeX, lookY + shakeY, 0); // Apply shake to lookAt target
+             } else if (camera && gameState === 'ready') {
+                 // Ensure camera is steady in ready state
+                 camera.position.set(0, initialBallY + cameraVerticalOffset, camera.position.z);
+                 camera.lookAt(0, initialBallY + cameraLookAtOffset, 0);
+             }
+
+
+             // Render the scene
+            if (composer) { composer.render(dt); }
+            else if (renderer && scene && camera) { renderer.render(scene, camera); }
         }
 
         // --- Start ---
