@@ -1,14 +1,14 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Helix Point Drop - Telegram Mini App (Local Test)</title>
+    <title>Helix Point Drop - Telegram Mini App</title> <!-- Changed Title -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
-    <!-- REMOVED: Real Telegram Web App Script -->
+    <!-- Telegram Web App Script (Should be included when deploying) -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         /* --- Theming Variables --- */
         :root {
@@ -429,56 +429,7 @@
     <!-- Game Container -->
     <div id="game-container"> <canvas id="game-canvas"></canvas> </div>
 
-    <!-- *********************************************************** -->
-    <!-- * MOCK TELEGRAM OBJECT FOR LOCAL TESTING                  * -->
-    <!-- *********************************************************** -->
-    <script>
-        // WARNING: This is ONLY for local browser testing.
-        if (!window.Telegram) {
-            console.warn("Creating MOCK Telegram.WebApp object for testing. REMOVE THIS SCRIPT FOR PRODUCTION!");
-            window.Telegram = {
-                WebApp: {
-                    // Example with Referral ID (uncomment to test referral)
-                    // initData: "mockInitData_QUERYID=MOCKQUERYID&user=%7B%22id%22%3A112233445%2C%22first_name%22%3A%22New%22%2C%22last_name%22%3A%22Player%22%2C%22username%22%3A%22new_player_ref%22%2C%22language_code%22%3A%22en%22%2C%22is_premium%22%3Afalse%7D&auth_date=1678886400&hash=mockhashstring_new_ref&start_param=987654321", // Referrer ID: 987654321
-                    // Example without Referral ID
-                    initData: "mockInitData_QUERYID=MOCKQUERYID&user=%7B%22id%22%3A987654321%2C%22first_name%22%3A%22Mock%22%2C%22last_name%22%3A%22Tester%22%2C%22username%22%3A%22mock_tester_main%22%2C%22language_code%22%3A%22en%22%2C%22is_premium%22%3Afalse%7D&auth_date=1678886400&hash=mockhashstring_main",
-                    initDataUnsafe: {
-                        query_id: "MOCKQUERYID_MAIN",
-                        user: {
-                            id: 987654321, // Example User ID
-                            first_name: "Mock",
-                            last_name: "Tester",
-                            username: "mock_tester_main", // Example username
-                            language_code: "en",
-                            is_premium: false
-                        },
-                        // --- MOCK start_param for TESTING ---
-                         start_param: null, // Set to null/empty for normal launch
-                        // start_param: "123456789", // Uncomment to test referral flow (Referrer ID: 123456789)
-                        auth_date: Math.floor(Date.now() / 1000),
-                        hash: "mockhashstring_main"
-                    },
-                    version: "7.2", platform: "browser_mock_ref", colorScheme: "dark",
-                    themeParams: { bg_color: "#0a0a1a", text_color: "#ffffff", hint_color: "#aaaaaa", link_color: "#00cfde", button_color: "#00cfde", button_text_color: "#111122", secondary_bg_color: "#111122", },
-                    isExpanded: true, viewportHeight: window.innerHeight, viewportStableHeight: window.innerHeight - 50, headerColor: '#0a0a1a', backgroundColor: '#0a0a1a', isClosingConfirmationEnabled: false,
-                    ready: () => console.log("Mock Telegram.WebApp.ready() called"),
-                    expand: () => console.log("Mock Telegram.WebApp.expand() called"),
-                    onEvent: (eventType, callback) => { console.log(`Mock Telegram.WebApp.onEvent('${eventType}') registered`); },
-                    offEvent: (eventType, callback) => { console.log(`Mock Telegram.WebApp.offEvent('${eventType}') unregistered`); },
-                    sendData: (data) => { console.log(`Mock Telegram.WebApp.sendData called with:`, data); alert(`Mock Send Data: ${data}`); },
-                    close: () => { console.log("Mock Telegram.WebApp.close() called"); alert("Mock Close Requested"); },
-                    setHeaderColor: (color) => { console.log(`Mock Telegram.WebApp.setHeaderColor('${color}') called`); window.Telegram.WebApp.headerColor = color; },
-                    setBackgroundColor: (color) => { console.log(`Mock Telegram.WebApp.setBackgroundColor('${color}') called`); window.Telegram.WebApp.backgroundColor = color; },
-                    showAlert: (message) => { console.log(`Mock Telegram.WebApp.showAlert: ${message}`); alert(`TG Alert: ${message}`); },
-                    showConfirm: (message, callback) => { console.log(`Mock Telegram.WebApp.showConfirm: ${message}`); const result = confirm(`TG Confirm: ${message}`); if (callback) { callback(result); } },
-                }
-            };
-        }
-    </script>
-    <!-- *********************************************************** -->
-    <!-- * END OF MOCK TELEGRAM OBJECT SCRIPT                      * -->
-    <!-- *********************************************************** -->
-
+    <!-- REMOVED MOCK TELEGRAM OBJECT SCRIPT BLOCK -->
 
     <!-- Libraries & SDKs -->
     <script type="importmap">{ "imports": { "three": "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.min.js", "three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/" } }</script>
@@ -504,9 +455,9 @@
         const REWARDED_AD_TASKS_CONFIG = {
             'task_1': { title: "Watch video", reward: 50, limit: 50, icon: 'video', adType: 'rewardedInterstitial' },
             'task_2': { title: "Watch video", reward: 40, limit: 40, icon: 'video', adType: 'rewardedPopup' },
-            'task_3': { title: "Watch video", reward: 30, limit: 30, icon: 'video', adType: 'inAppInterstitial' }, // Using simulation for this type for now
-            'task_4': { title: "Watch video", reward: 20, limit: 20, icon: 'video', adType: 'simulation' }, // Placeholder
-            'task_5': { title: "Watch video", reward: 10, limit: 10, icon: 'video', adType: 'simulation' } // Placeholder
+            'task_3': { title: "Watch video", reward: 30, limit: 30, icon: 'video', adType: 'inAppInterstitial' },
+            'task_4': { title: "Watch video", reward: 20, limit: 20, icon: 'video', adType: 'rewardedInterstitial' }, // Changed from 'simulation' to match Task 1
+            'task_5': { title: "Watch video", reward: 10, limit: 10, icon: 'video', adType: 'inAppInterstitial' }  // Changed from 'simulation' to match Task 3
         };
 
 
@@ -826,14 +777,14 @@
 
             // Call the appropriate Ad SDK function based on config
             if (config.adType === 'rewardedInterstitial') {
-                 show_9292240().then(grantReward).catch(error => {
+                 show_929240().then(grantReward).catch(error => { // Note: Ensure show_9292240 is correct function name from SDK
                      console.error(`Rewarded Interstitial Ad SDK failed for task ${taskId}:`, error);
                      alert("Ad failed or skipped. No reward.");
                      const latestCount = currentUserAdTasks[taskId]?.completed || 0;
                      if (latestCount < config.limit) taskElement.classList.remove('disabled');
                  });
             } else if (config.adType === 'rewardedPopup') {
-                 show_9292240('pop').then(grantReward).catch(error => {
+                 show_929240('pop').then(grantReward).catch(error => { // Note: Ensure show_9292240 is correct function name from SDK
                      console.error(`Rewarded Popup Ad SDK failed for task ${taskId}:`, error);
                      alert("Ad failed or skipped. No reward.");
                      const latestCount = currentUserAdTasks[taskId]?.completed || 0;
@@ -845,7 +796,7 @@
                 // but ideally, this ad type isn't used for direct "click-to-reward".
                 console.warn("Using In-App Interstitial for a rewarded task. Reward might not be guaranteed by SDK.");
                 try {
-                    show_9292240({ type: 'inApp', inAppSettings: { frequency: 1, capping: 24, interval: 0, timeout: 0, everyPage: false } }); // Show immediately, once per 24h (adjust as needed)
+                    show_929240({ type: 'inApp', inAppSettings: { frequency: 1, capping: 24, interval: 0, timeout: 0, everyPage: false } }); // Note: Ensure show_9292240 is correct function name from SDK
                     console.log(`In-App Interstitial initiated for task ${taskId}. Simulating reward.`);
                     // Simulate reward after a short delay, assuming initiation means success for this task type
                     setTimeout(() => grantReward(), 500);
@@ -856,10 +807,11 @@
                      if (latestCount < config.limit) taskElement.classList.remove('disabled');
                 }
 
-            } else { // 'simulation' or other types
-                console.log(`Simulating ad for task ${taskId}`);
-                alert(`Simulating Ad Watch... (Task: ${config.title} - ${reward} Points)`);
-                setTimeout(grantReward, 1500); // Simulate success after delay
+            } else { // Should not happen with current config
+                console.error(`Unexpected adType '${config.adType}' for task ${taskId}`);
+                alert(`Configuration error for task: ${config.title}`);
+                 const latestCount = currentUserAdTasks[taskId]?.completed || 0;
+                 if (latestCount < config.limit) taskElement.classList.remove('disabled'); // Re-enable if error
             }
         }
 
@@ -873,23 +825,50 @@
         // --- Telegram Integration ---
         async function initializeTelegramIntegration() {
              hasProcessedReferral = false;
-             if (!window.Telegram?.WebApp) { console.error("MOCK Telegram WebApp object not found!"); alert("Initialization Error: Mock Telegram missing."); gameState = 'error'; setInternalPause(true); return Promise.reject("Mock Telegram Env Missing"); }
+             if (!window.Telegram?.WebApp) {
+                 console.error("Telegram WebApp object not found!");
+                 alert("Initialization Error: Could not load Telegram environment.");
+                 gameState = 'error';
+                 setInternalPause(true);
+                 return Promise.reject("TG Env Missing"); // Use a more generic error
+             }
              const tg = window.Telegram.WebApp;
              return new Promise(async (resolve, reject) => {
-                 tg.ready(); console.log("Mock TG Ready. Data:", tg.initDataUnsafe); tg.expand();
+                 tg.ready();
+                 console.log("TG Ready. Data:", tg.initDataUnsafe);
+                 tg.expand();
                  if (tg.initDataUnsafe?.user?.id) {
-                     telegramUserData = tg.initDataUnsafe.user; telegramUserId = telegramUserData.id;
-                     console.log("Mock TG User:", telegramUserId, telegramUserData);
-                     if(userIdOverlay) userIdOverlay.textContent=telegramUserId||'N/A';
-                     if(usernameOverlay) usernameOverlay.textContent=telegramUserData?.username?`@${telegramUserData.username}`:'(Not Set)';
+                     telegramUserData = tg.initDataUnsafe.user;
+                     telegramUserId = telegramUserData.id;
+                     console.log("TG User:", telegramUserId, telegramUserData);
+                     if(userIdOverlay) userIdOverlay.textContent = telegramUserId || 'N/A';
+                     if(usernameOverlay) usernameOverlay.textContent = telegramUserData?.username ? `@${telegramUserData.username}` : '(Not Set)';
                      initializeFirebaseApp();
                      if (db) {
-                         listenToUserData(telegramUserId); await resetGame();
-                         setTimeout(() => { onWindowResize(); animateCameraZoom(cameraZoomedInZ, cameraZoomDuration); resolve(); }, 100);
-                     } else { console.error("FB DB fail!"); gameState='error'; setInternalPause(true); alert("DB error."); reject("FB DB Error"); }
-                 } else { console.error("Mock TG user missing!"); gameState='error'; setInternalPause(true); alert("User info error (Mock)."); reject("Mock TG User Missing"); }
+                         listenToUserData(telegramUserId);
+                         await resetGame();
+                         setTimeout(() => {
+                             onWindowResize();
+                             animateCameraZoom(cameraZoomedInZ, cameraZoomDuration);
+                             resolve();
+                         }, 100);
+                     } else {
+                         console.error("FB DB fail!");
+                         gameState = 'error';
+                         setInternalPause(true);
+                         alert("Database connection error.");
+                         reject("FB DB Error");
+                     }
+                 } else {
+                     console.error("TG user info missing!");
+                     gameState = 'error';
+                     setInternalPause(true);
+                     alert("User information could not be retrieved.");
+                     reject("TG User Missing"); // Use a more generic error
+                 }
              });
          }
+
 
         // --- Core Game Initialization ---
         async function init() {
@@ -903,7 +882,7 @@
             createBall(); platformGroup = new THREE.Group(); scene.add(platformGroup); poleGroup = new THREE.Group(); scene.add(poleGroup);
             window.addEventListener('resize', onWindowResize, false); document.addEventListener('pointerdown', onPointerDown, { passive: false }); document.addEventListener('pointermove', onPointerMove, { passive: false }); document.addEventListener('pointerup', onPointerUp, false); document.addEventListener('pointerleave', onPointerUp, false);
             setupUIListeners();
-            try { await initializeTelegramIntegration(); console.log("TG/Mock Init OK."); } catch (e) { console.error("Init fail:", e); gameState = 'error'; setInternalPause(true); return; }
+            try { await initializeTelegramIntegration(); console.log("TG Init OK."); } catch (e) { console.error("Initialization failed:", e); gameState = 'error'; setInternalPause(true); /* Potentially show user-friendly error message */ return; }
             onWindowResize(); animate(); console.log("Init complete.");
         }
 
@@ -950,14 +929,14 @@
         // Game Over Ad Handler (uses the standard rewarded interstitial)
         function handleWatchAd() {
             if (gameState !== 'gameOver' || !telegramUserId || currentScore <= 0) return;
-            if (typeof show_9292240 !== 'function') { alert("Ad SDK not ready. Please try again later."); return; }
+             if (typeof show_9292240 !== 'function') { alert("Ad SDK not ready. Please try again later."); return; } // Ensure correct function name
 
             console.log("Watch Ad & Save clicked.");
             if (restartButton) restartButton.disabled = true;
             if (watchAdButton) watchAdButton.disabled = true;
             gameOverMessageP.textContent = `Loading Ad...`;
 
-            show_9292240().then(() => {
+            show_9292240().then(() => { // Ensure correct function name
                  console.log("Ad watched successfully (Game Over). Saving score...");
                  updateUserTotalScore(currentScore).then(() => {
                      console.log("Score save OK via Ad.");
