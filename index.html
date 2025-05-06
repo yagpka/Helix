@@ -1291,31 +1291,42 @@
         // --- Telegram Integration ---
         async function initializeTelegramIntegration() {
              hasProcessedReferral = false;
-             if (!window.Telegram?.WebApp) {
-                 console.error("Telegram WebApp object not found! Game cannot function.");
-                 // REMOVED Mock Check
-                 alert("Initialization Error: Critical Telegram object missing.");
-                 gameState = 'error'; setInternalPause(true);
-                 return Promise.reject("Telegram Env Missing");
+             // REMOVED Mock Check - Now Directly Checks for Real Object
+             if (typeof window.Telegram === 'undefined' || typeof window.Telegram.WebApp === 'undefined') {
+                 console.error("FATAL: window.Telegram.WebApp object not found! Ensure telegram-web-app.js is loaded and the app is running in Telegram environment.");
+                 alert("Initialization Error: Cannot connect to Telegram.");
+                 gameState = 'error';
+                 setInternalPause(true);
+                 updateTotalScoreUI("TG Error"); // Indicate Telegram-specific error
+                 updateReferralCountUI("TG Error");
+                 return Promise.reject("Telegram Environment Missing or Not Ready"); // Reject the promise
              }
-             const tg = window.Telegram.WebApp;
 
-             return new Promise(async (resolve, reject) => {
-                 tg.ready(); console.log("TG Ready. Data:", tg.initDataUnsafe); tg.expand();
+             const tg = window.Telegram.WebApp;
+             console.log("Telegram WebApp object found:", tg); // Log that the object exists
+
+             // Wrap the rest in a try...catch for safety
+             try {
+                 tg.ready(); // Signal to Telegram that the app is ready
+                 console.log("Telegram.WebApp.ready() called.");
+                 tg.expand(); // Request app expansion
+                 console.log("Telegram.WebApp.expand() called.");
+                 console.log("Raw initDataUnsafe:", tg.initDataUnsafe); // Log the raw data
 
                  if (tg.initDataUnsafe?.user?.id) {
                      telegramUserData = tg.initDataUnsafe.user;
                      telegramUserId = telegramUserData.id; // Store as number
-                     console.log("TG User:", telegramUserId, telegramUserData);
+                     console.log("TG User Data:", telegramUserData);
+                     console.log("Extracted TG User ID:", telegramUserId);
 
                      // Update profile overlay immediately
-                     if(userIdOverlay) userIdOverlay.textContent = telegramUserId.toString(); // Convert ID to string for display
-                     if(usernameOverlay) usernameOverlay.textContent = telegramUserData?.username ? `@${telegramUserData.username}` : '(Not Set)';
+                     if (userIdOverlay) userIdOverlay.textContent = telegramUserId.toString();
+                     if (usernameOverlay) usernameOverlay.textContent = telegramUserData?.username ? `@${telegramUserData.username}` : '(Not Set)';
 
-                     // Initialize Supabase
+                     // Initialize Supabase (Only if TG init succeeded)
                      if (!initializeSupabaseClient()) {
-                         reject("Supabase Init Failed");
-                         return;
+                         // Error handled within initializeSupabaseClient
+                         return Promise.reject("Supabase Init Failed");
                      }
 
                      // Fetch/Create user in Supabase and get initial data
@@ -1329,19 +1340,35 @@
                          showInitialControls();
                          updateScoreUI();
                          updateReferralLinkUI(telegramUserId); // Generate referral link
-                         setTimeout(() => { onWindowResize(); resolve(); }, 100);
+                         // Removed the timeout, rely on DOMContentLoaded and script execution order
+                         onWindowResize(); // Call resize immediately after setup
+                         return Promise.resolve(); // Resolve the promise on success
                      } else {
-                         reject("User Fetch/Init Failed");
+                         // Error handled within fetchAndInitializeUser
+                         return Promise.reject("User Fetch/Init Failed");
                      }
 
                  } else {
-                     console.error("TG user ID missing!");
-                     gameState='error'; setInternalPause(true);
+                     console.error("Telegram User ID missing in initDataUnsafe!");
+                     console.error("Full initDataUnsafe:", tg.initDataUnsafe); // Log the problematic data
+                     gameState = 'error';
+                     setInternalPause(true);
                      alert("User information error. Cannot initialize.");
-                     reject("TG User Missing");
+                     updateTotalScoreUI("TG Data Err"); // More specific error
+                     updateReferralCountUI("TG Data Err");
+                     return Promise.reject("Telegram User ID Missing"); // Reject the promise
                  }
-             });
+             } catch (error) {
+                 console.error("Error during Telegram initialization process:", error);
+                 gameState = 'error';
+                 setInternalPause(true);
+                 alert("A critical error occurred during startup.");
+                 updateTotalScoreUI("Init Fail");
+                 updateReferralCountUI("Init Fail");
+                 return Promise.reject(error); // Reject the promise with the caught error
+             }
          }
+
 
         // --- Core Game Initialization ---
         async function init() {
@@ -1356,7 +1383,14 @@
             platformGroup = new THREE.Group(); scene.add(platformGroup); poleGroup = new THREE.Group(); scene.add(poleGroup);
             window.addEventListener('resize', onWindowResize, false); document.addEventListener('pointerdown', onPointerDown, { passive: false }); document.addEventListener('pointermove', onPointerMove, { passive: false }); document.addEventListener('pointerup', onPointerUp, false); document.addEventListener('pointerleave', onPointerUp, false);
             setupUIListeners();
-            try { await initializeTelegramIntegration(); console.log("TG/Supabase Init OK."); } catch (e) { console.error("Initialization failed:", e); gameState = 'error'; setInternalPause(true); /* Error already shown */ return; }
+            try {
+                 await initializeTelegramIntegration();
+                 console.log("TG/Supabase Init OK.");
+             } catch (e) {
+                 console.error("Initialization failed:", e);
+                 // gameState and UI updates are handled within initializeTelegramIntegration on failure
+                 return; // Stop further initialization
+             }
             onWindowResize(); animate(); console.log("Init complete. Ready for user to start.");
         }
 
@@ -1598,7 +1632,7 @@
         // --- Game Logic Functions ---
         function generatePlatforms() { if (!ball || !camera || internalPauseState || gameState !== 'playing' || !isTimedGameActive) return; const generationTriggerY = nextPlatformY + platformSpacingY * 8; while (ball.position.y < generationTriggerY && nextPlatformY > -1000) { createPlatform(nextPlatformY); createPoleSegment(nextPlatformY); nextPlatformY -= platformSpacingY; } const removalThresholdY_Above = camera.position.y + 15; activePlatforms.forEach(p => { if (p.position.y > removalThresholdY_Above && !p.userData.fadeOut) startFadeOut(p); }); for (const yPos in activePoleSegments) { const seg = activePoleSegments[yPos]; if (parseFloat(yPos) > removalThresholdY_Above && seg && !seg.userData.fadeOut) startFadeOut(seg); } }
         function updateBallPosition() { if (!ball || internalPauseState || gameState !== 'playing' || !isTimedGameActive) return; currentBallVelocityY += gravity; ball.position.y += currentBallVelocityY; ball.position.x = ballStartX; ball.position.z = ballStartZ; if (ball.position.y < nextPlatformY - platformSpacingY * 5) { handleGameOver("Fell Off!"); } }
-        function disposePlatformSegments(platform) { if (!platform) return; platform.traverse(object => { if (object.isMesh) { if (object.geometry) object.geometry.dispose(); if (object.material) { ['map', 'emissiveMap', 'aoMap', 'metalnessMap', 'roughnessMap', 'normalMap', 'displacementMap', 'alphaMap', 'envMap'].forEach(prop => { if (object.material[prop]?.dispose) object.material[prop].dispose(); }); if (Array.isArray(object.material)) { object.material.forEach(m => m.dispose()); } else { object.material.dispose(); } } } } }); if (platform.parent) platform.parent.remove(platform); }
+        function disposePlatformSegments(platform) { if (!platform) return; platform.traverse(object => { if (object.isMesh) { if (object.geometry) object.geometry.dispose(); if (object.material) { ['map', 'emissiveMap', 'aoMap', 'metalnessMap', 'roughnessMap', 'normalMap', 'displacementMap', 'alphaMap', 'envMap'].forEach(prop => { if (object.material[prop]?.dispose) object.material[prop].dispose(); }); if (Array.isArray(object.material)) { object.material.forEach(m => m.dispose()); } else { object.material.dispose(); } } } }); if (platform.parent) platform.parent.remove(platform); }
         function disposePoleSegment(yPos) { const segment = activePoleSegments[yPos]; if (segment) { if (segment.geometry) segment.geometry.dispose(); if (segment.material) segment.material.dispose(); if (segment.parent) segment.parent.remove(segment); delete activePoleSegments[yPos]; return true; } return false; }
         function startFadeOut(object) { if (!object || !object.userData || object.userData.fadeOut) return; object.userData.fadeOut = true; object.userData.fadeProgress = 0; }
         function destroyPlatformAndPole(platform) {
