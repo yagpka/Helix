@@ -933,14 +933,26 @@
         // --- Announcement Popup ---
         function showAnnouncementPopup() {
              if (!announcementPopupEl) return;
-             const announcementText = "Welcome to Helix Point Drop! Follow our channel for updates. Withdrawals coming soon!";
-             announcementMessageEl.textContent = announcementText;
+
+             const popupTitleText = "🚀 TON CARNIVAL INCOMING! 🚀";
+             const popupMessageText = "We need YOUR help to hit our global goal of 550 players to launch the event & unlock TON rewards! Complete your requirements and refer as many users to unlock the event faster. Check our Telegram group or the event page for all details!";
+
+             const popupTitleElement = announcementPopupEl.querySelector('h2');
+             if (popupTitleElement) {
+                 popupTitleElement.innerHTML = popupTitleText; // Using innerHTML for emojis
+             }
+
+             if (announcementMessageEl) {
+                announcementMessageEl.innerHTML = popupMessageText; // Using innerHTML for emojis and potential future HTML
+             }
+             
              announcementFollowButtonEl.href = TELEGRAM_CHANNEL_URL;
+
              closeAllOverlays(announcementPopupEl);
              hideInitialControls();
              announcementPopupEl.style.display = 'block';
              pauseGameForUI();
-             console.log("Announcement popup shown");
+             console.log("Announcement popup shown with TON Carnival message");
          }
         function hideAnnouncementPopup() {
             if (!announcementPopupEl) return;
