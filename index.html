@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Helix Point Drop - Telegram Mini App</title> <!-- Removed (Supabase Debug) for production feel -->
+    <title>Helix Point Drop - Telegram Mini App (Supabase Debug)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
@@ -44,6 +44,8 @@
             --bg-accordion-header-hover: rgba(255, 255, 255, 0.1);
             --bg-accordion-content: rgba(255, 255, 255, 0.02);
             --bg-history-item: rgba(255, 255, 255, 0.04);
+            --bg-leaderboard-item: rgba(255, 255, 255, 0.04);
+            --bg-my-rank-section: rgba(255, 255, 255, 0.06);
 
 
             --text-light: #ffffff;
@@ -63,6 +65,9 @@
             --text-history-status-pending: var(--accent-yellow);
             --text-history-status-completed: #4CAF50;
             --text-history-status-rejected: var(--accent-pink);
+            --text-leaderboard-rank: var(--accent-cyan);
+            --text-leaderboard-username: var(--text-light);
+            --text-leaderboard-score: var(--text-medium);
 
 
             --border-color: rgba(255, 255, 255, 0.15);
@@ -76,6 +81,8 @@
             --border-withdrawal-section: rgba(255, 255, 255, 0.1);
             --border-accordion: rgba(255, 255, 255, 0.1);
             --border-history-item: rgba(255, 255, 255, 0.08);
+            --border-leaderboard-item: rgba(255, 255, 255, 0.08);
+            --border-my-rank-section: rgba(255, 255, 255, 0.1);
 
 
             --shadow-color: rgba(0, 0, 0, 0.4);
@@ -144,6 +151,8 @@
             --bg-accordion-header-hover: rgba(0, 0, 0, 0.06);
             --bg-accordion-content: rgba(0,0,0,0.01);
             --bg-history-item: rgba(0, 0, 0, 0.02);
+            --bg-leaderboard-item: rgba(0, 0, 0, 0.02);
+            --bg-my-rank-section: rgba(0, 0, 0, 0.04);
 
 
             --text-light: #212121;
@@ -163,6 +172,9 @@
             --text-history-status-pending: var(--accent-yellow-hover);
             --text-history-status-completed: #45a049;
             --text-history-status-rejected: var(--accent-pink-hover);
+            --text-leaderboard-rank: var(--accent-cyan-hover);
+            --text-leaderboard-username: var(--text-light);
+            --text-leaderboard-score: var(--text-medium);
 
             --border-color: rgba(0, 0, 0, 0.1);
             --border-input: rgba(0, 0, 0, 0.15);
@@ -175,6 +187,8 @@
             --border-withdrawal-section: rgba(0, 0, 0, 0.1);
             --border-accordion: rgba(0, 0, 0, 0.1);
             --border-history-item: rgba(0, 0, 0, 0.05);
+            --border-leaderboard-item: rgba(0, 0, 0, 0.05);
+            --border-my-rank-section: rgba(0, 0, 0, 0.08);
 
 
             --shadow-color: rgba(0, 0, 0, 0.1);
@@ -226,7 +240,7 @@
             100% { left: 100%; width: 40%; }
         }
 
-        #header-bar, #side-menu, #settings-popup, .fullscreen-overlay, .modal, input, button, a.link-button, .score-display, h2, h3, p, #game-canvas, .task-group, .task-item, #referral-list-container, #referral-link-container, #initial-controls-container, #header-timer-display, select, .difficulty-button, .withdrawal-accordion-item, .withdrawal-accordion-header, .withdrawal-accordion-content, .history-item {
+        #header-bar, #side-menu, #settings-popup, .fullscreen-overlay, .modal, input, button, a.link-button, .score-display, h2, h3, p, #game-canvas, .task-group, .task-item, #referral-list-container, #referral-link-container, #initial-controls-container, #header-timer-display, select, .difficulty-button, .withdrawal-accordion-item, .withdrawal-accordion-header, .withdrawal-accordion-content, .history-item, .leaderboard-item, .my-rank-section, .leaderboard-tabs, .leaderboard-tab-button, .leaderboard-tab-content, .leaderboard-list-container {
             transition: background-color var(--transition-speed) var(--transition-timing),
                          color var(--transition-speed) var(--transition-timing),
                          border-color var(--transition-speed) var(--transition-timing),
@@ -326,7 +340,8 @@
         .task-item .link-button.submit-link:hover { background-color: var(--bg-button-special-hover); }
         #sponsor-contact-button { display: block; width: fit-content; margin: 10px auto 0 auto; padding: 10px 20px; }
 
-        #withdrawal-overlay .overlay-content { gap: 0; padding: 15px; }
+        #withdrawal-overlay .overlay-content,
+        #events-airdrop-overlay .overlay-content { gap: 0; padding: 15px; }
         .withdrawal-accordion-item { width: 100%; margin-bottom: 10px; border: 1px solid var(--border-accordion); border-radius: 8px; overflow: hidden; background-color: var(--bg-withdrawal-section); }
         .withdrawal-accordion-header { padding: 15px 20px; background-color: var(--bg-accordion-header); color: var(--text-accordion-header); font-size: 1.2em; font-weight: 700; cursor: pointer; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid transparent; }
         .withdrawal-accordion-header:hover { background-color: var(--bg-accordion-header-hover); }
@@ -380,6 +395,31 @@
         .referral-item { display: flex; align-items: center; justify-content: space-between; background-color: var(--bg-link-button); padding: 10px 15px; border-radius: 6px; border: 1px solid var(--border-link-button); }
         .referral-item span { font-size: 1em; color: var(--text-medium); flex-grow: 1; margin-right: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
+        /* Leaderboard Styles */
+        #leaderboard-overlay .overlay-content { padding: 15px; gap: 0; }
+        .leaderboard-tabs { display: flex; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); }
+        .leaderboard-tab-button { flex-grow: 1; padding: 12px 15px; background: none; border: none; color: var(--text-medium); font-size: 1.1em; font-weight: 600; cursor: pointer; transition: color 0.2s ease, border-bottom-color 0.2s ease; border-bottom: 3px solid transparent; text-transform: uppercase; letter-spacing: 0.5px;}
+        .leaderboard-tab-button.active { color: var(--accent-cyan); border-bottom-color: var(--accent-cyan); }
+        .leaderboard-tab-button:hover:not(.active) { color: var(--text-light); }
+        .leaderboard-tab-content { display: none; animation: fadeInOverlay 0.3s ease-out; }
+        .leaderboard-tab-content.active { display: block; }
+        .my-rank-section { background-color: var(--bg-my-rank-section); padding: 12px 18px; border-radius: 8px; margin-bottom: 20px; text-align: center; border: 1px solid var(--border-my-rank-section); }
+        .my-rank-section p { margin: 0; font-size: 1em; color: var(--text-light); }
+        .my-rank-section p .rank-label { font-size: 0.8em; color: var(--text-medium); display: block; margin-bottom: 3px; text-transform: uppercase;}
+        .my-rank-section strong { color: var(--accent-yellow); font-size: 1.4em; display: inline-block; margin-right: 5px;}
+        .my-rank-section .rank-value { font-size: 1.2em; color: var(--text-light); }
+
+        .leaderboard-list-container { width: 100%; max-height: 350px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 8px; background-color: rgba(0,0,0,0.1); padding: 10px; scrollbar-width: thin; scrollbar-color: var(--accent-cyan) rgba(0,0,0,0.1); }
+        .leaderboard-list-container::-webkit-scrollbar { width: 6px; }
+        .leaderboard-list-container::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); border-radius: 3px;}
+        .leaderboard-list-container::-webkit-scrollbar-thumb { background-color: var(--accent-cyan); border-radius: 3px; }
+        .leaderboard-list { display: flex; flex-direction: column; gap: 8px; }
+        .leaderboard-item { display: flex; align-items: center; background-color: var(--bg-leaderboard-item); padding: 10px 15px; border-radius: 6px; border: 1px solid var(--border-leaderboard-item); }
+        .leaderboard-item .rank-number { font-size: 1em; font-weight: 700; color: var(--text-leaderboard-rank); min-width: 35px; text-align: left; }
+        .leaderboard-item .username-display { font-size: 1em; color: var(--text-leaderboard-username); flex-grow: 1; margin: 0 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .leaderboard-item .score-value { font-size: 1em; font-weight: 600; color: var(--text-leaderboard-score); white-space: nowrap; }
+
+
         #game-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; order: -1; z-index: 1; }
         #game-canvas { display: block; width: 100%; height: 100%; image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges; }
 
@@ -395,7 +435,6 @@
         .modal-button.boost-button:hover:not(:disabled) { background-color: var(--bg-button-watch-ad-hover); }
         .modal-button.special-button { background-color: var(--bg-button-special); }
         .modal-button.special-button:hover:not(:disabled) { background-color: var(--bg-button-special-hover); }
-        /* Specific style for announcement popup button */
         #announcement-follow-button { display: inline-flex; align-items: center; text-decoration: none; }
         #announcement-follow-button svg { width: 18px; height: 18px; fill: currentColor; margin-right: 8px; }
 
@@ -409,7 +448,7 @@
         #watch-ad-button.game-over-button:hover:not(:disabled) { background-color: var(--bg-button-special-hover); }
 
         #start-game-modal h2 { margin-bottom: 25px; }
-        #start-game-modal p { display: none; } /* Kept hidden as per original, or adjust if needed */
+        #start-game-modal p { display: none; }
         #start-game-modal .modal-buttons { margin-top: 0; }
         #start-normal-button.modal-button { background-color: var(--bg-button-info); }
         #start-normal-button.modal-button:hover:not(:disabled) { background-color: var(--bg-button-info-hover); }
@@ -417,9 +456,6 @@
         #menu-overlay-dimmer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 399; display: none; opacity: 0; transition: opacity var(--transition-speed) ease-in-out; }
         #menu-overlay-dimmer.visible { display: block; opacity: 1; }
     </style>
-
-    <!-- Real Telegram Web Apps SDK -->
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
     <!-- Ad SDK (Keep this if you are using it) -->
     <script src='//whephiwums.com/sdk.js' data-zone='9292240' data-sdk='show_9292240'></script>
@@ -455,6 +491,8 @@
         <button class="menu-item-button" data-action="show-withdrawal">Withdrawal</button>
         <button class="menu-item-button" data-action="show-friends">Friends</button>
         <button class="menu-item-button" data-action="show-tasks">Tasks</button>
+        <button class="menu-item-button" data-action="show-events-airdrop">Events & Airdrops</button>
+        <button class="menu-item-button" data-action="show-leaderboard">Leaderboard</button>
     </div>
     <div id="menu-overlay-dimmer"></div>
 
@@ -521,11 +559,11 @@
                 <div class="withdrawal-accordion-content" id="withdrawal-form-content">
                     <div class="content-padding">
                         <div class="balance-display">
-                            <img src="ton_icon.svg" alt="TON" class="crypto-icon"> <!-- TODO: Replace with actual TON icon path -->
+                            <img src="ton_icon.svg" alt="TON" class="crypto-icon">
                             TON Balance: <strong id="actual-ton-balance-display">0.00000</strong>
                         </div>
                         <div class="balance-display">
-                            <img src="sol_icon.svg" alt="SOL" class="crypto-icon"> <!-- TODO: Replace with actual SOL icon path -->
+                            <img src="sol_icon.svg" alt="SOL" class="crypto-icon">
                             SOL Balance: <strong id="actual-sol-balance-display">0.000000</strong>
                         </div>
                         <hr style="border-color: var(--border-color); margin: 15px 0;">
@@ -573,7 +611,7 @@
         <div class="overlay-content">
             <div class="referral-info">
                 <p>Invite your <strong>friends</strong> using your unique referral link!</p>
-<p>For each reffered user you will get <strong>+1 point</strong> capped at <strong>9 points</strong></p>
+                <p>For each reffered user you will get <strong>+1 point</strong> capped at <strong>9 points</strong></p>
                  <div id="referral-link-container">
                      <span id="referral-link-display">Generating link...</span>
                      <button id="copy-referral-link-button">Copy</button>
@@ -583,6 +621,7 @@
             <div id="referral-list-container"><div id="referral-list"><p style="text-align: center; opacity: 0.7;">Loading referrals...</p></div></div>
         </div>
     </div>
+
     <div id="tasks-overlay" class="fullscreen-overlay">
          <button class="overlay-close-button" data-overlay-id="tasks-overlay">Close</button>
          <h2 class="overlay-title">Tasks</h2>
@@ -611,6 +650,166 @@
          </div>
      </div>
 
+    <div id="events-airdrop-overlay" class="fullscreen-overlay">
+        <button class="overlay-close-button" data-overlay-id="events-airdrop-overlay">Close</button>
+        <h2 class="overlay-title">Events & Airdrops</h2>
+        <div class="overlay-content">
+            <div class="withdrawal-accordion-item">
+                <div class="withdrawal-accordion-header" data-accordion-target="event-1-content">
+                    <span>🏆 Points Battle 🏆</span><span class="accordion-icon">&gt;</span>
+                </div>
+                <div class="withdrawal-accordion-content" id="event-1-content">
+                    <div class="content-padding">
+                        <p>Compete for the <strong>Top 100</strong> on the Points Leaderboard!</p>
+                        <ul>
+                            <li>🗓️ <strong>Concludes:</strong> 1st & 16th of every month.</li>
+                            <li>🎁 <strong>Rewards:</strong> Points (convertible to TON/SOL).</li>
+                            <li>🔄 <strong>Reset:</strong> All user points reset to 0 at the start of each cycle, giving everyone a fresh chance!</li>
+                            <li>💰 <strong>Prize Pool:</strong> <strong class="highlight">5,000,000 Points</strong> per cycle!
+                                <ul>
+                                    <li>1st Place: <em>1,000,000 Points</em></li>
+                                    <li>2nd Place: <em>750,000 Points</em></li>
+                                    <li>3rd Place: <em>500,000 Points</em></li>
+                                    <li>4th - 5th Place: <em>250,000 Points each</em></li>
+                                    <li>6th - 10th Place: <em>100,000 Points each</em></li>
+                                    <li>11th - 25th Place: <em>50,000 Points each</em></li>
+                                    <li>26th - 50th Place: <em>20,000 Points each</em></li>
+                                    <li>51st - 100th Place: <em>10,000 Points each</em></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="withdrawal-accordion-item">
+                <div class="withdrawal-accordion-header" data-accordion-target="event-2-content">
+                    <span>🤝 Referral Rally 🤝</span><span class="accordion-icon">&gt;</span>
+                </div>
+                <div class="withdrawal-accordion-content" id="event-2-content">
+                    <div class="content-padding">
+                        <p>Invite the most friends and climb the Referral Leaderboard!</p>
+                        <ul>
+                            <li>🗓️ <strong>Concludes:</strong> Beginning of each month.</li>
+                            <li>🎁 <strong>Rewards:</strong> TON cryptocurrency.</li>
+                            <li>💰 <strong>Prize Pool:</strong> <strong class="highlight">20 TON</strong> per month!
+                                <ul>
+                                    <li>1st Place: <em>5 TON</em></li>
+                                    <li>2nd Place: <em>3 TON</em></li>
+                                    <li>3rd Place: <em>2 TON</em></li>
+                                    <li>4th - 5th Place: <em>1 TON each</em></li>
+                                    <li>6th - 10th Place: <em>0.5 TON each</em></li>
+                                    <li>11th - 25th Place: <em>0.2 TON each</em></li>
+                                    <li>26th - 50th Place: <em>0.1 TON each</em></li>
+                                    <li>51st - 100th Place: <em>0.05 TON each</em></li>
+                                </ul>
+                            </li>
+                             <li>📜 <strong>Rules:</strong> Referrals must be genuine users. Suspicious activity may lead to disqualification.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="withdrawal-accordion-item">
+                <div class="withdrawal-accordion-header" data-accordion-target="event-3-content">
+                    <span>🎉 TON Carnival 🎉</span><span class="accordion-icon">&gt;</span>
+                </div>
+                <div class="withdrawal-accordion-content" id="event-3-content">
+                    <div class="content-padding">
+                        <p>Earn direct TON rewards while playing!</p>
+                        <ul>
+                            <li>🎟️ <strong>Entry:</strong> 10,000 Points & 5 Referrals required.</li>
+                            <li>🎁 <strong>Rewards (per game during event):</strong>
+                                <ul>
+                                    <li>Easy Mode: <strong>0.0005 TON</strong> per 7 platforms passed.</li>
+                                    <li>Medium Mode: <strong>0.0005 TON</strong> per 5 platforms passed.</li>
+                                    <li>Hard Mode: <strong>0.0005 TON</strong> per 3 platforms passed.</li>
+                                </ul>
+                            </li>
+                            <li>⏳ <strong>Duration:</strong> Conducted randomly each month or week. Stay active!</li>
+                            <li>❗ <strong>Note:</strong> Rewards are credited until you die or the timer ends for that game session.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="withdrawal-accordion-item">
+                <div class="withdrawal-accordion-header" data-accordion-target="event-4-content">
+                    <span>🎊 SOL Fiesta 🎊</span><span class="accordion-icon">&gt;</span>
+                </div>
+                <div class="withdrawal-accordion-content" id="event-4-content">
+                     <div class="content-padding">
+                        <p>Dive into the SOL Fiesta and earn SOL rewards!</p>
+                        <ul>
+                            <li>🎟️ <strong>Entry:</strong> 10,000 Points & 5 Referrals required.</li>
+                            <li>🎁 <strong>Rewards (per game during event):</strong>
+                                <ul>
+                                    <li>Easy Mode: <strong>0.00002 SOL</strong> per 7 platforms passed.</li>
+                                    <li>Medium Mode: <strong>0.00002 SOL</strong> per 5 platforms passed.</li>
+                                    <li>Hard Mode: <strong>0.00002 SOL</strong> per 3 platforms passed.</li>
+                                </ul>
+                            </li>
+                            <li>⏳ <strong>Duration:</strong> Starts randomly each month or week. Don't miss out!</li>
+                            <li>❗ <strong>Note:</strong> Rewards accrue until game over for that session.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="withdrawal-accordion-item">
+                <div class="withdrawal-accordion-header" data-accordion-target="event-5-content">
+                    <span>💎 ??? Coin Airdrop 💎</span><span class="accordion-icon">&gt;</span>
+                </div>
+                <div class="withdrawal-accordion-content" id="event-5-content">
+                    <div class="content-padding">
+                        <p>Get ready for the <strong class="highlight">BIGGEST AIRDROP YET!</strong></p>
+                        <ul>
+                            <li>🚀 <strong>Trigger:</strong> This massive event unlocks when our active userbase reaches <strong class="highlight">10,000 players!</strong></li>
+                            <li>🪙 <strong>Token:</strong> Our very own CryptoDrop native token!</li>
+                            <li>✨ <strong>Details:</strong> This will be a substantial airdrop. The more you engage, the better your potential reward. Specifics on eligibility and distribution will be announced as we get closer to the milestone. Spread the word!</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="withdrawal-accordion-item">
+                <div class="withdrawal-accordion-header" data-accordion-target="event-6-content">
+                    <span>🤫 Secret Event 🤫</span><span class="accordion-icon">&gt;</span>
+                </div>
+                <div class="withdrawal-accordion-content" id="event-6-content">
+                    <div class="content-padding">
+                        <p>Something exciting is brewing... Details will be announced soon! Keep playing and stay tuned to our official channels.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="leaderboard-overlay" class="fullscreen-overlay">
+        <button class="overlay-close-button" data-overlay-id="leaderboard-overlay">Close</button>
+        <h2 class="overlay-title">Leaderboard</h2>
+        <div class="overlay-content">
+            <div class="leaderboard-tabs">
+                <button class="leaderboard-tab-button active" data-tab="points">Points</button>
+                <button class="leaderboard-tab-button" data-tab="referrals">Referrals</button>
+            </div>
+
+            <div class="leaderboard-tab-content active" id="leaderboard-points-content">
+                <div class="my-rank-section" id="my-rank-points-section">
+                    <p><span class="rank-label">Your Points Rank</span> <strong id="user-points-rank-display">...</strong> (<span id="user-points-score-display">...</span> Pts)</p>
+                </div>
+                <div class="leaderboard-list-container" id="points-leaderboard-list-container">
+                    <div id="points-leaderboard-list"><p style="text-align: center; opacity: 0.7;">Loading points leaderboard...</p></div>
+                </div>
+            </div>
+
+            <div class="leaderboard-tab-content" id="leaderboard-referrals-content">
+                 <div class="my-rank-section" id="my-rank-referrals-section">
+                     <p><span class="rank-label">Your Referrals Rank</span> <strong id="user-referrals-rank-display">...</strong> (<span id="user-referrals-count-display">...</span> Refs)</p>
+                 </div>
+                 <div class="leaderboard-list-container" id="referrals-leaderboard-list-container">
+                     <div id="referrals-leaderboard-list"><p style="text-align: center; opacity: 0.7;">Loading referrals leaderboard...</p></div>
+                 </div>
+            </div>
+        </div>
+    </div>
+
+
     <div id="game-over-ui" class="modal">
         <h2>Game Over!</h2>
         <p id="game-over-message">Score: <span id="final-score">0</span></p>
@@ -629,8 +828,7 @@
         </div>
     </div>
 
-    <!-- Announcement Popup -->
-    <div id="announcement-popup" class="modal" style="display: none;"> <!-- Start hidden -->
+    <div id="announcement-popup" class="modal" style="display: none;">
         <h2>Announcement</h2>
         <p id="announcement-message">Important Announcement: [Details will be updated here]</p>
         <div class="modal-buttons" style="justify-content: center; gap: 10px;">
@@ -641,11 +839,10 @@
             <button id="announcement-close-button" class="modal-button">OK</button>
         </div>
     </div>
-    <!-- End Announcement Popup -->
 
     <div id="game-container"><canvas id="game-canvas"></canvas></div>
 
-    <div id="initial-controls-container" class="hidden"> <!-- Start hidden -->
+    <div id="initial-controls-container" class="hidden">
         <h3>Select Difficulty & Start</h3>
          <div id="difficulty-options">
              <button class="difficulty-button active" data-difficulty="easy">Easy</button>
@@ -655,10 +852,9 @@
          <button id="start-game-button">Start Game (1 Min)</button>
     </div>
 
-    <!--
-        REMOVED MOCK TELEGRAM SCRIPT BLOCK.
-        The real Telegram SDK is now included in the <head>.
-    -->
+    <!-- Real Telegram WebApp Script -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- Make sure the above script is included before your main app script -->
 
     <script type="importmap">{
         "imports": {
@@ -741,6 +937,8 @@
         const withdrawalOverlay = document.getElementById('withdrawal-overlay');
         const friendsOverlay = document.getElementById('friends-overlay');
         const tasksOverlay = document.getElementById('tasks-overlay');
+        const eventsAirdropOverlay = document.getElementById('events-airdrop-overlay');
+        const leaderboardOverlay = document.getElementById('leaderboard-overlay');
         const overlayCloseButtons = document.querySelectorAll('.overlay-close-button');
         const menuItemButtons = sideMenu.querySelectorAll('.menu-item-button');
         const themeToggleCheckbox = document.getElementById('theme-toggle-checkbox');
@@ -761,7 +959,7 @@
         const announcementMessageEl = document.getElementById('announcement-message');
         const announcementFollowButtonEl = document.getElementById('announcement-follow-button');
         const announcementCloseButtonEl = document.getElementById('announcement-close-button');
-        const withdrawalAccordionHeaders = document.querySelectorAll('#withdrawal-overlay .withdrawal-accordion-header');
+        const allAccordionHeaders = document.querySelectorAll('.withdrawal-accordion-header'); // Generic selector for all accordions
         const conversionPointsInput = document.getElementById('conversion-points-input');
         const conversionCryptoSelect = document.getElementById('conversion-crypto-select');
         const conversionExpectedAmountDisplay = document.getElementById('conversion-expected-amount');
@@ -774,6 +972,15 @@
         const withdrawExpectedAfterFeesDisplay = document.getElementById('withdraw-expected-after-fees');
         const withdrawMainButton = document.getElementById('withdraw-main-button');
         const withdrawalHistoryListDiv = document.getElementById('withdrawal-history-list');
+        const leaderboardTabButtons = leaderboardOverlay.querySelectorAll('.leaderboard-tab-button');
+        const leaderboardTabContents = leaderboardOverlay.querySelectorAll('.leaderboard-tab-content');
+        const userPointsRankDisplay = document.getElementById('user-points-rank-display');
+        const userPointsScoreDisplay = document.getElementById('user-points-score-display');
+        const pointsLeaderboardList = document.getElementById('points-leaderboard-list');
+        const userReferralsRankDisplay = document.getElementById('user-referrals-rank-display');
+        const userReferralsCountDisplay = document.getElementById('user-referrals-count-display');
+        const referralsLeaderboardList = document.getElementById('referrals-leaderboard-list');
+
 
         // --- Supabase & User State ---
         let supabase = null;
@@ -802,6 +1009,12 @@
         function parseColorHex(colorString) { if (colorString.startsWith('#')) { return parseInt(colorString.substring(1), 16); } console.warn(`Could not parse color hex: ${colorString}`); return 0xffffff; }
         function formatNumber(num) { try { if (typeof num !== 'number' && typeof num !== 'bigint' && typeof num !== 'string') return num; return BigInt(num).toLocaleString(); } catch (e) { console.warn("formatNumber error:", e, "Input:", num); return String(num); } }
         function maskUsername(username) { if (!username || username.length <= 3) return "***"; return username.substring(0, 3) + '*'.repeat(username.length - 3); }
+        function getDisplayUsername(user) {
+            if (user?.username) return `@${user.username}`;
+            if (user?.first_name) return user.first_name;
+            if (user?.telegram_id) return `User ${user.telegram_id.toString().slice(-4)}`;
+            return "User";
+        }
         function generateReferralLink(userId) { if (!userId) { console.warn("generateReferralLink called without a userId."); return "Link Unavailable"; } if (BOT_USERNAME === "Crypto_drop_ya_bot") { console.warn("Note: Your BOT_USERNAME is set to 'Crypto_drop_ya_bot'. Ensure this is correct."); } const appPath = MINI_APP_NAME ? `/${MINI_APP_NAME}` : ''; return `https://t.me/${BOT_USERNAME}${appPath}?startapp=${userId}`; }
         async function copyToClipboard(text) { if (!navigator.clipboard) { console.warn("Clipboard API missing"); return false; } try { await navigator.clipboard.writeText(text); return true; } catch (err) { console.error('Copy fail: ', err); return false; } }
         function formatTime(seconds) { if (typeof seconds !== 'number' || seconds < 0) seconds = 0; const mins = Math.floor(seconds / 60); const secs = Math.floor(seconds % 60); return `${mins}:${secs < 10 ? '0' : ''}${secs}`; }
@@ -831,13 +1044,27 @@
             calculateWithdrawalAfterFees();
         }
         function updateReferralLinkUI(userId) { if (referralLinkDisplay) referralLinkDisplay.textContent = generateReferralLink(userId); }
-        async function populateReferralListUI() { if (!referralList || !telegramUserId) return; referralList.innerHTML = '<p style="text-align: center; opacity: 0.7;">Loading referrals...</p>'; try { const { data, error } = await supabase.rpc('get_user_referrals', { p_user_id: telegramUserId }); if (error) { console.error("Error fetching referrals:", error); referralList.innerHTML = '<p style="text-align: center; color: var(--text-error);">Could not load referrals.</p>'; return; } referralList.innerHTML = ''; if (!data || data.length === 0) { referralList.innerHTML = '<p style="text-align: center; opacity: 0.7;">No referrals yet.</p>'; return; } data.forEach(ref => { const li = document.createElement('div'); li.className = 'referral-item'; const span = document.createElement('span'); const displayName = ref.ref_username ? maskUsername(ref.ref_username) : (ref.ref_first_name || 'User'); span.textContent = displayName; li.appendChild(span); referralList.appendChild(li); }); } catch(e) { console.error("Exception fetching referrals:", e); referralList.innerHTML = '<p style="text-align: center; color: var(--text-error);">Error loading referrals.</p>'; } }
+        async function populateReferralListUI() { if (!referralList || !telegramUserId) return; referralList.innerHTML = '<p style="text-align: center; opacity: 0.7;">Loading referrals...</p>'; try { const { data, error } = await supabase.rpc('get_user_referrals', { p_user_id: telegramUserId }); if (error) { console.error("Error fetching referrals:", error); referralList.innerHTML = '<p style="text-align: center; color: var(--text-error);">Could not load referrals.</p>'; return; } referralList.innerHTML = ''; if (!data || data.length === 0) { referralList.innerHTML = '<p style="text-align: center; opacity: 0.7;">No referrals yet.</p>'; return; } data.forEach(ref => { const li = document.createElement('div'); li.className = 'referral-item'; const span = document.createElement('span'); const displayName = ref.ref_username ? maskUsername(ref.ref_username) : (maskUsername(ref.ref_first_name) || 'User'); span.textContent = displayName; li.appendChild(span); referralList.appendChild(li); }); } catch(e) { console.error("Exception fetching referrals:", e); referralList.innerHTML = '<p style="text-align: center; color: var(--text-error);">Error loading referrals.</p>'; } }
 
         // --- Game State & UI Pause/Resume ---
         function setInternalPause(pause) { if (internalPauseState === pause) return; internalPauseState = pause; if (!pause && gameState === 'playing' && isTimedGameActive) { clock.getDelta(); } console.log("Internal Pause State:", internalPauseState); }
-        function isAnyUIOverlayOpen() { return sideMenu.classList.contains('open') || settingsPopup.style.display === 'block' || profileOverlay.style.display === 'flex' || withdrawalOverlay.style.display === 'flex' || friendsOverlay.style.display === 'flex' || tasksOverlay.style.display === 'flex' || gameOverUI.style.display === 'block' || startGameModal.style.display === 'block' || announcementPopupEl.style.display === 'block' || (initialControlsContainer && !initialControlsContainer.classList.contains('hidden')); }
+        function isAnyUIOverlayOpen() { return sideMenu.classList.contains('open') || settingsPopup.style.display === 'block' || profileOverlay.style.display === 'flex' || withdrawalOverlay.style.display === 'flex' || friendsOverlay.style.display === 'flex' || tasksOverlay.style.display === 'flex' || eventsAirdropOverlay.style.display === 'flex' || leaderboardOverlay.style.display === 'flex' || gameOverUI.style.display === 'block' || startGameModal.style.display === 'block' || announcementPopupEl.style.display === 'block' || (initialControlsContainer && !initialControlsContainer.classList.contains('hidden')); }
         function pauseGameForUI() { if (gameState === 'playing') { setInternalPause(true); console.log("Paused for UI (Physics/Input only)"); } }
-        function resumeGameFromUI() { if (!isAnyUIOverlayOpen()) { if (gameState === 'playing' && internalPauseState) { setInternalPause(false); console.log("Resumed from UI (Physics/Input only)"); } else if (gameState === 'ready') { showInitialControls(); } } }
+        function resumeGameFromUI() {
+            if (!isAnyUIOverlayOpen()) {
+                if (gameState === 'playing' && internalPauseState) {
+                    setInternalPause(false);
+                    console.log("Resumed from UI (Physics/Input only)");
+                } else if (gameState === 'ready') {
+                    if (initialControlsContainer.classList.contains('hidden') &&
+                        announcementPopupEl.style.display === 'none' &&
+                        loadingScreen.style.display === 'none') {
+                        showInitialControls();
+                    }
+                }
+            }
+        }
+
 
         // --- Supabase Functions ---
         function initializeSupabaseClient() { if (!SUPABASE_URL || !SUPABASE_ANON_KEY || SUPABASE_URL === 'YOUR_SUPABASE_URL') { console.error("Supabase URL or Anon Key is not configured."); alert("Service Configuration Error."); gameState = 'error'; setInternalPause(true); updateTotalScoreUI("Config Error"); updateReferralCountUI("Config Error"); if (loadingTextEl) loadingTextEl.textContent = "Service Configuration Error."; return false; } try { supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY); console.log("Supabase Client Initialized OK"); return true; } catch (e) { console.error("Supabase Client Init Failed:", e); alert("Service Initialization Error."); updateTotalScoreUI("Init Error"); updateReferralCountUI("Init Error"); gameState='error'; setInternalPause(true); if (loadingTextEl) loadingTextEl.textContent = "Service Initialization Error."; return false; } }
@@ -848,7 +1075,7 @@
                 console.log(`Fetching/Initializing user: ${tgUserId}`); if (loadingTextEl) loadingTextEl.textContent = "Verifying User...";
                 let { data: userData, error: fetchError } = await supabase
                     .from('users')
-                    .select('total_score, referral_count, referred_by, actual_ton_balance, actual_sol_balance')
+                    .select('total_score, referral_count, referred_by, actual_ton_balance, actual_sol_balance, first_name, username')
                     .eq('telegram_id', tgUserId)
                     .single();
 
@@ -868,7 +1095,7 @@
                 } else {
                     console.log(`User ${tgUserId} not found. Attempting to create.`); if (loadingTextEl) loadingTextEl.textContent = "Creating Profile...";
                     const newUserRecord = { telegram_id: tgUserId, username: tgUser?.username || null, first_name: tgUser?.first_name || 'User', first_seen_at: new Date().toISOString(), last_seen_at: new Date().toISOString(), actual_ton_balance: 0.0, actual_sol_balance: 0.0 };
-                    const { data: insertedData, error: insertError } = await supabase.from('users').insert(newUserRecord).select('total_score, referral_count, referred_by, actual_ton_balance, actual_sol_balance').single();
+                    const { data: insertedData, error: insertError } = await supabase.from('users').insert(newUserRecord).select('total_score, referral_count, referred_by, actual_ton_balance, actual_sol_balance, first_name, username').single();
                     if (insertError) { console.error("Error creating new user:", insertError); if (insertError.code === '42501') console.error("RLS policy might be blocking INSERT."); throw insertError; }
                     if (insertedData) {
                         console.log("New user created successfully:", insertedData); if (loadingTextEl) loadingTextEl.textContent = "Profile Created!";
@@ -887,7 +1114,7 @@
         async function updateUserScoreInBackend(pointsChange) {
             if (!supabase || !telegramUserId || typeof pointsChange !== 'number' || isNaN(pointsChange) || pointsChange === 0) {
                 console.warn("Invalid score update request (or zero change) to backend:", { supabase: !!supabase, telegramUserId, pointsChange });
-                return Promise.resolve(); // No actual update needed for zero or invalid
+                return Promise.resolve();
             }
             console.log(`Calling RPC increment_total_score for user ${telegramUserId} with points change ${pointsChange}`);
             const { error } = await supabase.rpc('increment_total_score', {
@@ -926,28 +1153,29 @@
              if (el === profileOverlay) updateTotalScoreUI(currentUserTotalScore);
              else if (el === friendsOverlay) { updateReferralCountUI(currentUserReferralCount); updateReferralLinkUI(telegramUserId); populateReferralListUI(); }
              else if (el === withdrawalOverlay) updateActualCryptoBalancesUI();
+             else if (el === eventsAirdropOverlay) { /* No specific action on show for now */ }
+             else if (el === leaderboardOverlay) populateLeaderboardUI();
          }
         function hideOverlay(el) { if(!el || el.style.display === 'none') return; el.style.display = 'none'; resumeGameFromUI(); }
-        function closeAllOverlays(exclude=null) { [profileOverlay, withdrawalOverlay, friendsOverlay, tasksOverlay, startGameModal, gameOverUI, announcementPopupEl].forEach(o => { if (o && o !== exclude && o.style.display !== 'none') o.style.display = 'none'; }); if (gameState === 'ready' && !isAnyUIOverlayOpen()) showInitialControls(); }
+        function closeAllOverlays(exclude=null) {
+            [profileOverlay, withdrawalOverlay, friendsOverlay, tasksOverlay, eventsAirdropOverlay, leaderboardOverlay, startGameModal, gameOverUI, announcementPopupEl].forEach(o => {
+                if (o && o !== exclude && o.style.display !== 'none') o.style.display = 'none';
+            });
+            // Only show initial controls if absolutely no other UI is meant to be visible AND game is ready
+            if (gameState === 'ready' && !isAnyUIOverlayOpen() && loadingScreen.style.display === 'none') {
+                 showInitialControls();
+            }
+        }
 
         // --- Announcement Popup ---
         function showAnnouncementPopup() {
              if (!announcementPopupEl) return;
-
-             const popupTitleText = " TON CARNIVAL INCOMING! ";
+             const popupTitleText = "🚀 TON CARNIVAL INCOMING! 🚀";
              const popupMessageText = "We need YOUR help to hit our global goal of 550 players to launch the event & unlock TON rewards! Complete your requirements and refer as many users to unlock the event faster. Check our Telegram group or the event page for all details!";
-
              const popupTitleElement = announcementPopupEl.querySelector('h2');
-             if (popupTitleElement) {
-                 popupTitleElement.innerHTML = popupTitleText; // Using innerHTML for emojis
-             }
-
-             if (announcementMessageEl) {
-                announcementMessageEl.innerHTML = popupMessageText; // Using innerHTML for emojis and potential future HTML
-             }
-             
+             if (popupTitleElement) popupTitleElement.innerHTML = popupTitleText;
+             if (announcementMessageEl) announcementMessageEl.innerHTML = popupMessageText;
              announcementFollowButtonEl.href = TELEGRAM_CHANNEL_URL;
-
              closeAllOverlays(announcementPopupEl);
              hideInitialControls();
              announcementPopupEl.style.display = 'block';
@@ -964,14 +1192,25 @@
             resumeGameFromUI();
         }
 
-        // --- Withdrawal Accordion & Forms ---
+        // --- Accordion (Reused for Withdrawal & Events/Airdrops) & Forms ---
         function toggleAccordion(headerElement) {
             console.log("toggleAccordion called for header:", headerElement.dataset.accordionTarget);
             const targetId = headerElement.dataset.accordionTarget;
             const contentElement = document.getElementById(targetId);
             if (!contentElement) { console.error("Accordion content element not found:", targetId); return; }
+
+            const parentOverlay = headerElement.closest('.fullscreen-overlay');
+            let currentAccordionHeaders = [];
+            if (parentOverlay === withdrawalOverlay) {
+                currentAccordionHeaders = withdrawalOverlay.querySelectorAll('.withdrawal-accordion-header');
+            } else if (parentOverlay === eventsAirdropOverlay) {
+                currentAccordionHeaders = eventsAirdropOverlay.querySelectorAll('.withdrawal-accordion-header');
+            }
+
+
             const isActive = headerElement.classList.contains('active');
-            withdrawalAccordionHeaders.forEach(otherHeader => {
+
+            currentAccordionHeaders.forEach(otherHeader => {
                 if (otherHeader !== headerElement) {
                     otherHeader.classList.remove('active');
                     const otherContent = document.getElementById(otherHeader.dataset.accordionTarget);
@@ -1208,6 +1447,103 @@
             }
         }
 
+        // --- Leaderboard Functions ---
+        function switchLeaderboardTab(targetTab) {
+            leaderboardTabButtons.forEach(button => button.classList.remove('active'));
+            leaderboardTabContents.forEach(content => content.classList.remove('active'));
+
+            leaderboardOverlay.querySelector(`.leaderboard-tab-button[data-tab="${targetTab}"]`).classList.add('active');
+            leaderboardOverlay.querySelector(`#leaderboard-${targetTab}-content`).classList.add('active');
+        }
+        async function populateLeaderboardUI() {
+            if (!leaderboardOverlay || !telegramUserId || !supabase) {
+                console.warn("Leaderboard UI or dependencies missing.");
+                if (pointsLeaderboardList) pointsLeaderboardList.innerHTML = '<p>Error loading leaderboard.</p>';
+                if (referralsLeaderboardList) referralsLeaderboardList.innerHTML = '<p>Error loading leaderboard.</p>';
+                return;
+            }
+
+            if (userPointsRankDisplay) userPointsRankDisplay.textContent = '...';
+            if (userPointsScoreDisplay) userPointsScoreDisplay.textContent = '...';
+            if (pointsLeaderboardList) pointsLeaderboardList.innerHTML = '<p style="text-align: center; opacity: 0.7;">Loading points leaderboard...</p>';
+            if (userReferralsRankDisplay) userReferralsRankDisplay.textContent = '...';
+            if (userReferralsCountDisplay) userReferralsCountDisplay.textContent = '...';
+            if (referralsLeaderboardList) referralsLeaderboardList.innerHTML = '<p style="text-align: center; opacity: 0.7;">Loading referrals leaderboard...</p>';
+
+            try {
+                const { data: userPointsRankData, error: userPointsRankError } = await supabase.rpc('get_user_rank_by_score', { p_user_id: telegramUserId });
+                if (userPointsRankError) throw userPointsRankError;
+                if (userPointsRankData && userPointsRankData.length > 0) {
+                    const rankInfo = userPointsRankData[0];
+                    if (userPointsRankDisplay) userPointsRankDisplay.textContent = `#${formatNumber(rankInfo.rank)}`;
+                    if (userPointsScoreDisplay) userPointsScoreDisplay.textContent = `${formatNumber(rankInfo.total_score)} Pts`;
+                } else {
+                     if (userPointsRankDisplay) userPointsRankDisplay.textContent = 'N/A';
+                     if (userPointsScoreDisplay) userPointsScoreDisplay.textContent = '0 Pts';
+                }
+
+                const { data: topPointsData, error: topPointsError } = await supabase.rpc('get_top_100_by_score');
+                if (topPointsError) throw topPointsError;
+                if (pointsLeaderboardList) {
+                    pointsLeaderboardList.innerHTML = '';
+                    if (topPointsData && topPointsData.length > 0) {
+                        topPointsData.forEach((user, index) => {
+                            const item = document.createElement('div');
+                            item.className = 'leaderboard-item';
+                            const displayName = getDisplayUsername(user);
+                            item.innerHTML = `
+                                <span class="rank-number">${user.rank_order || (index + 1)}.</span>
+                                <span class="username-display">${displayName}</span>
+                                <span class="score-value">${formatNumber(user.total_score)} Pts</span>
+                            `;
+                            pointsLeaderboardList.appendChild(item);
+                        });
+                    } else {
+                        pointsLeaderboardList.innerHTML = '<p style="text-align: center; opacity: 0.7;">No points data yet.</p>';
+                    }
+                }
+
+                const { data: userReferralsRankData, error: userReferralsRankError } = await supabase.rpc('get_user_rank_by_referrals', { p_user_id: telegramUserId });
+                if (userReferralsRankError) throw userReferralsRankError;
+                if (userReferralsRankData && userReferralsRankData.length > 0) {
+                    const rankInfo = userReferralsRankData[0];
+                    if (userReferralsRankDisplay) userReferralsRankDisplay.textContent = `#${formatNumber(rankInfo.rank)}`;
+                    if (userReferralsCountDisplay) userReferralsCountDisplay.textContent = `${formatNumber(rankInfo.referral_count)} Refs`;
+                } else {
+                    if (userReferralsRankDisplay) userReferralsRankDisplay.textContent = 'N/A';
+                    if (userReferralsCountDisplay) userReferralsCountDisplay.textContent = '0 Refs';
+                }
+
+
+                const { data: topReferralsData, error: topReferralsError } = await supabase.rpc('get_top_100_by_referrals');
+                if (topReferralsError) throw topReferralsError;
+                if (referralsLeaderboardList) {
+                    referralsLeaderboardList.innerHTML = '';
+                    if (topReferralsData && topReferralsData.length > 0) {
+                        topReferralsData.forEach((user, index) => {
+                            const item = document.createElement('div');
+                            item.className = 'leaderboard-item';
+                            const displayName = getDisplayUsername(user);
+                            item.innerHTML = `
+                                <span class="rank-number">${user.rank_order || (index + 1)}.</span>
+                                <span class="username-display">${displayName}</span>
+                                <span class="score-value">${formatNumber(user.referral_count)} Refs</span>
+                            `;
+                            referralsLeaderboardList.appendChild(item);
+                        });
+                    } else {
+                        referralsLeaderboardList.innerHTML = '<p style="text-align: center; opacity: 0.7;">No referral data yet.</p>';
+                    }
+                }
+
+            } catch (error) {
+                console.error("Error populating leaderboard:", error);
+                if (pointsLeaderboardList) pointsLeaderboardList.innerHTML = `<p style="text-align: center; color: var(--text-error);">Error: ${error.message}</p>`;
+                if (referralsLeaderboardList) referralsLeaderboardList.innerHTML = `<p style="text-align: center; color: var(--text-error);">Error: ${error.message}</p>`;
+            }
+        }
+
+
         // --- Three.js Scene Setup ---
         function createStarfield() { if(starField)scene.remove(starField); const c=7000; const p=new Float32Array(c*3); const g=new THREE.BufferGeometry(); const h=parseColorHex(getCssVariable('--star-color')); for(let i=0;i<c;i++){ const i3=i*3; const r=60+Math.random()*60; const ph=Math.acos(-1+(2*Math.random())); const th=Math.random()*Math.PI*2; p[i3]=r*Math.sin(ph)*Math.cos(th); p[i3+1]=r*Math.cos(ph); p[i3+2]=r*Math.sin(ph)*Math.sin(th); } g.setAttribute('position',new THREE.BufferAttribute(p,3)); const m=new THREE.PointsMaterial({size:0.1,color:h,sizeAttenuation:true,transparent:true,opacity:0.8,depthWrite:false,blending:THREE.AdditiveBlending}); starField=new THREE.Points(g,m); starField.userData.isStarfield=true; starField.renderOrder=-1; starField.visible=!document.body.classList.contains('light-mode'); scene.add(starField); }
         function createBall() { if(ball)scene.remove(ball); const g=new THREE.SphereGeometry(0.25,32,32); const h=parseColorHex(getCssVariable('--ball-color')); const m=new THREE.MeshStandardMaterial({color:h,map:ballTexture,metalness:0.8,roughness:0.3,envMap:envMap,envMapIntensity:0.7}); ball=new THREE.Mesh(g,m); ball.userData.isBall=true; ball.position.set(ballStartX,initialBallY,ballStartZ); ballPreviousY=ball.position.y; scene.add(ball); }
@@ -1217,52 +1553,32 @@
         // --- Initialization & Game Flow ---
         async function initializeTelegramIntegration() {
             hasProcessedReferral = false;
-            // The real Telegram SDK script is already in <head>, so window.Telegram should exist when run in Telegram
-            if (!window.Telegram?.WebApp) {
-                console.error("Telegram WebApp object not found! Ensure you are running this in a Telegram Mini App environment.");
-                // Optionally, you could fall back to a mock here for local development if you want,
-                // but for production, it's better to fail or show a message.
-                // For now, we'll assume it will be present in the TG environment.
-                if (loadingTextEl) loadingTextEl.textContent = "Please open in Telegram.";
-                gameState = 'error'; setInternalPause(true);
-                return Promise.reject("Telegram Env Missing");
-            }
+            if (!window.Telegram?.WebApp) { console.error("Telegram WebApp object not found! Game cannot run in this environment without it."); alert("Initialization Error: Critical Telegram object missing. Please open this app through Telegram."); gameState = 'error'; setInternalPause(true); if (loadingTextEl) loadingTextEl.textContent = "Platform Error. Open via Telegram."; return Promise.reject("Telegram Env Missing"); }
             const tg = window.Telegram.WebApp;
 
             return new Promise(async (resolve, reject) => {
-                try {
-                    tg.ready(); console.log("TG Ready. Data:", tg.initDataUnsafe); tg.expand();
-                    if (loadingTextEl) loadingTextEl.textContent = "Connecting to Telegram...";
+                tg.ready(); console.log("TG Ready. Data:", tg.initDataUnsafe); tg.expand();
+                if (loadingTextEl) loadingTextEl.textContent = "Connecting to Telegram...";
 
-                    if (tg.initDataUnsafe?.user?.id) {
-                        telegramUserData = tg.initDataUnsafe.user; telegramUserId = telegramUserData.id;
-                        console.log("TG User:", telegramUserId, telegramUserData);
-                        if(userIdOverlay) userIdOverlay.textContent = telegramUserId.toString();
-                        if(usernameOverlay) usernameOverlay.textContent = telegramUserData?.username ? `@${telegramUserData.username}` : '(Not Set)';
+                if (tg.initDataUnsafe?.user?.id) {
+                    telegramUserData = tg.initDataUnsafe.user; telegramUserId = telegramUserData.id;
+                    console.log("TG User:", telegramUserId, telegramUserData);
+                    if(userIdOverlay) userIdOverlay.textContent = telegramUserId.toString();
+                    if(usernameOverlay) usernameOverlay.textContent = telegramUserData?.username ? `@${telegramUserData.username}` : (telegramUserData?.first_name || '(Not Set)');
 
-                        if (!initializeSupabaseClient()) { reject("Supabase Init Failed"); return; }
-                        const initialUserData = await fetchAndInitializeUser(telegramUserId, telegramUserData);
 
-                        if (initialUserData !== null) {
-                            await processReferralOnLoad(telegramUserId, telegramUserData, initialUserData);
-                            if (loadingTextEl) loadingTextEl.textContent = "Finalizing...";
-                            gameState = 'ready'; setInternalPause(false);
-                            showAnnouncementPopup();
-                            updateScoreUI(); updateReferralLinkUI(telegramUserId); updateActualCryptoBalancesUI();
-                            setTimeout(() => { onWindowResize(); resolve(); }, 100);
-                        } else { if (loadingTextEl) loadingTextEl.textContent = "User Profile Error."; reject("User Fetch/Init Failed"); }
-                    } else {
-                        console.error("TG user ID missing!"); gameState='error'; setInternalPause(true);
-                        alert("User information error. Are you in a valid Telegram session?");
-                        if (loadingTextEl) loadingTextEl.textContent = "Telegram User Error.";
-                        reject("TG User Missing");
-                    }
-                } catch (err) {
-                    console.error("Error during Telegram integration:", err);
-                    if (loadingTextEl) loadingTextEl.textContent = "Telegram Integration Error.";
-                    gameState = 'error'; setInternalPause(true);
-                    reject("TG Integration Error");
-                }
+                    if (!initializeSupabaseClient()) { reject("Supabase Init Failed"); return; }
+                    const initialUserData = await fetchAndInitializeUser(telegramUserId, telegramUserData);
+
+                    if (initialUserData !== null) {
+                        await processReferralOnLoad(telegramUserId, telegramUserData, initialUserData);
+                        if (loadingTextEl) loadingTextEl.textContent = "Finalizing...";
+                        gameState = 'ready'; setInternalPause(false);
+                        showAnnouncementPopup();
+                        updateScoreUI(); updateReferralLinkUI(telegramUserId); updateActualCryptoBalancesUI();
+                        setTimeout(() => { onWindowResize(); resolve(); }, 100);
+                    } else { if (loadingTextEl) loadingTextEl.textContent = "User Profile Error."; reject("User Fetch/Init Failed"); }
+                } else { console.error("TG user ID missing!"); gameState='error'; setInternalPause(true); alert("User information error."); if (loadingTextEl) loadingTextEl.textContent = "Telegram User Error."; reject("TG User Missing"); }
             });
         }
         async function init() {
@@ -1299,12 +1615,12 @@
         function setupUIListeners() {
              menuButton.addEventListener('click', (e) => { e.stopPropagation(); toggleSideMenu(); });
              settingsButton.addEventListener('click', (e) => { e.stopPropagation(); toggleSettingsPopup(); });
-             menuItemButtons.forEach(b => { b.addEventListener('click', () => { const action = b.getAttribute('data-action'); closeSideMenu(); switch (action) { case 'show-profile': showOverlay(profileOverlay); break; case 'show-withdrawal': showOverlay(withdrawalOverlay); break; case 'show-friends': showOverlay(friendsOverlay); break; case 'show-tasks': showOverlay(tasksOverlay); break; } }); });
+             menuItemButtons.forEach(b => { b.addEventListener('click', () => { const action = b.getAttribute('data-action'); closeSideMenu(); switch (action) { case 'show-profile': showOverlay(profileOverlay); break; case 'show-withdrawal': showOverlay(withdrawalOverlay); break; case 'show-friends': showOverlay(friendsOverlay); break; case 'show-tasks': showOverlay(tasksOverlay); break; case 'show-events-airdrop': showOverlay(eventsAirdropOverlay); break; case 'show-leaderboard': showOverlay(leaderboardOverlay); break;} }); });
              overlayCloseButtons.forEach(b => { b.addEventListener('click', () => { const id = b.getAttribute('data-overlay-id'); const o = document.getElementById(id); if (o) { hideOverlay(o); if (id === 'game-over-ui') handlePlayAgain(); } }); });
              document.addEventListener('click', (e) => { if (sideMenu.classList.contains('open') && !sideMenu.contains(e.target) && !menuButton.contains(e.target)) closeSideMenu(); if (settingsPopup.style.display === 'block' && !settingsPopup.contains(e.target) && !settingsButton.contains(e.target)) closeSettingsPopup(); });
              menuOverlayDimmer.addEventListener('click', closeSideMenu);
              settingsPopup.addEventListener('click', e => e.stopPropagation()); sideMenu.addEventListener('click', e => e.stopPropagation());
-             [profileOverlay, withdrawalOverlay, friendsOverlay, tasksOverlay, gameOverUI, startGameModal, announcementPopupEl].forEach(overlay => { if (overlay) { overlay.addEventListener('click', e => { if (!e.target.closest('button') && !e.target.closest('a') && !e.target.closest('input') && !e.target.closest('select') && !e.target.closest('.theme-switch') && !e.target.closest('#referral-list-container') && !e.target.closest('.withdrawal-accordion-header')) { e.stopPropagation(); } }); } });
+             [profileOverlay, withdrawalOverlay, friendsOverlay, tasksOverlay, eventsAirdropOverlay, leaderboardOverlay, gameOverUI, startGameModal, announcementPopupEl].forEach(overlay => { if (overlay) { overlay.addEventListener('click', e => { if (!e.target.closest('button') && !e.target.closest('a') && !e.target.closest('input') && !e.target.closest('select') && !e.target.closest('.theme-switch') && !e.target.closest('#referral-list-container') && !e.target.closest('.withdrawal-accordion-header') && !e.target.closest('.leaderboard-list-container')) { e.stopPropagation(); } }); } });
              if (initialControlsContainer) initialControlsContainer.addEventListener('click', e => e.stopPropagation());
 
              if (announcementCloseButtonEl) announcementCloseButtonEl.addEventListener('click', hideAnnouncementPopup);
@@ -1317,7 +1633,7 @@
              startBoostButton.addEventListener('click', handleWatchAdForBoost);
              if (copyReferralLinkButton) { copyReferralLinkButton.addEventListener('click', async () => { const link = referralLinkDisplay.textContent; if (link && link !== "Generating link..." && link !== "Link Unavailable") { const success = await copyToClipboard(link); copyReferralLinkButton.textContent = success ? "Copied!" : "Failed"; } else { copyReferralLinkButton.textContent = "Error"; } setTimeout(() => { copyReferralLinkButton.textContent = "Copy"; }, 1500); }); }
 
-            withdrawalAccordionHeaders.forEach(header => { header.addEventListener('click', () => toggleAccordion(header)); });
+            allAccordionHeaders.forEach(header => { header.addEventListener('click', () => toggleAccordion(header)); });
             if (conversionPointsInput) conversionPointsInput.addEventListener('input', calculateConversionAmount);
             if (conversionCryptoSelect) conversionCryptoSelect.addEventListener('change', calculateConversionAmount);
             if (convertPointsButton) convertPointsButton.addEventListener('click', handlePointConversion);
@@ -1325,29 +1641,73 @@
             if (withdrawAmountInput) withdrawAmountInput.addEventListener('input', calculateWithdrawalAfterFees);
             if (withdrawAddressInput) withdrawAddressInput.addEventListener('input', calculateWithdrawalAfterFees);
             if (withdrawMainButton) withdrawMainButton.addEventListener('click', handleWithdrawalRequest);
+
+            leaderboardTabButtons.forEach(button => { button.addEventListener('click', () => switchLeaderboardTab(button.dataset.tab)); });
          }
         function handleDifficultySelection(difficulty) { selectedDifficulty = difficulty; difficultyButtons.forEach(btn => { btn.classList.toggle('active', btn.getAttribute('data-difficulty') === difficulty); }); console.log("Selected difficulty:", selectedDifficulty); }
-        function showInitialControls() { if (initialControlsContainer) initialControlsContainer.classList.remove('hidden'); if (headerTimerDisplayEl) headerTimerDisplayEl.classList.remove('visible'); if (startGameButton) startGameButton.disabled = false; updateScoreUI(); }
-        function hideInitialControls() { if (initialControlsContainer) initialControlsContainer.classList.add('hidden'); }
-        function hideInitialControlsAndShowTimer() { hideInitialControls(); if (headerTimerDisplayEl) headerTimerDisplayEl.classList.add('visible'); }
+        function showInitialControls() {
+            console.log("showInitialControls called. Current gameState:", gameState);
+            if (initialControlsContainer) {
+                initialControlsContainer.classList.remove('hidden');
+                console.log("Initial controls container should be visible.");
+            }
+            if (headerTimerDisplayEl) {
+                headerTimerDisplayEl.classList.remove('visible');
+                console.log("Header timer display should be hidden.");
+            }
+            if (startGameButton) startGameButton.disabled = false;
+            updateScoreUI();
+        }
+        function hideInitialControls() {
+            if (initialControlsContainer) {
+                initialControlsContainer.classList.add('hidden');
+                console.log("Initial controls container hidden.");
+            }
+        }
+        function hideInitialControlsAndShowTimer() {
+            hideInitialControls();
+            if (headerTimerDisplayEl) {
+                headerTimerDisplayEl.classList.add('visible');
+                console.log("Header timer display made visible.");
+            }
+        }
         function updateHeaderTimerDisplay() { if (headerTimerDisplayEl) headerTimerDisplayEl.textContent = formatTime(currentGameCountdown); }
         function updateGameTimer() { if (internalPauseState) return; if (currentGameCountdown > 0 && isTimedGameActive && gameState === 'playing') { currentGameCountdown--; updateHeaderTimerDisplay(); } if (currentGameCountdown <= 0 && isTimedGameActive && gameState === 'playing') { console.log("Timer ended!"); handleGameOver("Time's Up!"); } }
+
         async function startGame() {
-            if (gameState !== 'ready') { console.warn("Cannot start game, not in ready state."); return; }
-            currentGameCountdown = GAME_DURATION_SECONDS; isTimedGameActive = true;
-            hideInitialControlsAndShowTimer(); updateHeaderTimerDisplay();
+            if (gameState !== 'ready') {
+                console.warn("Cannot start game, not in ready state. Current state:", gameState);
+                return;
+            }
+
+            gameState = 'starting'; // Set state to 'starting' to prevent race conditions with UI
+            console.log("Game state changed to: starting");
+
+            currentGameCountdown = GAME_DURATION_SECONDS;
+            isTimedGameActive = true;
+
+            hideInitialControlsAndShowTimer();
+            updateHeaderTimerDisplay();
+
             await prepareGameForStart();
-            gameState = 'playing'; setInternalPause(false);
+
+            gameState = 'playing'; // Now the game is officially playing
+            console.log("Game state changed to: playing");
+            setInternalPause(false);
+
             if (gameTimerIntervalId) clearInterval(gameTimerIntervalId);
             gameTimerIntervalId = setInterval(updateGameTimer, 1000);
+
             clock.getDelta();
             animateCameraZoom(cameraZoomedInZ, cameraZoomDuration);
             console.log("Game started! Ad Bonus:", adBonusActiveForThisGame, "Refs:", currentUserReferralCount);
         }
+
         async function prepareGameForStart() {
              console.log("Preparing game board for difficulty:", selectedDifficulty);
              if (adTimerIntervalId) { clearInterval(adTimerIntervalId); adTimerIntervalId = null; }
              if (gameTimerIntervalId) { clearInterval(gameTimerIntervalId); gameTimerIntervalId = null; }
+             // gameState check already done in startGame, but keep here as safeguard
              if (gameState === 'error') { return Promise.reject("Game Error State"); }
              if (cameraZoomRequestId) cancelAnimationFrame(cameraZoomRequestId); cameraZoomRequestId = null; isCameraZooming = false;
              if (!ball) createBall(); else { const ballColorHex = parseColorHex(getCssVariable('--ball-color')); ball.material.color.setHex(ballColorHex); }
@@ -1359,11 +1719,19 @@
              currentScore = 0; updateScoreUI(); scoreIncrementedForPlatform = {}; platformColorIndex = 0; shakeIntensity = 0;
              nextPlatformY = initialBallY - platformSpacingY * 2; lastSafePlatformY = nextPlatformY + platformSpacingY;
              for (let i = 0; i < 15; i++) { createPlatform(nextPlatformY); createPoleSegment(nextPlatformY); nextPlatformY -= platformSpacingY; }
-             hideOverlay(gameOverUI); hideOverlay(startGameModal); hideOverlay(announcementPopupEl);
+             closeAllOverlays(); // Ensure other overlays are closed before game starts
              if (camera && ball) { const camY = ball.position.y + cameraVerticalOffset; const lookY = ball.position.y + cameraLookAtOffset; camera.position.set(0, camY, cameraFixedZ); camera.lookAt(0, lookY, 0); }
              setTimeout(onWindowResize, 50); return Promise.resolve();
          }
-        function handlePlayAgain() { hideOverlay(gameOverUI); gameState = 'ready'; setInternalPause(false); isTimedGameActive = false; adBonusActiveForThisGame = false; currentGameCountdown = 0; showInitialControls(); }
+        function handlePlayAgain() {
+            hideOverlay(gameOverUI);
+            gameState = 'ready';
+            setInternalPause(false);
+            isTimedGameActive = false;
+            adBonusActiveForThisGame = false;
+            currentGameCountdown = 0;
+            showInitialControls();
+        }
 
         // --- Game Logic: Physics, Collisions, Generation ---
         function generatePlatforms() { if (!ball || !camera || internalPauseState || gameState !== 'playing' || !isTimedGameActive) return; const generationTriggerY = nextPlatformY + platformSpacingY * 8; while (ball.position.y < generationTriggerY && nextPlatformY > -1000) { createPlatform(nextPlatformY); createPoleSegment(nextPlatformY); nextPlatformY -= platformSpacingY; } const removalThresholdY_Above = camera.position.y + 15; activePlatforms.forEach(p => { if (p.position.y > removalThresholdY_Above && !p.userData.fadeOut) startFadeOut(p); }); for (const yPos in activePoleSegments) { const seg = activePoleSegments[yPos]; if (parseFloat(yPos) > removalThresholdY_Above && seg && !seg.userData.fadeOut) startFadeOut(seg); } }
@@ -1429,7 +1797,7 @@
         function startShake(intensity) { shakeIntensity = Math.max(shakeIntensity, intensity); }
 
         // --- Input Handling ---
-        function onPointerDown(e){ let target = e.target; let isUI = false; if (headerBar.contains(target) || (sideMenu.classList.contains('open') && sideMenu.contains(target)) || (menuOverlayDimmer.classList.contains('visible') && target === menuOverlayDimmer) || (settingsPopup.style.display === 'block' && settingsPopup.contains(target)) || (profileOverlay.style.display === 'flex' && profileOverlay.contains(target)) || (withdrawalOverlay.style.display === 'flex' && withdrawalOverlay.contains(target)) || (friendsOverlay.style.display === 'flex' && friendsOverlay.contains(target)) || (tasksOverlay.style.display === 'flex' && tasksOverlay.contains(target)) || (gameOverUI.style.display === 'block' && gameOverUI.contains(target)) || (startGameModal.style.display === 'block' && startGameModal.contains(target)) || (announcementPopupEl.style.display === 'block' && announcementPopupEl.contains(target)) || (initialControlsContainer && !initialControlsContainer.classList.contains('hidden') && initialControlsContainer.contains(target)) || target.closest('.icon-button') || target.closest('button') || target.closest('a') || target.closest('input') || target.closest('select') || target.closest('.theme-switch') || target.closest('#referral-list-container') || target.closest('.withdrawal-accordion-header') ) { isUI = true; } if (target === renderer?.domElement && gameState === 'playing' && isTimedGameActive && !internalPauseState) { isUI = false; } else if (target === renderer?.domElement) { isUI = true; } if (isUI) { isPointerDown = false; } else { isPointerDown = true; previousPointerX = e.clientX ?? e.touches?.[0]?.clientX; if (previousPointerX === undefined) { isPointerDown = false; return; } document.body.style.cursor = 'grabbing'; if (e.cancelable && e.touches && gameContainer.contains(target)) { e.preventDefault(); } } }
+        function onPointerDown(e){ let target = e.target; let isUI = false; if (headerBar.contains(target) || (sideMenu.classList.contains('open') && sideMenu.contains(target)) || (menuOverlayDimmer.classList.contains('visible') && target === menuOverlayDimmer) || (settingsPopup.style.display === 'block' && settingsPopup.contains(target)) || (profileOverlay.style.display === 'flex' && profileOverlay.contains(target)) || (withdrawalOverlay.style.display === 'flex' && withdrawalOverlay.contains(target)) || (friendsOverlay.style.display === 'flex' && friendsOverlay.contains(target)) || (tasksOverlay.style.display === 'flex' && tasksOverlay.contains(target)) || (eventsAirdropOverlay.style.display === 'flex' && eventsAirdropOverlay.contains(target)) || (leaderboardOverlay.style.display === 'flex' && leaderboardOverlay.contains(target)) || (gameOverUI.style.display === 'block' && gameOverUI.contains(target)) || (startGameModal.style.display === 'block' && startGameModal.contains(target)) || (announcementPopupEl.style.display === 'block' && announcementPopupEl.contains(target)) || (initialControlsContainer && !initialControlsContainer.classList.contains('hidden') && initialControlsContainer.contains(target)) || target.closest('.icon-button') || target.closest('button') || target.closest('a') || target.closest('input') || target.closest('select') || target.closest('.theme-switch') || target.closest('#referral-list-container') || target.closest('.withdrawal-accordion-header') || target.closest('.leaderboard-list-container') ) { isUI = true; } if (target === renderer?.domElement && gameState === 'playing' && isTimedGameActive && !internalPauseState) { isUI = false; } else if (target === renderer?.domElement) { isUI = true; } if (isUI) { isPointerDown = false; } else { isPointerDown = true; previousPointerX = e.clientX ?? e.touches?.[0]?.clientX; if (previousPointerX === undefined) { isPointerDown = false; return; } document.body.style.cursor = 'grabbing'; if (e.cancelable && e.touches && gameContainer.contains(target)) { e.preventDefault(); } } }
         function onPointerMove(e){ if (!isPointerDown || gameState !== 'playing' || !isTimedGameActive || internalPauseState) return; const currentX = e.clientX ?? e.touches?.[0]?.clientX; if (currentX === undefined) return; const deltaX = currentX - previousPointerX; if (platformGroup) { platformGroup.rotation.y += deltaX * rotationSensitivity; } previousPointerX = currentX; if (e.cancelable && e.touches) { e.preventDefault(); } }
         function onPointerUp(e){ if (isPointerDown) { isPointerDown = false; document.body.style.cursor = 'default'; } }
 
