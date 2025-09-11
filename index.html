@@ -10,55 +10,56 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-gradient-start: #0a0a1a;
-            --bg-gradient-end: #111122;
-            --bg-header-bar: rgba(10, 10, 25, 0.85);
-            --bg-ui-panel: rgba(15, 15, 35, 0.9);
-            --bg-overlay: rgba(11, 11, 34, 0.98);
-            --bg-menu: rgba(20, 20, 45, 0.97);
-            --bg-modal: rgba(15, 15, 35, 0.95);
-            --bg-input: rgba(255, 255, 255, 0.08);
+            /* NEW "Neon Abyss" Dark Theme */
+            --bg-gradient-start: #0d0221;
+            --bg-gradient-end: #261447;
+            --bg-gradient-stop: #5c1b4f;
+            --bg-header-bar: rgba(13, 2, 33, 0.75);
+            --bg-ui-panel: rgba(18, 5, 58, 0.8);
+            --bg-overlay: rgba(13, 2, 33, 0.9);
+            --bg-menu: rgba(25, 10, 70, 0.95);
+            --bg-modal: rgba(18, 5, 58, 0.9);
+            --bg-input: rgba(0, 245, 212, 0.1);
             --bg-select: var(--bg-input);
-            --bg-button-info: #00cfde;
-            --bg-button-info-hover: #00b3bf;
-            --bg-button-action: #ff4081;
-            --bg-button-action-hover: #d81b60;
-            --bg-button-special: #f5d131;
-            --bg-button-special-hover: #dbc02b;
+            --bg-button-info: #00f5d4;
+            --bg-button-info-hover: #00e0c3;
+            --bg-button-action: #ff00f7;
+            --bg-button-action-hover: #e600e0;
+            --bg-button-special: #fef102;
+            --bg-button-special-hover: #e9db02;
             --bg-button-watch-ad: #4CAF50;
             --bg-button-watch-ad-hover: #45a049;
             --bg-button-x: #000000;
             --bg-button-x-hover: #333333;
             --bg-toggle-track: #555;
             --bg-toggle-track-active: var(--accent-cyan);
-            --bg-link-button: rgba(255, 255, 255, 0.05);
-            --bg-link-button-hover: rgba(255, 255, 255, 0.1);
+            --bg-link-button: rgba(0, 245, 212, 0.08);
+            --bg-link-button-hover: rgba(0, 245, 212, 0.15);
             --bg-copy-button: rgba(255, 255, 255, 0.1);
             --bg-copy-button-hover: rgba(255, 255, 255, 0.2);
-            --bg-difficulty-button: rgba(255, 255, 255, 0.08);
+            --bg-difficulty-button: transparent;
             --bg-difficulty-button-active: var(--accent-cyan);
-            --bg-difficulty-button-hover: rgba(255, 255, 255, 0.15);
-            --bg-initial-controls: rgba(15, 15, 35, 0.92);
-            --bg-withdrawal-section: rgba(255, 255, 255, 0.03);
-            --bg-accordion-header: rgba(255, 255, 255, 0.05);
-            --bg-accordion-header-hover: rgba(255, 255, 255, 0.1);
-            --bg-accordion-content: rgba(255, 255, 255, 0.02);
+            --bg-difficulty-button-hover: rgba(0, 245, 212, 0.1);
+            --bg-initial-controls: rgba(18, 5, 58, 0.85);
+            --bg-withdrawal-section: transparent;
+            --bg-accordion-header: rgba(0, 245, 212, 0.08);
+            --bg-accordion-header-hover: rgba(0, 245, 212, 0.15);
+            --bg-accordion-content: rgba(0, 245, 212, 0.03);
             --bg-history-item: rgba(255, 255, 255, 0.04);
             --bg-leaderboard-item: rgba(255, 255, 255, 0.04);
-            --bg-my-rank-section: rgba(255, 255, 255, 0.06);
+            --bg-my-rank-section: rgba(0, 245, 212, 0.1);
 
-
-            --text-light: #ffffff;
-            --text-medium: #cccccc;
-            --text-dark: #111122;
+            --text-light: #f0f0f0;
+            --text-medium: #a9d6e5;
+            --text-dark: #0d0221;
             --text-link: var(--accent-cyan);
-            --text-link-hover: var(--accent-cyan-hover);
+            --text-link-hover: #9afff2;
             --text-heading-accent: var(--accent-yellow);
             --text-error: var(--accent-pink);
-            --text-placeholder: rgba(255, 255, 255, 0.4);
+            --text-placeholder: rgba(169, 214, 229, 0.4);
             --text-copy-button: var(--text-medium);
             --text-copy-button-hover: var(--text-light);
-            --text-difficulty-button: var(--text-medium);
+            --text-difficulty-button: var(--accent-cyan);
             --text-difficulty-button-active: var(--text-dark);
             --text-label: var(--text-medium);
             --text-accordion-header: var(--text-light);
@@ -69,138 +70,205 @@
             --text-leaderboard-username: var(--text-light);
             --text-leaderboard-score: var(--text-medium);
 
-
-            --border-color: rgba(255, 255, 255, 0.15);
-            --border-input: rgba(255, 255, 255, 0.15);
+            --border-color: rgba(0, 245, 212, 0.2);
+            --border-input: rgba(0, 245, 212, 0.3);
             --border-select: var(--border-input);
-            --border-menu-item: rgba(255, 255, 255, 0.1);
-            --border-link-button: rgba(255, 255, 255, 0.1);
-            --border-copy-button: rgba(255, 255, 255, 0.2);
-            --border-difficulty-button: rgba(255, 255, 255, 0.15);
-            --border-initial-controls: rgba(255, 255, 255, 0.1);
-            --border-withdrawal-section: rgba(255, 255, 255, 0.1);
-            --border-accordion: rgba(255, 255, 255, 0.1);
-            --border-history-item: rgba(255, 255, 255, 0.08);
-            --border-leaderboard-item: rgba(255, 255, 255, 0.08);
-            --border-my-rank-section: rgba(255, 255, 255, 0.1);
+            --border-menu-item: rgba(0, 245, 212, 0.15);
+            --border-link-button: rgba(0, 245, 212, 0.1);
+            --border-copy-button: rgba(0, 245, 212, 0.2);
+            --border-difficulty-button: var(--accent-cyan);
+            --border-initial-controls: rgba(0, 245, 212, 0.25);
+            --border-withdrawal-section: rgba(0, 245, 212, 0.2);
+            --border-accordion: rgba(0, 245, 212, 0.2);
+            --border-history-item: rgba(0, 245, 212, 0.1);
+            --border-leaderboard-item: rgba(0, 245, 212, 0.1);
+            --border-my-rank-section: rgba(0, 245, 212, 0.25);
 
+            --shadow-color: rgba(0, 0, 0, 0.5);
+            --shadow-header-bar: 0 4px 20px var(--shadow-color);
+            --shadow-panel: 0 6px 25px var(--shadow-color);
+            --shadow-modal: 0 8px 30px var(--shadow-color);
+            --shadow-button: 0 2px 8px rgba(0,0,0,0.3);
+            --shadow-button-hover: 0 4px 12px rgba(0,0,0,0.4);
+            --shadow-initial-controls: 0 6px 25px var(--shadow-color);
+            --glow-cyan: 0 0 12px rgba(0, 245, 212, 0.5);
+            --glow-pink: 0 0 12px rgba(255, 0, 247, 0.5);
+            --glow-yellow: 0 0 12px rgba(254, 241, 2, 0.5);
 
-            --shadow-color: rgba(0, 0, 0, 0.4);
-            --shadow-header-bar: 0 3px 12px var(--shadow-color);
-            --shadow-panel: 0 6px 20px var(--shadow-color);
-            --shadow-modal: 0 8px 25px var(--shadow-color);
-            --shadow-button: 0 2px 5px rgba(0, 0, 0, 0.2);
-            --shadow-button-hover: 0 4px 8px rgba(0, 0, 0, 0.25);
-            --shadow-initial-controls: 0 6px 20px var(--shadow-color);
+            --backdrop-blur: 6px;
+            --backdrop-blur-heavy: 10px;
 
-            --backdrop-blur: 4px;
-            --backdrop-blur-heavy: 6px;
-
-            --accent-cyan: #00cfde;
-            --accent-cyan-hover: #00b3bf;
-            --accent-pink: #ff4081;
-            --accent-pink-hover: #d81b60;
-            --accent-yellow: #f5d131;
-            --accent-yellow-hover: #dbc02b;
-            --danger-glow: #cc8400;
+            --accent-cyan: #00f5d4;
+            --accent-cyan-hover: #00e0c3;
+            --accent-pink: #ff00f7;
+            --accent-pink-hover: #e600e0;
+            --accent-yellow: #fef102;
+            --accent-yellow-hover: #e9db02;
             --danger-color: var(--accent-yellow);
             --ball-color: var(--accent-pink);
-            --pole-color: #679b31;
-            --star-color: #aaaaee;
-            --x-color: #000000;
-            --x-color-hover: #333333;
 
             --menu-width: 260px;
             --transition-speed: 0.4s;
-            --transition-timing: ease;
+            --transition-timing: cubic-bezier(0.25, 0.8, 0.25, 1);
+            --border-radius-small: 6px;
+            --border-radius-medium: 10px;
+            --border-radius-large: 15px;
         }
 
         body.light-mode {
-            --bg-gradient-start: #87CEEB;
-            --bg-gradient-end: #FFB347;
-            --bg-gradient-stop: #FF6F61;
-            --bg-header-bar: rgba(255, 255, 255, 0.85);
-            --bg-ui-panel: rgba(255, 255, 255, 0.9);
-            --bg-overlay: rgba(245, 245, 250, 0.98);
+             /* NEW "Aqua Mint" Light Theme */
+            --bg-gradient-start: #e0fdfd;
+            --bg-gradient-end: #cbf3f0;
+            --bg-gradient-stop: #b8f2e6;
+            --bg-header-bar: rgba(255, 255, 255, 0.75);
+            --bg-ui-panel: rgba(255, 255, 255, 0.85);
+            --bg-overlay: rgba(240, 255, 253, 0.95);
             --bg-menu: rgba(250, 250, 255, 0.97);
-            --bg-modal: rgba(250, 250, 255, 0.95);
-            --bg-input: rgba(0, 0, 0, 0.05);
+            --bg-modal: rgba(255, 255, 255, 0.9);
+            --bg-input: rgba(0, 129, 167, 0.05);
             --bg-select: var(--bg-input);
-            --bg-button-info: #00a8b5;
-            --bg-button-info-hover: #008a96;
-            --bg-button-action: #e91e63;
-            --bg-button-action-hover: #c2185b;
-            --bg-button-special: #fbc02d;
-            --bg-button-special-hover: #f9a825;
+            --bg-button-info: #2ec4b6;
+            --bg-button-info-hover: #28a79d;
+            --bg-button-action: #ff9f1c;
+            --bg-button-action-hover: #e68f19;
+            --bg-button-special: #0081a7;
+            --bg-button-special-hover: #006d8f;
             --bg-button-watch-ad: #8BC34A;
             --bg-button-watch-ad-hover: #7CB342;
             --bg-button-x: #333333;
             --bg-button-x-hover: #555555;
             --bg-toggle-track: #ccc;
             --bg-toggle-track-active: var(--accent-cyan);
-            --bg-link-button: rgba(0, 0, 0, 0.03);
-            --bg-link-button-hover: rgba(0, 0, 0, 0.06);
+            --bg-link-button: rgba(0, 129, 167, 0.04);
+            --bg-link-button-hover: rgba(0, 129, 167, 0.08);
             --bg-copy-button: rgba(0, 0, 0, 0.05);
             --bg-copy-button-hover: rgba(0, 0, 0, 0.1);
-            --bg-difficulty-button: rgba(0, 0, 0, 0.05);
+            --bg-difficulty-button: transparent;
             --bg-difficulty-button-active: var(--accent-cyan);
-            --bg-difficulty-button-hover: rgba(0, 0, 0, 0.1);
+            --bg-difficulty-button-hover: rgba(46, 196, 182, 0.1);
             --bg-initial-controls: rgba(250, 250, 255, 0.92);
-            --bg-withdrawal-section: rgba(0, 0, 0, 0.03);
-            --bg-accordion-header: rgba(0, 0, 0, 0.03);
-            --bg-accordion-header-hover: rgba(0, 0, 0, 0.06);
-            --bg-accordion-content: rgba(0,0,0,0.01);
+            --bg-withdrawal-section: transparent;
+            --bg-accordion-header: rgba(46, 196, 182, 0.08);
+            --bg-accordion-header-hover: rgba(46, 196, 182, 0.15);
+            --bg-accordion-content: rgba(46, 196, 182, 0.03);
             --bg-history-item: rgba(0, 0, 0, 0.02);
             --bg-leaderboard-item: rgba(0, 0, 0, 0.02);
-            --bg-my-rank-section: rgba(0, 0, 0, 0.04);
+            --bg-my-rank-section: rgba(46, 196, 182, 0.1);
 
-
-            --text-light: #212121;
-            --text-medium: #555555;
+            --text-light: #001f24;
+            --text-medium: #5b787c;
             --text-dark: #ffffff;
             --text-link: var(--accent-cyan);
-            --text-link-hover: var(--accent-cyan-hover);
-            --text-heading-accent: #ff8f00;
-            --text-error: var(--accent-pink);
-            --text-placeholder: rgba(0, 0, 0, 0.4);
+            --text-link-hover: #006d8f;
+            --text-heading-accent: var(--bg-button-action);
+            --text-error: #e63946;
+            --text-placeholder: rgba(0, 31, 36, 0.4);
             --text-copy-button: var(--text-medium);
             --text-copy-button-hover: var(--text-light);
-            --text-difficulty-button: var(--text-medium);
-            --text-difficulty-button-active: var(--text-light);
+            --text-difficulty-button: var(--accent-cyan);
+            --text-difficulty-button-active: var(--text-dark);
             --text-label: var(--text-medium);
             --text-accordion-header: var(--text-light);
-            --text-history-status-pending: var(--accent-yellow-hover);
+            --text-history-status-pending: var(--bg-button-action-hover);
             --text-history-status-completed: #45a049;
-            --text-history-status-rejected: var(--accent-pink-hover);
+            --text-history-status-rejected: #e63946;
             --text-leaderboard-rank: var(--accent-cyan-hover);
             --text-leaderboard-username: var(--text-light);
             --text-leaderboard-score: var(--text-medium);
 
-            --border-color: rgba(0, 0, 0, 0.1);
-            --border-input: rgba(0, 0, 0, 0.15);
+            --border-color: rgba(0, 129, 167, 0.2);
+            --border-input: rgba(0, 129, 167, 0.3);
             --border-select: var(--border-input);
-            --border-menu-item: rgba(0, 0, 0, 0.08);
-            --border-link-button: rgba(0, 0, 0, 0.1);
-            --border-copy-button: rgba(0, 0, 0, 0.15);
-            --border-difficulty-button: rgba(0, 0, 0, 0.1);
-            --border-initial-controls: rgba(0, 0, 0, 0.1);
-            --border-withdrawal-section: rgba(0, 0, 0, 0.1);
-            --border-accordion: rgba(0, 0, 0, 0.1);
-            --border-history-item: rgba(0, 0, 0, 0.05);
-            --border-leaderboard-item: rgba(0, 0, 0, 0.05);
-            --border-my-rank-section: rgba(0, 0, 0, 0.08);
+            --border-menu-item: rgba(0, 129, 167, 0.15);
+            --border-link-button: rgba(0, 129, 167, 0.1);
+            --border-copy-button: rgba(0, 129, 167, 0.2);
+            --border-difficulty-button: var(--accent-cyan);
+            --border-initial-controls: rgba(0, 129, 167, 0.25);
+            --border-withdrawal-section: rgba(0, 129, 167, 0.2);
+            --border-accordion: rgba(0, 129, 167, 0.2);
+            --border-history-item: rgba(0, 129, 167, 0.1);
+            --border-leaderboard-item: rgba(0, 129, 167, 0.1);
+            --border-my-rank-section: rgba(0, 129, 167, 0.25);
 
-
-            --shadow-color: rgba(0, 0, 0, 0.1);
-            --shadow-header-bar: 0 3px 12px var(--shadow-color);
+            --shadow-color: rgba(91, 120, 124, 0.15);
+            --shadow-header-bar: 0 3px 15px var(--shadow-color);
             --shadow-panel: 0 6px 20px var(--shadow-color);
             --shadow-modal: 0 8px 25px var(--shadow-color);
             --shadow-button: 0 2px 5px rgba(0, 0, 0, 0.1);
             --shadow-button-hover: 0 4px 8px rgba(0, 0, 0, 0.15);
             --shadow-initial-controls: 0 6px 20px var(--shadow-color);
 
+            --accent-cyan: #2ec4b6;
+            --accent-cyan-hover: #28a79d;
+            --accent-pink: #ff9f1c; /* This is orange in light mode */
+            --accent-pink-hover: #e68f19;
+            --accent-yellow: #0081a7; /* This is blue in light mode */
+            --accent-yellow-hover: #006d8f;
+
             --star-color: rgba(170, 170, 238, 0.3);
         }
+
+        /* --- ANIMATIONS --- */
+        @keyframes fadeInOverlay { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideInUpFade {
+            from {
+                opacity: 0;
+                transform: translate(-50%, calc(-50% + 30px)) scale(0.98);
+            } to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+        @keyframes slideInUpFadeFullscreen {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            } to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes slideDown {
+            from { transform: translateY(-100%); }
+            to { transform: translateY(0); }
+        }
+        @keyframes scoreUpdate {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.25); color: var(--accent-yellow); text-shadow: var(--glow-yellow); }
+            100% { transform: scale(1); }
+        }
+        @keyframes fadeInItem {
+            from { opacity: 0; transform: translateX(-15px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .list-item-animated {
+            opacity: 0;
+            animation: fadeInItem 0.4s ease-out forwards;
+        }
+        .score-updated {
+            animation: scoreUpdate 0.5s ease-in-out;
+        }
+
+        /* Animation for +1 on tap */
+        @keyframes floatAndFade {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-80px) scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        /* Animation for falling rain effect */
+        @keyframes rainFall {
+            to {
+                transform: translateY(105vh);
+                opacity: 0.2;
+            }
+        }
+
 
         * { box-sizing: border-box; }
         html { height: 100%; }
@@ -225,9 +293,10 @@
         }
         #loading-image {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;
+            opacity: 0.5;
         }
         #loading-text { font-size: 1.1em; font-weight: 400; color: var(--text-medium); margin-bottom: 20px; }
-        #loading-bar-container { width: 60%; max-width: 250px; height: 8px; background-color: rgba(255, 255, 255, 0.15); border-radius: 4px; overflow: hidden; position: relative; }
+        #loading-bar-container { width: 60%; max-width: 250px; height: 8px; background-color: rgba(255, 255, 255, 0.1); border-radius: 4px; overflow: hidden; position: relative; }
         #loading-bar { width: 100%; height: 100%; position: relative; }
         #loading-bar::before {
             content: ''; position: absolute; top: 0; left: 0; width: 40%; height: 100%;
@@ -240,67 +309,104 @@
             100% { left: 100%; width: 40%; }
         }
 
-        #header-bar, #side-menu, #settings-popup, .fullscreen-overlay, .modal, input, button, a.link-button, .score-display, h2, h3, p, #game-canvas, .task-group, .task-item, #referral-list-container, #referral-link-container, #initial-controls-container, #header-timer-display, select, .difficulty-button, .withdrawal-accordion-item, .withdrawal-accordion-header, .withdrawal-accordion-content, .history-item, .leaderboard-item, .my-rank-section, .leaderboard-tabs, .leaderboard-tab-button, .leaderboard-tab-content, .leaderboard-list-container {
+        #header-bar, #side-menu, #settings-popup, .fullscreen-overlay, .modal, input, button, a.link-button, .score-display, h2, h3, p, #game-canvas, .task-group, .task-item, #referral-list-container, #referral-link-container, #initial-controls-container, #header-timer-display, select, .difficulty-button, .withdrawal-accordion-item, .withdrawal-accordion-header, .withdrawal-accordion-content, .history-item, .leaderboard-item, .my-rank-section, .leaderboard-tabs, .leaderboard-tab-button, .leaderboard-tab-content, .leaderboard-list-container, #tapping-game-container, #tap-target {
             transition: background-color var(--transition-speed) var(--transition-timing),
                          color var(--transition-speed) var(--transition-timing),
                          border-color var(--transition-speed) var(--transition-timing),
                          box-shadow var(--transition-speed) var(--transition-timing),
                          opacity var(--transition-speed) var(--transition-timing),
                          fill var(--transition-speed) var(--transition-timing),
-                         display var(--transition-speed) var(--transition-timing),
                          transform var(--transition-speed) var(--transition-timing),
                          max-height 0.3s ease-out;
         }
 
-        #header-bar { padding: 10px 15px 5px 15px; background-color: var(--bg-header-bar); backdrop-filter: blur(var(--backdrop-blur)); color: var(--text-light); z-index: 200; box-shadow: var(--shadow-header-bar); display: flex; flex-direction: column; align-items: center; position: static; border-radius: 0 0 10px 10px; width: 100%; max-width: 500px; margin: 0 auto; flex-shrink: 0; position: relative; }
+        #header-bar {
+            padding: 10px 15px 5px 15px; background-color: var(--bg-header-bar); backdrop-filter: blur(var(--backdrop-blur));
+            color: var(--text-light); z-index: 200; box-shadow: var(--shadow-header-bar); display: flex;
+            flex-direction: column; align-items: center; position: static; border-radius: 0 0 var(--border-radius-medium) var(--border-radius-medium);
+            width: 100%; max-width: 500px; margin: 0 auto; flex-shrink: 0; position: relative;
+            animation: slideDown 0.6s var(--transition-timing) 0.5s forwards;
+            transform: translateY(-120%);
+        }
         #score-wrapper { display: flex; width: 100%; max-width: 350px; justify-content: space-around; align-items: center; padding: 8px 0 4px 0; }
         .score-display { font-size: 1.8em; font-weight: 700; text-shadow: 0 1px 2px var(--shadow-color); text-align: center; color: var(--text-light); }
         .score-label { font-size: 0.55em; display: block; opacity: 0.7; font-weight: 400; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-medium); }
 
-        #initial-controls-container { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(1); width: 90%; max-width: 350px; display: flex; flex-direction: column; align-items: center; padding: 25px 20px; background-color: var(--bg-initial-controls); border: 1px solid var(--border-initial-controls); border-radius: 15px; box-shadow: var(--shadow-initial-controls); z-index: 150; opacity: 1; pointer-events: auto; backdrop-filter: blur(var(--backdrop-blur)); transition: opacity 0.3s ease, transform 0.3s ease, visibility 0s linear 0s; visibility: visible; }
-        #initial-controls-container.hidden { opacity: 0; transform: translate(-50%, -50%) scale(0.8); pointer-events: none; visibility: hidden; transition: opacity 0.3s ease, transform 0.3s ease, visibility 0s linear 0.3s; }
-        #initial-controls-container h3 { font-size: 1.4em; color: var(--text-heading-accent); margin-top: 0; margin-bottom: 20px; font-weight: 700; }
+        #initial-controls-container {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(1);
+            width: 90%; max-width: 350px; display: flex; flex-direction: column; align-items: center;
+            padding: 25px 20px; background-color: var(--bg-initial-controls); border: 1px solid var(--border-initial-controls);
+            border-radius: var(--border-radius-large); box-shadow: var(--shadow-initial-controls); z-index: 150;
+            opacity: 1; pointer-events: auto; backdrop-filter: blur(var(--backdrop-blur));
+            transition: opacity 0.4s ease, transform 0.4s ease, visibility 0s linear 0s;
+            visibility: visible;
+        }
+        #initial-controls-container.hidden {
+            opacity: 0; transform: translate(-50%, -50%) scale(0.9); pointer-events: none;
+            visibility: hidden; transition: opacity 0.4s ease, transform 0.4s ease, visibility 0s linear 0.4s;
+        }
+
+        #initial-controls-container h3 { font-size: 1.4em; color: var(--text-heading-accent); margin-top: 0; margin-bottom: 20px; font-weight: 700; text-shadow: var(--glow-yellow); }
         #difficulty-options { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
-        .difficulty-button { padding: 8px 15px; border: 1px solid var(--border-difficulty-button); border-radius: 20px; background-color: var(--bg-difficulty-button); color: var(--text-difficulty-button); font-family: inherit; font-size: 0.9em; font-weight: 600; cursor: pointer; transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.1s ease; }
-        .difficulty-button:hover { background-color: var(--bg-difficulty-button-hover); transform: translateY(-1px); }
+        .difficulty-button { padding: 8px 15px; border: 1px solid var(--border-difficulty-button); border-radius: 20px; background-color: var(--bg-difficulty-button); color: var(--text-difficulty-button); font-family: inherit; font-size: 0.9em; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
+        .difficulty-button:hover { background-color: var(--bg-difficulty-button-hover); transform: translateY(-1px); color: var(--text-light); }
         .difficulty-button.active { background-color: var(--bg-difficulty-button-active); color: var(--text-difficulty-button-active); border-color: var(--bg-difficulty-button-active); font-weight: 700; }
-        #start-game-button { padding: 12px 30px; border: none; border-radius: 8px; background-color: var(--bg-button-special); color: var(--text-dark); font-family: inherit; font-weight: 700; font-size: 1.1em; cursor: pointer; transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease; box-shadow: var(--shadow-button); width: 70%; max-width: 250px; text-transform: uppercase; letter-spacing: 1px; }
-        #start-game-button:hover:not(:disabled) { background-color: var(--bg-button-special-hover); transform: scale(1.03); box-shadow: var(--shadow-button-hover); }
+
+        #start-game-button {
+            padding: 12px 30px; border: none; border-radius: var(--border-radius-medium); background-color: var(--bg-button-special);
+            color: var(--text-dark); font-family: inherit; font-weight: 700; font-size: 1.1em; cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-button), inset 0 -2px 4px rgba(0,0,0,0.2);
+            width: 80%; max-width: 280px; text-transform: uppercase; letter-spacing: 1px; margin-top: 15px;
+        }
+        #start-game-button:hover:not(:disabled) {
+            background-color: var(--bg-button-special-hover); transform: scale(1.03) translateY(-2px);
+            box-shadow: var(--shadow-button-hover), var(--glow-yellow);
+        }
         #start-game-button:active:not(:disabled) { transform: scale(0.98); }
         #start-game-button:disabled { background-color: #777; color: #bbb; cursor: not-allowed; transform: none; box-shadow: none; }
 
-        #header-timer-display { font-size: 1.6em; font-weight: 700; color: var(--text-heading-accent); margin-top: 5px; margin-bottom: 5px; display: block; opacity: 0; text-shadow: 0 1px 2px var(--shadow-color); transition: opacity 0.3s ease, visibility 0s linear 0.3s, height 0s linear 0.3s; visibility: hidden; height: 0; overflow: hidden; }
+        #header-timer-display { font-size: 1.6em; font-weight: 700; color: var(--text-heading-accent); margin-top: 5px; margin-bottom: 5px; display: block; opacity: 0; text-shadow: 0 1px 2px var(--shadow-color), var(--glow-yellow); transition: opacity 0.3s ease, visibility 0s linear 0.3s, height 0s linear 0.3s; visibility: hidden; height: 0; overflow: hidden; }
         #header-timer-display.visible { opacity: 1; visibility: visible; height: auto; transition: opacity 0.3s ease, height 0s linear 0s, visibility 0s linear 0s; }
 
         .input-group { margin-bottom: 15px; text-align: left; }
         .input-group label { display: block; margin-bottom: 5px; font-size: 0.9em; font-weight: 600; color: var(--text-label); }
-        .input-group input[type="number"], .input-group input[type="text"], .input-group select { display: block; width: 100%; padding: 10px 12px; border: 1px solid var(--border-input); background-color: var(--bg-input); color: var(--text-light); border-radius: 5px; font-family: inherit; font-size: 1em; appearance: none; -webkit-appearance: none; -moz-appearance: none; }
+        .input-group input[type="number"], .input-group input[type="text"], .input-group select { display: block; width: 100%; padding: 10px 12px; border: 1px solid var(--border-input); background-color: var(--bg-input); color: var(--text-light); border-radius: var(--border-radius-small); font-family: inherit; font-size: 1em; appearance: none; -webkit-appearance: none; -moz-appearance: none; }
         .input-group input::placeholder { color: var(--text-placeholder); opacity: 1; }
-        .input-group select { background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23cccccc%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 10px center; background-size: 10px 10px; padding-right: 30px; cursor: pointer; }
-        body.light-mode .input-group select { background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23555555%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); }
+        .input-group select { background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2300f5d4%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 10px center; background-size: 10px 10px; padding-right: 30px; cursor: pointer; }
+        body.light-mode .input-group select { background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%232ec4b6%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); }
 
-        .modal input[type="number"] { display: block; width: 100%; padding: 10px 12px; margin-bottom: 10px; border: 1px solid var(--border-input); background-color: var(--bg-input); color: var(--text-light); border-radius: 5px; font-family: inherit; font-size: 1em; }
+        .modal input[type="number"] { display: block; width: 100%; padding: 10px 12px; margin-bottom: 10px; border: 1px solid var(--border-input); background-color: var(--bg-input); color: var(--text-light); border-radius: var(--border-radius-small); font-family: inherit; font-size: 1em; }
         .modal input::placeholder { color: var(--text-placeholder); opacity: 1; }
-        .standard-button { padding: 10px 15px; border: none; border-radius: 5px; background-color: var(--bg-button-info); color: var(--text-dark); font-family: inherit; font-weight: 700; font-size: 1em; cursor: pointer; transition: background-color 0.2s ease, transform 0.1s ease; display: inline-block; margin-top: 5px; }
-        .standard-button:hover:not(:disabled) { background-color: var(--bg-button-info-hover); transform: scale(1.03); }
-        .standard-button:active:not(:disabled) { transform: scale(0.98); }
+
+        .standard-button {
+            padding: 10px 15px; border: none; border-radius: var(--border-radius-small); background-color: var(--bg-button-info);
+            color: var(--text-dark); font-family: inherit; font-weight: 700; font-size: 1em; cursor: pointer;
+            transition: all 0.2s ease; display: inline-block; margin-top: 5px;
+        }
+        .standard-button:hover:not(:disabled) {
+            background-color: var(--bg-button-info-hover); transform: scale(1.03) translateY(-2px); box-shadow: var(--glow-cyan);
+        }
+        .standard-button:active:not(:disabled) { transform: scale(0.98) translateY(0); }
         .standard-button.action-button { background-color: var(--bg-button-action); }
-        .standard-button.action-button:hover:not(:disabled) { background-color: var(--bg-button-action-hover); }
+        .standard-button.action-button:hover:not(:disabled) { background-color: var(--bg-button-action-hover); box-shadow: var(--glow-pink); }
         .standard-button.special-button { background-color: var(--bg-button-special); }
-        .standard-button.special-button:hover:not(:disabled) { background-color: var(--bg-button-special-hover); }
-        .standard-button:disabled { background-color: #777; color: #bbb; cursor: not-allowed; transform: none; }
+        .standard-button.special-button:hover:not(:disabled) { background-color: var(--bg-button-special-hover); box-shadow: var(--glow-yellow); }
+        .standard-button:disabled { background-color: #777; color: #bbb; cursor: not-allowed; transform: none; box-shadow: none; }
 
         .icon-button { position: absolute; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--accent-cyan); cursor: pointer; padding: 5px; border-radius: 50%; width: 40px; height: 40px; transition: background-color 0.2s ease, transform 0.2s ease, color 0.2s ease; z-index: 210; display: block; font-size: 24px; line-height: 30px; text-align: center; }
-        .icon-button:hover { background-color: rgba(128, 128, 128, 0.1); transform: translateY(-50%) scale(1.1); }
+        .icon-button:hover { background-color: rgba(0, 245, 212, 0.1); transform: translateY(-50%) scale(1.1); }
         .icon-button svg { width: 100%; height: 100%; vertical-align: middle; fill: var(--accent-cyan); transition: fill var(--transition-speed) var(--transition-timing); }
         #menu-button { left: 15px; top: 27.5px; }
         #settings-button { right: 15px; top: 27.5px; color: var(--accent-cyan); }
-        #side-menu { position: fixed; top: 0; left: calc(var(--menu-width) * -1); width: var(--menu-width); height: 100%; background-color: var(--bg-menu); backdrop-filter: blur(var(--backdrop-blur-heavy)); box-shadow: 4px 0 15px var(--shadow-color); z-index: 400; transition: left var(--transition-speed) cubic-bezier(0.25, 0.8, 0.25, 1), background-color var(--transition-speed) var(--transition-timing); padding: 60px 0 20px 0; display: flex; flex-direction: column; overflow-y: auto; }
+
+        #side-menu { position: fixed; top: 0; left: calc(var(--menu-width) * -1); width: var(--menu-width); height: 100%; background-color: var(--bg-menu); backdrop-filter: blur(var(--backdrop-blur-heavy)); box-shadow: 4px 0 15px var(--shadow-color); z-index: 400; transition: left var(--transition-speed) var(--transition-timing), background-color var(--transition-speed) var(--transition-timing); padding: 60px 0 20px 0; display: flex; flex-direction: column; overflow-y: auto; }
         #side-menu.open { left: 0; }
         .menu-item-button { display: block; width: 100%; padding: 15px 25px; text-align: left; background: none; border: none; border-bottom: 1px solid var(--border-menu-item); color: var(--text-light); font-family: inherit; font-size: 1.1em; font-weight: 400; cursor: pointer; transition: background-color 0.2s ease, color 0.2s ease, border-color var(--transition-speed) var(--transition-timing); }
         .menu-item-button:first-of-type { border-top: 1px solid var(--border-menu-item); }
-        .menu-item-button:hover { background-color: rgba(128, 128, 128, 0.08); color: var(--accent-cyan); }
-        #settings-popup { display: none; position: absolute; top: 60px; right: 15px; background-color: var(--bg-ui-panel); backdrop-filter: blur(var(--backdrop-blur)); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; box-shadow: var(--shadow-panel); z-index: 350; min-width: 180px; text-align: left; }
+        .menu-item-button:hover { background-color: rgba(0, 245, 212, 0.1); color: var(--accent-cyan); }
+
+        #settings-popup { display: none; position: absolute; top: 60px; right: 15px; background-color: var(--bg-ui-panel); backdrop-filter: blur(var(--backdrop-blur)); border: 1px solid var(--border-color); border-radius: var(--border-radius-medium); padding: 15px; box-shadow: var(--shadow-panel); z-index: 350; min-width: 180px; text-align: left; }
         #settings-popup .setting-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         #settings-popup .setting-item p { margin: 0; font-size: 0.95em; color: var(--text-medium); }
         .theme-switch { position: relative; display: inline-block; width: 50px; height: 26px; flex-shrink: 0; }
@@ -310,57 +416,73 @@
         input:checked + .slider { background-color: var(--bg-toggle-track-active); }
         input:focus + .slider { box-shadow: 0 0 1px var(--bg-toggle-track-active); }
         input:checked + .slider:before { transform: translateX(24px); }
-        .fullscreen-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--bg-overlay); backdrop-filter: blur(var(--backdrop-blur-heavy)); z-index: 500; display: none; padding: 80px 20px 20px 20px; overflow-y: auto; color: var(--text-light); align-items: center; justify-content: flex-start; flex-direction: column; text-align: center; animation: fadeInOverlay 0.3s ease-out; }
-        @keyframes fadeInOverlay { from { opacity: 0; } to { opacity: 1; } }
-        .overlay-close-button { position: absolute; top: 15px; right: 15px; padding: 8px 12px; background-color: var(--bg-button-action); color: var(--text-dark); border: none; border-radius: 5px; font-size: 1em; font-weight: 700; cursor: pointer; transition: background-color 0.2s ease, transform 0.1s ease, color var(--transition-speed) var(--transition-timing); z-index: 510; }
-        .overlay-close-button:hover { background-color: var(--bg-button-action-hover); transform: scale(1.05); }
-        .overlay-title { font-size: 2em; font-weight: 700; color: var(--text-heading-accent); margin-bottom: 20px; margin-top: 20px; }
-        .overlay-content { width: 100%; max-width: 450px; padding: 25px; background-color: var(--bg-ui-panel); border-radius: 10px; box-shadow: var(--shadow-panel); color: var(--text-light); display: flex; flex-direction: column; gap: 15px; }
+
+        .fullscreen-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--bg-overlay);
+            backdrop-filter: blur(var(--backdrop-blur-heavy)); z-index: 500; display: none; padding: 80px 20px 20px 20px;
+            overflow-y: auto; color: var(--text-light); align-items: center; justify-content: flex-start;
+            flex-direction: column; text-align: center;
+            animation: slideInUpFadeFullscreen 0.5s var(--transition-timing) forwards;
+        }
+
+        .overlay-close-button {
+            position: absolute; top: 15px; right: 15px; padding: 8px 12px; background-color: var(--bg-button-action);
+            color: var(--text-dark); border: none; border-radius: var(--border-radius-small); font-size: 1em; font-weight: 700;
+            cursor: pointer; transition: all 0.2s ease; z-index: 510;
+        }
+        .overlay-close-button:hover { background-color: var(--bg-button-action-hover); transform: scale(1.05); box-shadow: var(--glow-pink);}
+
+        .overlay-title { font-size: 2em; font-weight: 700; color: var(--text-heading-accent); margin-bottom: 20px; margin-top: 20px; text-shadow: var(--glow-yellow); }
+        .overlay-content { width: 100%; max-width: 450px; padding: 25px; background-color: var(--bg-ui-panel); border-radius: var(--border-radius-medium); box-shadow: var(--shadow-panel); color: var(--text-light); display: flex; flex-direction: column; gap: 15px; border: 1px solid var(--border-color); }
         .overlay-content p { font-size: 1.1em; color: var(--text-medium); margin-bottom: 0; line-height: 1.6; }
         .overlay-content p strong { color: var(--accent-cyan); word-break: break-all; }
         .overlay-content p strong.highlight { color: var(--accent-yellow); font-weight: 700; }
-        #profile-overlay .profile-info-item { display: flex; justify-content: space-between; align-items: center; font-size: 1.1em; color: var(--text-medium); padding: 5px 0; border-bottom: 1px solid var(--border-color); }
+        #profile-overlay .profile-info-item { display: flex; justify-content: space-between; align-items: center; font-size: 1.1em; color: var(--text-medium); padding: 10px 0; border-bottom: 1px solid var(--border-color); }
         #profile-overlay .profile-info-item:last-child { border-bottom: none; }
         #profile-overlay .profile-info-item span { margin-right: 15px; }
         #profile-overlay .profile-info-item strong { color: var(--text-light); word-break: break-all; text-align: right; margin-top: 0; }
-        #tasks-overlay .overlay-content { background-color: transparent; box-shadow: none; padding: 0; max-width: 500px; display: flex; flex-direction: column; gap: 30px; }
-        .task-group { background-color: var(--bg-ui-panel); border-radius: 10px; box-shadow: var(--shadow-panel); padding: 20px; width: 100%; }
-        .task-group h3 { font-size: 1.4em; color: var(--text-heading-accent); margin-top: 0; margin-bottom: 20px; text-align: center; font-weight: 700; }
+
+        #tasks-overlay .overlay-content { background-color: transparent; box-shadow: none; padding: 0; max-width: 500px; display: flex; flex-direction: column; gap: 30px; border: none; }
+        .task-group { background-color: var(--bg-ui-panel); border: 1px solid var(--border-color); border-radius: var(--border-radius-medium); box-shadow: var(--shadow-panel); padding: 20px; width: 100%; }
+        .task-group h3 { font-size: 1.4em; color: var(--text-heading-accent); margin-top: 0; margin-bottom: 20px; text-align: center; font-weight: 700; text-shadow: var(--glow-yellow); }
         .task-group .task-list { display: flex; flex-direction: column; gap: 15px; }
-        .task-item { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; background-color: var(--bg-link-button); padding: 10px 15px; border-radius: 8px; border: 1px solid var(--border-link-button); }
+        .task-item { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; background-color: var(--bg-link-button); padding: 10px 15px; border-radius: var(--border-radius-medium); border: 1px solid var(--border-link-button); }
         .task-item span { font-size: 1em; color: var(--text-medium); margin-right: 15px; flex-grow: 1; text-align: left; margin-bottom: 5px; }
-        .task-item .link-button { display: inline-flex; align-items: center; padding: 8px 18px; border-radius: 20px; background-color: var(--bg-button-info); color: var(--text-dark); text-decoration: none; font-weight: 700; font-size: 0.9em; transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease; box-shadow: var(--shadow-button); cursor: pointer; white-space: nowrap; border: none; flex-shrink: 0; }
-        .task-item .link-button:hover { background-color: var(--bg-button-info-hover); transform: scale(1.04); box-shadow: var(--shadow-button-hover); }
+        .task-item .link-button {
+            display: inline-flex; align-items: center; padding: 8px 18px; border-radius: 20px; background-color: var(--bg-button-info);
+            color: var(--text-dark); text-decoration: none; font-weight: 700; font-size: 0.9em; transition: all 0.2s ease;
+            box-shadow: var(--shadow-button); cursor: pointer; white-space: nowrap; border: none; flex-shrink: 0;
+        }
+        .task-item .link-button:hover { background-color: var(--bg-button-info-hover); transform: scale(1.04); box-shadow: var(--shadow-button-hover), var(--glow-cyan); }
         .task-item .link-button svg { width: 18px; height: 18px; fill: currentColor; margin-right: 8px; }
         .task-item .link-button.x-link { background-color: var(--bg-button-x); color: white; }
-        .task-item .link-button.x-link:hover { background-color: var(--bg-button-x-hover); }
+        .task-item .link-button.x-link:hover { background-color: var(--bg-button-x-hover); box-shadow: var(--shadow-button-hover), 0 0 12px rgba(200,200,200,0.5); }
         .task-item .link-button.youtube-link { background-color: #FF0000; color: white; }
-        .task-item .link-button.youtube-link:hover { background-color: #CC0000; }
+        .task-item .link-button.youtube-link:hover { background-color: #CC0000; box-shadow: var(--shadow-button-hover), 0 0 12px rgba(255,0,0,0.5); }
         .task-item .link-button.submit-link { background-color: var(--bg-button-special); color: var(--text-dark); }
-        .task-item .link-button.submit-link:hover { background-color: var(--bg-button-special-hover); }
+        .task-item .link-button.submit-link:hover { background-color: var(--bg-button-special-hover); box-shadow: var(--shadow-button-hover), var(--glow-yellow); }
         #sponsor-contact-button { display: block; width: fit-content; margin: 10px auto 0 auto; padding: 10px 20px; }
 
-        #withdrawal-overlay .overlay-content,
-        #events-airdrop-overlay .overlay-content { gap: 0; padding: 15px; }
-        .withdrawal-accordion-item { width: 100%; margin-bottom: 10px; border: 1px solid var(--border-accordion); border-radius: 8px; overflow: hidden; background-color: var(--bg-withdrawal-section); }
+        #withdrawal-overlay .overlay-content { gap: 0; padding: 15px; }
+        .withdrawal-accordion-item { width: 100%; margin-bottom: 10px; border: 1px solid var(--border-accordion); border-radius: var(--border-radius-medium); overflow: hidden; background-color: var(--bg-withdrawal-section); }
         .withdrawal-accordion-header { padding: 15px 20px; background-color: var(--bg-accordion-header); color: var(--text-accordion-header); font-size: 1.2em; font-weight: 700; cursor: pointer; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid transparent; }
         .withdrawal-accordion-header:hover { background-color: var(--bg-accordion-header-hover); }
         .withdrawal-accordion-header.active { border-bottom-color: var(--border-accordion); }
         .withdrawal-accordion-header .accordion-icon { font-size: 1.2em; transition: transform 0.3s ease-out; }
         .withdrawal-accordion-header.active .accordion-icon { transform: rotate(90deg); }
-        .withdrawal-accordion-content { padding: 0px; background-color: var(--bg-accordion-content); max-height: 0; overflow: hidden; text-align: left; }
+        .withdrawal-accordion-content { padding: 0; background-color: var(--bg-accordion-content); max-height: 0; overflow: hidden; text-align: left; }
         .withdrawal-accordion-content .content-padding { padding: 20px; }
         .withdrawal-accordion-content.open { max-height: 1000px; }
         .withdrawal-accordion-content ul { list-style: none; padding-left: 0; margin: 0; }
         .withdrawal-accordion-content li { font-size: 1em; color: var(--text-medium); margin-bottom: 10px; line-height: 1.5; padding-left: 20px; position: relative; }
         .withdrawal-accordion-content li::before { content: "•"; position: absolute; left: 0; color: var(--accent-cyan); font-weight: bold; display: inline-block; width: 20px; }
         .withdrawal-accordion-content li strong { color: var(--accent-yellow); font-weight: 600; }
-        #withdraw-main-button, #convert-points-button { padding: 12px 25px; border: none; border-radius: 8px; font-family: inherit; font-weight: 700; font-size: 1.1em; display: block; width: 100%; margin-top: 15px; }
+        #withdraw-main-button, #convert-points-button { padding: 12px 25px; border: none; border-radius: var(--border-radius-medium); font-family: inherit; font-weight: 700; font-size: 1.1em; display: block; width: 100%; margin-top: 15px; transition: all 0.2s ease; }
         #convert-points-button { background-color: var(--bg-button-info); color: var(--text-dark); cursor: pointer; }
-        #convert-points-button:hover:not(:disabled) { background-color: var(--bg-button-info-hover); }
+        #convert-points-button:hover:not(:disabled) { background-color: var(--bg-button-info-hover); box-shadow: var(--glow-cyan); }
         #convert-points-button:disabled { background-color: #777; color: #bbb; cursor: not-allowed; }
         #withdraw-main-button { background-color: var(--bg-button-action); color: var(--text-dark); cursor: pointer; }
-        #withdraw-main-button:hover:not(:disabled) { background-color: var(--bg-button-action-hover); }
+        #withdraw-main-button:hover:not(:disabled) { background-color: var(--bg-button-action-hover); box-shadow: var(--glow-pink); }
         #withdraw-main-button:disabled { background-color: #777; color: #bbb; cursor: not-allowed; opacity: 0.6;}
 
         .balance-display { margin-bottom: 10px; font-size: 1em; color: var(--text-medium); display: flex; align-items: center; }
@@ -368,7 +490,7 @@
         .crypto-icon { width: 18px; height: 18px; margin-right: 8px; vertical-align: middle; }
 
         #withdrawal-history-list { display: flex; flex-direction: column; gap: 10px; max-height: 250px; overflow-y: auto; padding-right: 5px; }
-        .history-item { background-color: var(--bg-history-item); padding: 12px 15px; border-radius: 6px; border: 1px solid var(--border-history-item); font-size: 0.9em; }
+        .history-item { background-color: var(--bg-history-item); padding: 12px 15px; border-radius: var(--border-radius-small); border: 1px solid var(--border-history-item); font-size: 0.9em; }
         .history-item-details { display: block; color: var(--text-medium); margin-bottom: 3px; }
         .history-item-details strong { color: var(--text-light); }
         .history-item-details .status-pending { color: var(--text-history-status-pending); font-weight: bold; }
@@ -378,21 +500,20 @@
         .history-item-tx { font-size: 0.8em; color: var(--text-link); word-break: break-all; }
         .history-item-tx:hover { color: var(--text-link-hover); }
 
-
         #friends-overlay .overlay-content { gap: 20px; }
         #friends-overlay .referral-info { display: flex; flex-direction: column; gap: 10px; text-align: center; margin-bottom: 15px; }
-        #referral-link-container { display: flex; align-items: center; gap: 10px; background-color: var(--bg-input); padding: 8px 12px; border-radius: 6px; margin-top: 10px; border: 1px solid var(--border-input); }
+        #referral-link-container { display: flex; align-items: center; gap: 10px; background-color: var(--bg-input); padding: 8px 12px; border-radius: var(--border-radius-small); margin-top: 10px; border: 1px solid var(--border-input); }
         #referral-link-display { flex-grow: 1; font-size: 0.9em; color: var(--text-medium); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left; }
         #copy-referral-link-button { padding: 6px 10px; font-size: 0.85em; font-weight: 600; background-color: var(--bg-copy-button); color: var(--text-copy-button); border: 1px solid var(--border-copy-button); border-radius: 4px; cursor: pointer; transition: background-color 0.2s ease, color 0.2s ease; flex-shrink: 0; }
         #copy-referral-link-button:hover { background-color: var(--bg-copy-button-hover); color: var(--text-copy-button-hover); }
         #friends-overlay .referral-count { font-size: 1.2em; font-weight: 700; color: var(--text-light); margin-bottom: 10px; padding-bottom: 10px; text-align: center; border-bottom: 1px solid var(--border-color); }
-        #friends-overlay .referral-count strong { color: var(--accent-yellow); }
-        #referral-list-container { width: 100%; max-height: 280px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 8px; background-color: rgba(0,0,0,0.1); padding: 10px; scrollbar-width: thin; scrollbar-color: var(--accent-cyan) rgba(0,0,0,0.1); }
+        #friends-overlay .referral-count strong { color: var(--accent-yellow); text-shadow: var(--glow-yellow); }
+        #referral-list-container { width: 100%; max-height: 280px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: var(--border-radius-medium); background-color: rgba(0,0,0,0.1); padding: 10px; scrollbar-width: thin; scrollbar-color: var(--accent-cyan) rgba(0,0,0,0.1); }
         #referral-list-container::-webkit-scrollbar { width: 6px; }
         #referral-list-container::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); border-radius: 3px;}
         #referral-list-container::-webkit-scrollbar-thumb { background-color: var(--accent-cyan); border-radius: 3px; }
         #referral-list { display: flex; flex-direction: column; gap: 10px; }
-        .referral-item { display: flex; align-items: center; justify-content: space-between; background-color: var(--bg-link-button); padding: 10px 15px; border-radius: 6px; border: 1px solid var(--border-link-button); }
+        .referral-item { display: flex; align-items: center; justify-content: space-between; background-color: var(--bg-link-button); padding: 10px 15px; border-radius: var(--border-radius-small); border: 1px solid var(--border-link-button); }
         .referral-item span { font-size: 1em; color: var(--text-medium); flex-grow: 1; margin-right: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
         /* Leaderboard Styles */
@@ -401,64 +522,157 @@
         .leaderboard-tab-button { flex-grow: 1; padding: 12px 15px; background: none; border: none; color: var(--text-medium); font-size: 1.1em; font-weight: 600; cursor: pointer; transition: color 0.2s ease, border-bottom-color 0.2s ease; border-bottom: 3px solid transparent; text-transform: uppercase; letter-spacing: 0.5px;}
         .leaderboard-tab-button.active { color: var(--accent-cyan); border-bottom-color: var(--accent-cyan); }
         .leaderboard-tab-button:hover:not(.active) { color: var(--text-light); }
-        .leaderboard-tab-content { display: none; animation: fadeInOverlay 0.3s ease-out; }
-        .leaderboard-tab-content.active { display: block; }
-        .my-rank-section { background-color: var(--bg-my-rank-section); padding: 12px 18px; border-radius: 8px; margin-bottom: 20px; text-align: center; border: 1px solid var(--border-my-rank-section); }
+        .leaderboard-tab-content { display: none; }
+        .leaderboard-tab-content.active { display: block; animation: fadeInOverlay 0.5s ease-out; }
+        .my-rank-section { background-color: var(--bg-my-rank-section); padding: 12px 18px; border-radius: var(--border-radius-medium); margin-bottom: 20px; text-align: center; border: 1px solid var(--border-my-rank-section); }
         .my-rank-section p { margin: 0; font-size: 1em; color: var(--text-light); }
         .my-rank-section p .rank-label { font-size: 0.8em; color: var(--text-medium); display: block; margin-bottom: 3px; text-transform: uppercase;}
-        .my-rank-section strong { color: var(--accent-yellow); font-size: 1.4em; display: inline-block; margin-right: 5px;}
+        .my-rank-section strong { color: var(--accent-yellow); font-size: 1.4em; display: inline-block; margin-right: 5px; text-shadow: var(--glow-yellow); }
         .my-rank-section .rank-value { font-size: 1.2em; color: var(--text-light); }
 
-        .leaderboard-list-container { width: 100%; max-height: 350px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 8px; background-color: rgba(0,0,0,0.1); padding: 10px; scrollbar-width: thin; scrollbar-color: var(--accent-cyan) rgba(0,0,0,0.1); }
+        .leaderboard-list-container { width: 100%; max-height: 350px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: var(--border-radius-medium); background-color: rgba(0,0,0,0.1); padding: 10px; scrollbar-width: thin; scrollbar-color: var(--accent-cyan) rgba(0,0,0,0.1); }
         .leaderboard-list-container::-webkit-scrollbar { width: 6px; }
         .leaderboard-list-container::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); border-radius: 3px;}
         .leaderboard-list-container::-webkit-scrollbar-thumb { background-color: var(--accent-cyan); border-radius: 3px; }
         .leaderboard-list { display: flex; flex-direction: column; gap: 8px; }
-        .leaderboard-item { display: flex; align-items: center; background-color: var(--bg-leaderboard-item); padding: 10px 15px; border-radius: 6px; border: 1px solid var(--border-leaderboard-item); }
+        .leaderboard-item { display: flex; align-items: center; background-color: var(--bg-leaderboard-item); padding: 10px 15px; border-radius: var(--border-radius-small); border: 1px solid var(--border-leaderboard-item); }
         .leaderboard-item .rank-number { font-size: 1em; font-weight: 700; color: var(--text-leaderboard-rank); min-width: 35px; text-align: left; }
         .leaderboard-item .username-display { font-size: 1em; color: var(--text-leaderboard-username); flex-grow: 1; margin: 0 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .leaderboard-item .score-value { font-size: 1em; font-weight: 600; color: var(--text-leaderboard-score); white-space: nowrap; }
 
-
-        #game-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; order: -1; z-index: 1; }
+        #game-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; order: -1; z-index: 1; display: none !important; }
         #game-canvas { display: block; width: 100%; height: 100%; image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges; }
 
-        .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: var(--bg-modal); backdrop-filter: blur(var(--backdrop-blur-heavy)); padding: 30px 40px; border-radius: 15px; text-align: center; z-index: 600; display: none; box-shadow: var(--shadow-modal); width: 90%; max-width: 400px; border: 1px solid var(--border-color); pointer-events: auto; color: var(--text-light); }
-        .modal h2 { margin: 0 0 20px 0; font-size: 2.1em; font-weight: 700; color: var(--text-heading-accent); text-align: center; }
+        /* Tapping Game Styles */
+        #tapping-game-container {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; justify-content: center; align-items: center; z-index: 100;
+            opacity: 1; transition: opacity 0.3s ease;
+            overflow: hidden; /* NEW: Keep animations contained */
+        }
+        #tapping-game-container.hidden {
+            opacity: 0; pointer-events: none;
+        }
+        #tap-target {
+            width: 250px; /* MODIFIED: Bigger size */
+            height: 250px; /* MODIFIED: Bigger size */
+            background: radial-gradient(circle, var(--accent-yellow) 0%, var(--accent-pink) 100%);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 25px var(--accent-pink), 0 0 40px var(--accent-yellow);
+            display: flex; justify-content: center; align-items: center;
+            font-size: 2em; /* MODIFIED: Bigger text */
+            font-weight: 700; color: var(--text-dark); text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent; /* MODIFIED: Remove blue highlight on tap */
+        }
+        body.light-mode #tap-target {
+            /* MODIFIED: New theme for light mode */
+            background: radial-gradient(circle, var(--accent-cyan-hover) 0%, var(--accent-pink) 100%);
+            box-shadow: 0 0 25px var(--accent-pink), 0 0 40px var(--accent-cyan);
+            color: var(--text-dark);
+        }
+         #tap-target:before {
+            content: "TAP!";
+         }
+        #tap-target.tapped {
+            transform: scale(0.92);
+            box-shadow: 0 0 15px var(--accent-pink), 0 0 20px var(--accent-yellow);
+        }
+
+        /* NEW: Container for tap animations */
+        #tap-animation-container {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none; /* Allows clicks to go through to the target */
+            overflow: hidden;
+            z-index: 110;
+        }
+        /* NEW: Style for the floating "+1" text */
+        .plus-one-animation {
+            position: absolute;
+            font-size: 2em;
+            font-weight: bold;
+            color: var(--accent-yellow);
+            text-shadow: 0 0 5px #000;
+            animation: floatAndFade 1s ease-out forwards;
+            user-select: none;
+            pointer-events: none;
+            transform: translateX(-50%); /* Center the text on the click */
+        }
+        body.light-mode .plus-one-animation {
+             color: var(--accent-yellow); /* Blue in light mode */
+             text-shadow: 0 0 5px rgba(0,0,0,0.3);
+        }
+
+
+        /* NEW: Container and styles for rain effect */
+        #rain-container {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 99;
+            overflow: hidden;
+        }
+        .raindrop {
+            position: absolute;
+            top: -5%; /* Start off screen */
+            color: var(--accent-cyan);
+            font-size: 1.2em;
+            font-weight: bold;
+            animation-name: rainFall;
+            animation-timing-function: linear;
+            opacity: 0; /* Start invisible until delay kicks in */
+            user-select: none;
+        }
+
+
+        .modal {
+            position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%); background-color: var(--bg-modal); backdrop-filter: blur(var(--backdrop-blur-heavy));
+            padding: 30px 40px; border-radius: var(--border-radius-large); text-align: center; z-index: 600; display: none;
+            box-shadow: var(--shadow-modal); width: 90%; max-width: 400px; border: 1px solid var(--border-color);
+            pointer-events: auto; color: var(--text-light);
+            animation: slideInUpFade 0.5s var(--transition-timing) forwards;
+        }
+        .modal h2 { margin: 0 0 20px 0; font-size: 2.1em; font-weight: 700; color: var(--text-heading-accent); text-align: center; text-shadow: var(--glow-yellow); }
         .modal p { font-size: 1.1em; margin-bottom: 25px; font-weight: 400; color: var(--text-medium); line-height: 1.5; text-align: center; }
-        .modal-buttons { margin-top: 20px; display: flex; justify-content: space-between; gap: 15px; flex-wrap: nowrap; }
-        .modal-button { padding: 12px 15px; font-size: 1em; flex-grow: 1; flex-basis: 0; min-width: 100px; text-align: center; cursor: pointer; border: none; border-radius: 8px; background-color: var(--bg-button-info); color: var(--text-dark); font-weight: 700; transition: all .2s ease; pointer-events: auto; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: var(--shadow-button); }
+        .modal-buttons { margin-top: 20px; display: flex; justify-content: space-around; gap: 15px; flex-wrap: nowrap; }
+        .modal-button {
+            padding: 12px 15px; font-size: 1em; flex-grow: 1; flex-basis: 0; min-width: 100px; text-align: center; cursor: pointer;
+            border: none; border-radius: var(--border-radius-medium); background-color: var(--bg-button-info); color: var(--text-dark);
+            font-weight: 700; transition: all .2s ease; pointer-events: auto; text-transform: uppercase;
+            letter-spacing: 0.5px; box-shadow: var(--shadow-button);
+        }
         .modal-button:disabled { opacity: 0.5; cursor: not-allowed; background-color: #777; color: #eee; transform: none; box-shadow: none; }
-        .modal-button:hover:not(:disabled) { background-color: var(--bg-button-info-hover); transform: translateY(-2px) scale(1.02); box-shadow: var(--shadow-button-hover); }
+        .modal-button:hover:not(:disabled) {
+            background-color: var(--bg-button-info-hover); transform: translateY(-2px) scale(1.02);
+            box-shadow: var(--shadow-button-hover), var(--glow-cyan);
+        }
         .modal-button:active:not(:disabled) { transform: translateY(0px) scale(0.98); box-shadow: 0 1px 3px var(--shadow-color); }
         .modal-button.boost-button { background-color: var(--bg-button-watch-ad); }
         .modal-button.boost-button:hover:not(:disabled) { background-color: var(--bg-button-watch-ad-hover); }
         .modal-button.special-button { background-color: var(--bg-button-special); }
-        .modal-button.special-button:hover:not(:disabled) { background-color: var(--bg-button-special-hover); }
+        .modal-button.special-button:hover:not(:disabled) { background-color: var(--bg-button-special-hover); box-shadow: var(--shadow-button-hover), var(--glow-yellow); }
         #announcement-follow-button { display: inline-flex; align-items: center; text-decoration: none; }
         #announcement-follow-button svg { width: 18px; height: 18px; fill: currentColor; margin-right: 8px; }
 
-
         #game-over-ui h2 { margin-bottom: 15px; }
         #game-over-ui p#game-over-message { font-size: 1.2em; min-height: 1.5em; margin-bottom: 25px; }
-        #game-over-buttons { margin-top: 0; }
+        #game-over-buttons { margin-top: 0; justify-content: center; }
         #game-over-ui .game-over-button { background-color: var(--bg-button-info); }
         #game-over-ui .game-over-button:hover:not(:disabled) { background-color: var(--bg-button-info-hover); }
         #watch-ad-button.game-over-button { background-color: var(--bg-button-special); }
         #watch-ad-button.game-over-button:hover:not(:disabled) { background-color: var(--bg-button-special-hover); }
 
-        #start-game-modal h2 { margin-bottom: 25px; }
-        #start-game-modal p { display: none; }
-        #start-game-modal .modal-buttons { margin-top: 0; }
-        #start-normal-button.modal-button { background-color: var(--bg-button-info); }
-        #start-normal-button.modal-button:hover:not(:disabled) { background-color: var(--bg-button-info-hover); }
-
-        #menu-overlay-dimmer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 399; display: none; opacity: 0; transition: opacity var(--transition-speed) ease-in-out; }
+        #menu-overlay-dimmer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); z-index: 399; display: none; opacity: 0; transition: opacity var(--transition-speed) ease-in-out; }
         #menu-overlay-dimmer.visible { display: block; opacity: 1; }
     </style>
 
-    <!-- AdsGram SDK -->
-    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+    <script src='//whephiwums.com/sdk.js' data-zone='9292240' data-sdk='show_9292240'></script>
 </head>
 <body>
 
@@ -467,11 +681,14 @@
         <div id="loading-text">Initializing Game...</div>
         <div id="loading-bar-container"><div id="loading-bar"></div></div>
     </div>
+    
+    <!-- NEW: Rain container will be populated by JS -->
+    <div id="rain-container"></div>
 
     <div id="header-bar">
         <div id="score-wrapper">
-            <div class="score-display"><span class="score-label">Current</span> <span id="current-score">0</span></div>
-            <div class="score-display"><span class="score-label">Total</span> <span id="total-score">...</span></div>
+            <div class="score-display"><span class="score-label">Taps</span> <span id="current-score">0</span></div>
+            <div class="score-display"><span class="score-label">Total Points</span> <span id="total-score">...</span></div>
         </div>
         <div id="header-timer-display">0:00</div>
         <button id="menu-button" class="icon-button" aria-label="Open Menu">
@@ -491,7 +708,6 @@
         <button class="menu-item-button" data-action="show-withdrawal">Withdrawal</button>
         <button class="menu-item-button" data-action="show-friends">Friends</button>
         <button class="menu-item-button" data-action="show-tasks">Tasks</button>
-        <button class="menu-item-button" data-action="show-events-airdrop">Events & Airdrops</button>
         <button class="menu-item-button" data-action="show-leaderboard">Leaderboard</button>
     </div>
     <div id="menu-overlay-dimmer"></div>
@@ -548,7 +764,7 @@
                             <strong id="conversion-expected-amount" style="font-size: 1.1em; color: var(--accent-yellow);">0.0000 CRYPTO</strong>
                         </div>
                         <button id="convert-points-button" disabled>Convert</button>
-                        <p style="font-size: 0.8em; color: var(--text-medium); margin-top: 15px;">Note: 1000 pts = 0.0005 TON or 1000 pts = 0.00002 SOL. Withdrawal fees (0.05 TON / 0.01 SOL) apply separately.</p>
+                        <p style="font-size: 0.8em; color: var(--text-medium); margin-top: 15px;">Note: 1000 pts = 0.0002 TON or 1000 pts = 0.00001 SOL. Withdrawal fees (0.05 TON / 0.01 SOL) apply separately.</p>
                     </div>
                 </div>
             </div>
@@ -644,141 +860,11 @@
             </div>
              <div class="task-group">
                  <h3>Sponsorship & Partnership</h3>
-                 <p style="font-size: 1em; text-align: center; margin-bottom: 15px;">Are you interested in sponsoring or partnering with Helix Point Drop?</p>
+                 <p style="font-size: 1em; text-align: center; margin-bottom: 15px;">Are you interested in sponsoring or partnering with us?</p>
                  <a href="mailto:youremail@example.com?subject=Sponsorship Inquiry - Helix Point Drop" id="sponsor-contact-button" class="standard-button special-button">Contact Us</a>
              </div>
          </div>
      </div>
-
-    <div id="events-airdrop-overlay" class="fullscreen-overlay">
-        <button class="overlay-close-button" data-overlay-id="events-airdrop-overlay">Close</button>
-        <h2 class="overlay-title">Events & Airdrops</h2>
-        <div class="overlay-content">
-            <div class="withdrawal-accordion-item">
-                <div class="withdrawal-accordion-header" data-accordion-target="event-1-content">
-                    <span>🏆 Points Battle 🏆</span><span class="accordion-icon">&gt;</span>
-                </div>
-                <div class="withdrawal-accordion-content" id="event-1-content">
-                    <div class="content-padding">
-                        <p>Compete for the <strong>Top 100</strong> on the Points Leaderboard!</p>
-                        <ul>
-                            <li>🗓️ <strong>Concludes:</strong> 1st & 16th of every month.</li>
-                            <li>🎁 <strong>Rewards:</strong> Points (convertible to TON/SOL).</li>
-                            <li>🔄 <strong>Reset:</strong> All user points reset to 0 at the start of each cycle, giving everyone a fresh chance!</li>
-                            <li>💰 <strong>Prize Pool:</strong> <strong class="highlight">5,000,000 Points</strong> per cycle!
-                                <ul>
-                                    <li>1st Place: <em>1,000,000 Points</em></li>
-                                    <li>2nd Place: <em>750,000 Points</em></li>
-                                    <li>3rd Place: <em>500,000 Points</em></li>
-                                    <li>4th - 5th Place: <em>250,000 Points each</em></li>
-                                    <li>6th - 10th Place: <em>100,000 Points each</em></li>
-                                    <li>11th - 25th Place: <em>50,000 Points each</em></li>
-                                    <li>26th - 50th Place: <em>20,000 Points each</em></li>
-                                    <li>51st - 100th Place: <em>10,000 Points each</em></li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="withdrawal-accordion-item">
-                <div class="withdrawal-accordion-header" data-accordion-target="event-2-content">
-                    <span>🤝 Referral Rally 🤝</span><span class="accordion-icon">&gt;</span>
-                </div>
-                <div class="withdrawal-accordion-content" id="event-2-content">
-                    <div class="content-padding">
-                        <p>Invite the most friends and climb the Referral Leaderboard!</p>
-                        <ul>
-                            <li>🗓️ <strong>Concludes:</strong> Beginning of each month.</li>
-                            <li>🎁 <strong>Rewards:</strong> TON cryptocurrency.</li>
-                            <li>💰 <strong>Prize Pool:</strong> <strong class="highlight">20 TON</strong> per month!
-                                <ul>
-                                    <li>1st Place: <em>5 TON</em></li>
-                                    <li>2nd Place: <em>3 TON</em></li>
-                                    <li>3rd Place: <em>2 TON</em></li>
-                                    <li>4th - 5th Place: <em>1 TON each</em></li>
-                                    <li>6th - 10th Place: <em>0.5 TON each</em></li>
-                                    <li>11th - 25th Place: <em>0.2 TON each</em></li>
-                                    <li>26th - 50th Place: <em>0.1 TON each</em></li>
-                                    <li>51st - 100th Place: <em>0.05 TON each</em></li>
-                                </ul>
-                            </li>
-                             <li>📜 <strong>Rules:</strong> Referrals must be genuine users. Suspicious activity may lead to disqualification.</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="withdrawal-accordion-item">
-                <div class="withdrawal-accordion-header" data-accordion-target="event-3-content">
-                    <span>🎉 TON Carnival 🎉</span><span class="accordion-icon">&gt;</span>
-                </div>
-                <div class="withdrawal-accordion-content" id="event-3-content">
-                    <div class="content-padding">
-                        <p>Earn direct TON rewards while playing!</p>
-                        <ul>
-                            <li>🎟️ <strong>Entry:</strong> 10,000 Points & 5 Referrals required.</li>
-                            <li>🎁 <strong>Rewards (per game during event):</strong>
-                                <ul>
-                                    <li>Easy Mode: <strong>0.0005 TON</strong> per 7 platforms passed.</li>
-                                    <li>Medium Mode: <strong>0.0005 TON</strong> per 5 platforms passed.</li>
-                                    <li>Hard Mode: <strong>0.0005 TON</strong> per 3 platforms passed.</li>
-                                </ul>
-                            </li>
-                            <li>⏳ <strong>Duration:</strong> Conducted randomly each month or week. Stay active!</li>
-                            <li>❗ <strong>Note:</strong> Rewards are credited until you die or the timer ends for that game session.</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="withdrawal-accordion-item">
-                <div class="withdrawal-accordion-header" data-accordion-target="event-4-content">
-                    <span>🎊 SOL Fiesta 🎊</span><span class="accordion-icon">&gt;</span>
-                </div>
-                <div class="withdrawal-accordion-content" id="event-4-content">
-                     <div class="content-padding">
-                        <p>Dive into the SOL Fiesta and earn SOL rewards!</p>
-                        <ul>
-                            <li>🎟️ <strong>Entry:</strong> 10,000 Points & 5 Referrals required.</li>
-                            <li>🎁 <strong>Rewards (per game during event):</strong>
-                                <ul>
-                                    <li>Easy Mode: <strong>0.00002 SOL</strong> per 7 platforms passed.</li>
-                                    <li>Medium Mode: <strong>0.00002 SOL</strong> per 5 platforms passed.</li>
-                                    <li>Hard Mode: <strong>0.00002 SOL</strong> per 3 platforms passed.</li>
-                                </ul>
-                            </li>
-                            <li>⏳ <strong>Duration:</strong> Starts randomly each month or week. Don't miss out!</li>
-                            <li>❗ <strong>Note:</strong> Rewards accrue until game over for that session.</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="withdrawal-accordion-item">
-                <div class="withdrawal-accordion-header" data-accordion-target="event-5-content">
-                    <span>💎 ??? Coin Airdrop 💎</span><span class="accordion-icon">&gt;</span>
-                </div>
-                <div class="withdrawal-accordion-content" id="event-5-content">
-                    <div class="content-padding">
-                        <p>Get ready for the <strong class="highlight">BIGGEST AIRDROP YET!</strong></p>
-                        <ul>
-                            <li>🚀 <strong>Trigger:</strong> This massive event unlocks when our active userbase reaches <strong class="highlight">10,000 players!</strong></li>
-                            <li>🪙 <strong>Token:</strong> Our very own CryptoDrop native token!</li>
-                            <li>✨ <strong>Details:</strong> This will be a substantial airdrop. The more you engage, the better your potential reward. Specifics on eligibility and distribution will be announced as we get closer to the milestone. Spread the word!</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="withdrawal-accordion-item">
-                <div class="withdrawal-accordion-header" data-accordion-target="event-6-content">
-                    <span>🤫 Secret Event 🤫</span><span class="accordion-icon">&gt;</span>
-                </div>
-                <div class="withdrawal-accordion-content" id="event-6-content">
-                    <div class="content-padding">
-                        <p>Something exciting is brewing... Details will be announced soon! Keep playing and stay tuned to our official channels.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <div id="leaderboard-overlay" class="fullscreen-overlay">
         <button class="overlay-close-button" data-overlay-id="leaderboard-overlay">Close</button>
@@ -814,17 +900,8 @@
         <h2>Game Over!</h2>
         <p id="game-over-message">Score: <span id="final-score">0</span></p>
         <div id="game-over-buttons" class="modal-buttons">
-            <button id="watch-ad-button" class="game-over-button modal-button special-button">Watch Ad & Save</button>
+            <button id="watch-ad-button" class="game-over-button modal-button special-button" style="display: none;">Watch Ad & Save</button>
             <button id="restart-button" class="game-over-button modal-button">Play Again</button>
-        </div>
-    </div>
-
-    <div id="start-game-modal" class="modal">
-        <h2>Start Game</h2>
-        <p>Start normally or watch an ad for a points boost!</p>
-        <div class="modal-buttons">
-            <button id="start-boost-button" class="modal-button boost-button">+1 Pt/Platform</button>
-            <button id="start-normal-button" class="modal-button">Normally</button>
         </div>
     </div>
 
@@ -840,37 +917,31 @@
         </div>
     </div>
 
+    <!-- Tapping Game Area -->
+    <div id="tapping-game-container" class="hidden">
+        <div id="tap-target"></div>
+        <!-- NEW: Container for tap feedback animations -->
+        <div id="tap-animation-container"></div>
+    </div>
+
+
+    <!-- Old 3D game canvas container, now hidden -->
     <div id="game-container"><canvas id="game-canvas"></canvas></div>
 
     <div id="initial-controls-container" class="hidden">
-        <h3>Select Difficulty & Start</h3>
-         <div id="difficulty-options">
-             <button class="difficulty-button active" data-difficulty="easy">Easy</button>
-             <button class="difficulty-button" data-difficulty="medium">Medium</button>
-             <button class="difficulty-button" data-difficulty="hard">Hard</button>
-         </div>
-         <button id="start-game-button">Start Game (1 Min)</button>
+        <h3>Ready to Play?</h3>
+         <button id="start-game-button">Play Game (Watch Ad)</button>
     </div>
 
-    <!-- Real Telegram WebApp Script -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <!-- Make sure the above script is included before your main app script -->
 
     <script type="importmap">{
         "imports": {
-            "three": "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.min.js",
-            "three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/",
             "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"
         }
     }</script>
 
     <script type="module">
-        import * as THREE from 'three';
-        import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
-        import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-        import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-        import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
-        import { TextureLoader } from 'three';
         import { createClient } from '@supabase/supabase-js';
 
         const BOT_USERNAME = "Crypto_drop_ya_bot";
@@ -881,40 +952,16 @@
         const GAME_DURATION_SECONDS = 60;
         const TELEGRAM_CHANNEL_URL = "https://t.me/helix_cryptodrop";
 
-        let scene, camera, renderer, composer, bloomPass;
-        let ball, platformGroup, poleGroup, starField;
         let currentScore = 0;
         let gameState = 'initializing';
         let internalPauseState = false;
-        let rotationSensitivity = 0.02, bounceSpeed = 0.11;
-        let currentBallVelocityY = 0, ballPreviousY = 0, lastSafePlatformY = 0;
-        const gravity = -0.0035;
-        const platformRadius = 2.5, poleRadius = 0.5, gapSize = Math.PI / 2.5;
-        const platformSegments = 3, platformSpacingY = 2.0;
-        let activePlatforms = [], nextPlatformY = 0;
-        let activePoleSegments = {};
-        let scoreIncrementedForPlatform = {};
-        const ballStartX = 1.5; const ballStartZ = 0; const initialBallY = 8;
-        const cameraVerticalOffset = 4.5, cameraLookAtOffset = 1.0;
-        const cameraFixedZ = 11; const cameraZoomedInZ = 9.5; const cameraZoomDuration = 600;
-        let isCameraZooming = false; let cameraZoomRequestId = null;
-        const cameraFollowLerpFactor = 0.08;
-        let envMap = null;
-        const clock = new THREE.Clock();
-        let ballTexture = null;
-        const textureLoader = new TextureLoader();
-        const platformColorPalette = [ 0x00cfde, 0x8e44ad, 0x3498db, 0x2ecc71, 0xe74c3c, 0xf39c12 ];
-        let platformColorIndex = 0;
-        let shakeIntensity = 0; const shakeDecreaseFactor = 0.9; const maxShakeOffset = 0.15;
-        let isPointerDown = false; let previousPointerX = 0;
-        let adTimerIntervalId = null;
-        let AdController = null; // AdsGram Controller
 
-        let selectedDifficulty = 'easy';
-        let currentGameCountdown = 0;
-        let gameTimerIntervalId = null;
-        let adBonusActiveForThisGame = false;
-        let isTimedGameActive = false;
+        // --- Tapping Game State ---
+        let isTappingGameActive = false;
+        let tapGameTimerId = null;
+        let tapGameCountdown = 0;
+        let currentTaps = 0;
+        let rainInterval = null; // MODIFIED: For rain animation
 
         // --- DOM Element References ---
         const currentScoreEl = document.getElementById('current-score');
@@ -924,7 +971,6 @@
         const gameOverMessageP = document.getElementById('game-over-message');
         const restartButton = document.getElementById('restart-button');
         const watchAdButton = document.getElementById('watch-ad-button');
-        const gameContainer = document.getElementById('game-container');
         const headerBar = document.getElementById('header-bar');
         const menuButton = document.getElementById('menu-button');
         const settingsButton = document.getElementById('settings-button');
@@ -938,7 +984,6 @@
         const withdrawalOverlay = document.getElementById('withdrawal-overlay');
         const friendsOverlay = document.getElementById('friends-overlay');
         const tasksOverlay = document.getElementById('tasks-overlay');
-        const eventsAirdropOverlay = document.getElementById('events-airdrop-overlay');
         const leaderboardOverlay = document.getElementById('leaderboard-overlay');
         const overlayCloseButtons = document.querySelectorAll('.overlay-close-button');
         const menuItemButtons = sideMenu.querySelectorAll('.menu-item-button');
@@ -948,19 +993,15 @@
         const referralCountDisplay = document.getElementById('referral-count-display');
         const referralList = document.getElementById('referral-list');
         const initialControlsContainer = document.getElementById('initial-controls-container');
-        const difficultyButtons = initialControlsContainer.querySelectorAll('.difficulty-button');
-        const startGameButton = initialControlsContainer.querySelector('#start-game-button');
+        const startGameButton = document.getElementById('start-game-button');
         const headerTimerDisplayEl = document.getElementById('header-timer-display');
-        const startGameModal = document.getElementById('start-game-modal');
-        const startNormalButton = document.getElementById('start-normal-button');
-        const startBoostButton = document.getElementById('start-boost-button');
         const loadingScreen = document.getElementById('loading-screen');
         const loadingTextEl = document.getElementById('loading-text');
         const announcementPopupEl = document.getElementById('announcement-popup');
         const announcementMessageEl = document.getElementById('announcement-message');
         const announcementFollowButtonEl = document.getElementById('announcement-follow-button');
         const announcementCloseButtonEl = document.getElementById('announcement-close-button');
-        const allAccordionHeaders = document.querySelectorAll('.withdrawal-accordion-header'); // Generic selector for all accordions
+        const allAccordionHeaders = document.querySelectorAll('.withdrawal-accordion-header');
         const conversionPointsInput = document.getElementById('conversion-points-input');
         const conversionCryptoSelect = document.getElementById('conversion-crypto-select');
         const conversionExpectedAmountDisplay = document.getElementById('conversion-expected-amount');
@@ -981,6 +1022,10 @@
         const userReferralsRankDisplay = document.getElementById('user-referrals-rank-display');
         const userReferralsCountDisplay = document.getElementById('user-referrals-count-display');
         const referralsLeaderboardList = document.getElementById('referrals-leaderboard-list');
+        const tappingGameContainer = document.getElementById('tapping-game-container');
+        const tapTarget = document.getElementById('tap-target');
+        const tapAnimationContainer = document.getElementById('tap-animation-container'); // MODIFIED: For tap animations
+        const rainContainer = document.getElementById('rain-container'); // MODIFIED: For rain effect
 
 
         // --- Supabase & User State ---
@@ -995,8 +1040,8 @@
         let actualSolBalance = 0.0;
 
         // --- Constants ---
-        const POINTS_TO_TON_RATE = 0.0005 / 1000;
-        const POINTS_TO_SOL_RATE = 0.00002 / 1000;
+        const POINTS_TO_TON_RATE = 0.0002 / 1000;
+        const POINTS_TO_SOL_RATE = 0.00001 / 1000;
         const TON_FEE = 0.05;
         const SOL_FEE = 0.01;
         const TON_DECIMALS = 5;
@@ -1020,13 +1065,29 @@
         async function copyToClipboard(text) { if (!navigator.clipboard) { console.warn("Clipboard API missing"); return false; } try { await navigator.clipboard.writeText(text); return true; } catch (err) { console.error('Copy fail: ', err); return false; } }
         function formatTime(seconds) { if (typeof seconds !== 'number' || seconds < 0) seconds = 0; const mins = Math.floor(seconds / 60); const secs = Math.floor(seconds % 60); return `${mins}:${secs < 10 ? '0' : ''}${secs}`; }
         function formatDate(dateString) { if (!dateString) return 'N/A'; try { return new Date(dateString).toLocaleString(undefined, { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }); } catch (e) { return dateString; } }
+        function triggerScoreAnimation(element) {
+            if (!element) return;
+            element.classList.add('score-updated');
+            element.addEventListener('animationend', () => {
+                element.classList.remove('score-updated');
+            }, { once: true });
+        }
+
 
         // --- UI Update Functions ---
-        function updateScoreUI() { if (currentScoreEl) currentScoreEl.textContent = formatNumber(currentScore); }
+        function updateScoreUI() {
+            if (currentScoreEl) {
+                currentScoreEl.textContent = formatNumber(currentScore);
+                triggerScoreAnimation(currentScoreEl.parentElement);
+            }
+        }
         function updateTotalScoreUI(score) {
             try {
                 const fmt = formatNumber(score);
-                if (totalScoreEl) totalScoreEl.textContent = String(fmt);
+                if (totalScoreEl) {
+                    totalScoreEl.textContent = String(fmt);
+                    triggerScoreAnimation(totalScoreEl.parentElement);
+                }
                 if (profileTotalScoreDisplay) profileTotalScoreDisplay.textContent = String(fmt);
                 currentUserTotalScore = BigInt(score);
             } catch(e) {
@@ -1045,17 +1106,42 @@
             calculateWithdrawalAfterFees();
         }
         function updateReferralLinkUI(userId) { if (referralLinkDisplay) referralLinkDisplay.textContent = generateReferralLink(userId); }
-        async function populateReferralListUI() { if (!referralList || !telegramUserId) return; referralList.innerHTML = '<p style="text-align: center; opacity: 0.7;">Loading referrals...</p>'; try { const { data, error } = await supabase.rpc('get_user_referrals', { p_user_id: telegramUserId }); if (error) { console.error("Error fetching referrals:", error); referralList.innerHTML = '<p style="text-align: center; color: var(--text-error);">Could not load referrals.</p>'; return; } referralList.innerHTML = ''; if (!data || data.length === 0) { referralList.innerHTML = '<p style="text-align: center; opacity: 0.7;">No referrals yet.</p>'; return; } data.forEach(ref => { const li = document.createElement('div'); li.className = 'referral-item'; const span = document.createElement('span'); const displayName = ref.ref_username ? maskUsername(ref.ref_username) : (maskUsername(ref.ref_first_name) || 'User'); span.textContent = displayName; li.appendChild(span); referralList.appendChild(li); }); } catch(e) { console.error("Exception fetching referrals:", e); referralList.innerHTML = '<p style="text-align: center; color: var(--text-error);">Error loading referrals.</p>'; } }
+        async function populateReferralListUI() {
+            if (!referralList || !telegramUserId) return;
+            referralList.innerHTML = '<p style="text-align: center; opacity: 0.7;">Loading referrals...</p>';
+            try {
+                const { data, error } = await supabase.rpc('get_user_referrals', { p_user_id: telegramUserId });
+                if (error) { console.error("Error fetching referrals:", error); referralList.innerHTML = '<p style="text-align: center; color: var(--text-error);">Could not load referrals.</p>'; return; }
+                referralList.innerHTML = '';
+                if (!data || data.length === 0) {
+                    referralList.innerHTML = '<p style="text-align: center; opacity: 0.7;">No referrals yet.</p>';
+                    return;
+                }
+                data.forEach((ref, index) => {
+                    const li = document.createElement('div');
+                    li.className = 'referral-item list-item-animated';
+                    li.style.animationDelay = `${index * 50}ms`;
+                    const span = document.createElement('span');
+                    const displayName = ref.ref_username ? maskUsername(ref.ref_username) : (maskUsername(ref.ref_first_name) || 'User');
+                    span.textContent = displayName;
+                    li.appendChild(span);
+                    referralList.appendChild(li);
+                });
+            } catch(e) {
+                console.error("Exception fetching referrals:", e);
+                referralList.innerHTML = '<p style="text-align: center; color: var(--text-error);">Error loading referrals.</p>';
+            }
+        }
 
         // --- Game State & UI Pause/Resume ---
-        function setInternalPause(pause) { if (internalPauseState === pause) return; internalPauseState = pause; if (!pause && gameState === 'playing' && isTimedGameActive) { clock.getDelta(); } console.log("Internal Pause State:", internalPauseState); }
-        function isAnyUIOverlayOpen() { return sideMenu.classList.contains('open') || settingsPopup.style.display === 'block' || profileOverlay.style.display === 'flex' || withdrawalOverlay.style.display === 'flex' || friendsOverlay.style.display === 'flex' || tasksOverlay.style.display === 'flex' || eventsAirdropOverlay.style.display === 'flex' || leaderboardOverlay.style.display === 'flex' || gameOverUI.style.display === 'block' || startGameModal.style.display === 'block' || announcementPopupEl.style.display === 'block' || (initialControlsContainer && !initialControlsContainer.classList.contains('hidden')); }
-        function pauseGameForUI() { if (gameState === 'playing') { setInternalPause(true); console.log("Paused for UI (Physics/Input only)"); } }
+        function setInternalPause(pause) { if (internalPauseState === pause) return; internalPauseState = pause; console.log("Internal Pause State:", internalPauseState); }
+        function isAnyUIOverlayOpen() { return sideMenu.classList.contains('open') || settingsPopup.style.display === 'block' || profileOverlay.style.display === 'flex' || withdrawalOverlay.style.display === 'flex' || friendsOverlay.style.display === 'flex' || tasksOverlay.style.display === 'flex' || leaderboardOverlay.style.display === 'flex' || gameOverUI.style.display === 'block' || announcementPopupEl.style.display === 'block' || (initialControlsContainer && !initialControlsContainer.classList.contains('hidden')); }
+        function pauseGameForUI() { if (gameState === 'playing') { setInternalPause(true); console.log("Paused for UI"); } }
         function resumeGameFromUI() {
             if (!isAnyUIOverlayOpen()) {
                 if (gameState === 'playing' && internalPauseState) {
                     setInternalPause(false);
-                    console.log("Resumed from UI (Physics/Input only)");
+                    console.log("Resumed from UI");
                 } else if (gameState === 'ready') {
                     if (initialControlsContainer.classList.contains('hidden') &&
                         announcementPopupEl.style.display === 'none' &&
@@ -1132,8 +1218,7 @@
         }
 
         // --- Theme Functions ---
-        function applyTheme(theme) { const isLight = theme === 'light'; document.body.classList.toggle('light-mode', isLight); themeToggleCheckbox.checked = isLight; localStorage.setItem('theme', theme); updateMaterialsTheme(); try { if (window.Telegram?.WebApp) { const hc = getCssVariable('--bg-header-bar'); window.Telegram.WebApp.setHeaderColor(hc); } } catch (e) { console.warn("TG theme color set fail:", e); } console.log(`Theme: ${theme}`); }
-        function updateMaterialsTheme() { const isLight = document.body.classList.contains('light-mode'); if (ball?.material) { const bc = parseColorHex(getCssVariable('--ball-color')); ball.material.color.setHex(bc); } const pc = parseColorHex(getCssVariable('--pole-color')); for (const y in activePoleSegments) { const s = activePoleSegments[y]; if (s?.material) { s.material.color.setHex(pc); } } const dCol = parseColorHex(getCssVariable('--danger-color')); const dEm = parseColorHex(getCssVariable('--danger-glow')); activePlatforms.forEach(p => { if (p?.userData?.segmentAngles) { p.userData.segmentAngles.forEach(sd => { if (sd.isDanger && sd.material) { sd.material.color.setHex(dCol); sd.material.emissive.setHex(dEm); } else if (!sd.isDanger && sd.material && p.userData.colorHex) { sd.material.color.setHex(p.userData.colorHex); } }); } }); if (scene) { if (isLight) { scene.background = null; if (starField) starField.visible = false; } else { scene.background = null; if (starField) { starField.visible = true; const sc = parseColorHex(getCssVariable('--star-color')); starField.material.color.setHex(sc); starField.material.needsUpdate = true; } else { createStarfield(); } } } }
+        function applyTheme(theme) { const isLight = theme === 'light'; document.body.classList.toggle('light-mode', isLight); themeToggleCheckbox.checked = isLight; localStorage.setItem('theme', theme); try { if (window.Telegram?.WebApp) { const hc = getCssVariable('--bg-header-bar'); window.Telegram.WebApp.setHeaderColor(hc); } } catch (e) { console.warn("TG theme color set fail:", e); } console.log(`Theme: ${theme}`); }
         function setupTheme() { let initTheme = 'dark'; try { initTheme = window.Telegram?.WebApp?.colorScheme || localStorage.getItem('theme') || 'dark'; } catch (e) { initTheme = localStorage.getItem('theme') || 'dark'; } applyTheme(initTheme); themeToggleCheckbox.addEventListener('change', () => applyTheme(themeToggleCheckbox.checked ? 'light' : 'dark')); try { window.Telegram?.WebApp?.onEvent('themeChanged', () => applyTheme(window.Telegram.WebApp.colorScheme)); } catch(e) { console.warn("TG theme listener err:", e); } }
 
         // --- Overlay & Menu Toggles ---
@@ -1154,35 +1239,26 @@
              if (el === profileOverlay) updateTotalScoreUI(currentUserTotalScore);
              else if (el === friendsOverlay) { updateReferralCountUI(currentUserReferralCount); updateReferralLinkUI(telegramUserId); populateReferralListUI(); }
              else if (el === withdrawalOverlay) updateActualCryptoBalancesUI();
-             else if (el === eventsAirdropOverlay) { /* No specific action on show for now */ }
              else if (el === leaderboardOverlay) populateLeaderboardUI();
          }
         function hideOverlay(el) { if(!el || el.style.display === 'none') return; el.style.display = 'none'; resumeGameFromUI(); }
         function closeAllOverlays(exclude=null) {
-            [profileOverlay, withdrawalOverlay, friendsOverlay, tasksOverlay, eventsAirdropOverlay, leaderboardOverlay, startGameModal, gameOverUI, announcementPopupEl].forEach(o => {
+            [profileOverlay, withdrawalOverlay, friendsOverlay, tasksOverlay, leaderboardOverlay, gameOverUI, announcementPopupEl].forEach(o => {
                 if (o && o !== exclude && o.style.display !== 'none') o.style.display = 'none';
             });
-            // Only show initial controls if absolutely no other UI is meant to be visible AND game is ready
             if (gameState === 'ready' && !isAnyUIOverlayOpen() && loadingScreen.style.display === 'none') {
                  showInitialControls();
             }
         }
 
-        // --- Announcement Popup ---
+        // --- Announcement Popup (disabled) ---
         function showAnnouncementPopup() {
-             if (!announcementPopupEl) return;
-             const popupTitleText = "🚀 TON CARNIVAL INCOMING! 🚀";
-             const popupMessageText = "We need YOUR help to hit our global goal of 550 players to launch the event & unlock TON rewards! Complete your requirements and refer as many users to unlock the event faster. Check our Telegram group or the event page for all details!";
-             const popupTitleElement = announcementPopupEl.querySelector('h2');
-             if (popupTitleElement) popupTitleElement.innerHTML = popupTitleText;
-             if (announcementMessageEl) announcementMessageEl.innerHTML = popupMessageText;
-             announcementFollowButtonEl.href = TELEGRAM_CHANNEL_URL;
-             closeAllOverlays(announcementPopupEl);
-             hideInitialControls();
-             announcementPopupEl.style.display = 'block';
-             pauseGameForUI();
-             console.log("Announcement popup shown with TON Carnival message");
-         }
+            // This function is kept but does nothing, effectively disabling the announcement.
+            console.log("Announcement popup is disabled.");
+            if (gameState === 'ready') {
+                showInitialControls();
+            }
+        }
         function hideAnnouncementPopup() {
             if (!announcementPopupEl) return;
             announcementPopupEl.style.display = 'none';
@@ -1193,7 +1269,7 @@
             resumeGameFromUI();
         }
 
-        // --- Accordion (Reused for Withdrawal & Events/Airdrops) & Forms ---
+        // --- Accordion & Forms ---
         function toggleAccordion(headerElement) {
             console.log("toggleAccordion called for header:", headerElement.dataset.accordionTarget);
             const targetId = headerElement.dataset.accordionTarget;
@@ -1201,13 +1277,7 @@
             if (!contentElement) { console.error("Accordion content element not found:", targetId); return; }
 
             const parentOverlay = headerElement.closest('.fullscreen-overlay');
-            let currentAccordionHeaders = [];
-            if (parentOverlay === withdrawalOverlay) {
-                currentAccordionHeaders = withdrawalOverlay.querySelectorAll('.withdrawal-accordion-header');
-            } else if (parentOverlay === eventsAirdropOverlay) {
-                currentAccordionHeaders = eventsAirdropOverlay.querySelectorAll('.withdrawal-accordion-header');
-            }
-
+            const currentAccordionHeaders = parentOverlay.querySelectorAll('.withdrawal-accordion-header');
 
             const isActive = headerElement.classList.contains('active');
 
@@ -1412,9 +1482,11 @@
 
                 data.sort((a, b) => new Date(b.requested_at) - new Date(a.requested_at));
 
-                data.forEach((item) => {
+                data.forEach((item, index) => {
                     const historyDiv = document.createElement('div');
-                    historyDiv.className = 'history-item';
+                    historyDiv.className = 'history-item list-item-animated';
+                    historyDiv.style.animationDelay = `${index * 50}ms`;
+
                     const amountDecimals = item.crypto_type === 'TON' ? TON_DECIMALS : SOL_DECIMALS;
                     const statusValue = item.status ? item.status.toLowerCase() : 'unknown';
                     const statusClass = `status-${statusValue}`;
@@ -1490,7 +1562,8 @@
                     if (topPointsData && topPointsData.length > 0) {
                         topPointsData.forEach((user, index) => {
                             const item = document.createElement('div');
-                            item.className = 'leaderboard-item';
+                            item.className = 'leaderboard-item list-item-animated';
+                            item.style.animationDelay = `${index * 50}ms`;
                             const displayName = getDisplayUsername(user);
                             item.innerHTML = `
                                 <span class="rank-number">${user.rank_order || (index + 1)}.</span>
@@ -1523,7 +1596,8 @@
                     if (topReferralsData && topReferralsData.length > 0) {
                         topReferralsData.forEach((user, index) => {
                             const item = document.createElement('div');
-                            item.className = 'leaderboard-item';
+                            item.className = 'leaderboard-item list-item-animated';
+                            item.style.animationDelay = `${index * 50}ms`;
                             const displayName = getDisplayUsername(user);
                             item.innerHTML = `
                                 <span class="rank-number">${user.rank_order || (index + 1)}.</span>
@@ -1544,12 +1618,40 @@
             }
         }
 
+        // --- NEW: Rain Animation Functions ---
+        function createRaindrop() {
+            if (!rainContainer) return;
 
-        // --- Three.js Scene Setup ---
-        function createStarfield() { if(starField)scene.remove(starField); const c=7000; const p=new Float32Array(c*3); const g=new THREE.BufferGeometry(); const h=parseColorHex(getCssVariable('--star-color')); for(let i=0;i<c;i++){ const i3=i*3; const r=60+Math.random()*60; const ph=Math.acos(-1+(2*Math.random())); const th=Math.random()*Math.PI*2; p[i3]=r*Math.sin(ph)*Math.cos(th); p[i3+1]=r*Math.cos(ph); p[i3+2]=r*Math.sin(ph)*Math.sin(th); } g.setAttribute('position',new THREE.BufferAttribute(p,3)); const m=new THREE.PointsMaterial({size:0.1,color:h,sizeAttenuation:true,transparent:true,opacity:0.8,depthWrite:false,blending:THREE.AdditiveBlending}); starField=new THREE.Points(g,m); starField.userData.isStarfield=true; starField.renderOrder=-1; starField.visible=!document.body.classList.contains('light-mode'); scene.add(starField); }
-        function createBall() { if(ball)scene.remove(ball); const g=new THREE.SphereGeometry(0.25,32,32); const h=parseColorHex(getCssVariable('--ball-color')); const m=new THREE.MeshStandardMaterial({color:h,map:ballTexture,metalness:0.8,roughness:0.3,envMap:envMap,envMapIntensity:0.7}); ball=new THREE.Mesh(g,m); ball.userData.isBall=true; ball.position.set(ballStartX,initialBallY,ballStartZ); ballPreviousY=ball.position.y; scene.add(ball); }
-        function createPoleSegment(y) { const h=platformSpacingY; const g=new THREE.CylinderGeometry(poleRadius,poleRadius,h,16); const c=parseColorHex(getCssVariable('--pole-color')); const m=new THREE.MeshStandardMaterial({color:c,roughness:0.6,metalness:0.2,transparent:true,opacity:1.0}); const s=new THREE.Mesh(g,m); s.position.y=y; s.userData={y:y,isPoleSegment:true,fadeOut:false,fadeProgress:0,material:m}; poleGroup.add(s); activePoleSegments[y]=s; }
-        function createPlatform(y) { const p = new THREE.Group(); p.position.y = y; p.rotation.y = Math.random() * Math.PI * 2; const circ = 2 * Math.PI; if(platformSegments <= 0) return; const segAng = (circ - gapSize) / platformSegments; const gapSt = Math.random() * circ; const gapEnd = (gapSt + gapSize) % circ; let dangerProbability = 0.25; switch (selectedDifficulty) { case 'medium': dangerProbability = 0.55; break; case 'hard': dangerProbability = 0.9; break; default: dangerProbability = 0.25; break; } const hasD = Math.random() < dangerProbability; const dIdx = hasD ? Math.floor(Math.random() * platformSegments) : -1; const sCol = platformColorPalette[platformColorIndex % platformColorPalette.length]; platformColorIndex++; p.userData={y:y,isSafe:!hasD,segmentAngles:[],isPlatformGroup:true,gapStartAngle:gapSt,gapEndAngle:gapEnd,gapSize:gapSize,fadeOut:false,fadeProgress:0,colorHex:sCol}; const iR=poleRadius+0.05; const oR=platformRadius; let currAng=gapEnd; const dColH=parseColorHex(getCssVariable('--danger-color')); const dEmH=parseColorHex(getCssVariable('--danger-glow')); for(let i=0;i<platformSegments;i++){ const isD=(i===dIdx); const matOpts={roughness:isD?0.5:0.7,metalness:0.1,side:THREE.DoubleSide,transparent:true,opacity:1.0}; if(isD){matOpts.color=new THREE.Color(dColH);matOpts.emissive=new THREE.Color(dEmH);matOpts.emissiveIntensity=0.7;} else{matOpts.color=new THREE.Color(sCol);} const segMat=new THREE.MeshStandardMaterial(matOpts); const segGeo=new THREE.RingGeometry(iR,oR,32,1,0,segAng); segGeo.rotateX(-Math.PI/2); const segMesh=new THREE.Mesh(segGeo,segMat); segMesh.rotation.y=currAng; const sSt=currAng%circ; const sEnd=(currAng+segAng)%circ; const segDat={type:'platform_segment',isDanger:isD,parentPlatform:p,index:i,startAngle:sSt,endAngle:sEnd,mesh:segMesh,material:segMat}; p.userData.segmentAngles.push(segDat); segMesh.userData=segDat; p.add(segMesh); currAng=(currAng+segAng)%circ; } platformGroup.add(p); activePlatforms.push(p); }
+            const drop = document.createElement('div');
+            drop.className = 'raindrop';
+            drop.textContent = '+1'; // Content of the raindrop
+            drop.style.left = `${Math.random() * 100}vw`;
+            
+            const duration = Math.random() * 2 + 3; // 3 to 5 seconds to fall
+            drop.style.animationDuration = `${duration}s`;
+            
+            const delay = Math.random() * 4; // Stagger the start up to 4s
+            drop.style.animationDelay = `${delay}s`;
+            
+            rainContainer.appendChild(drop);
+
+            // Remove the drop after it has fallen to prevent DOM clutter
+            setTimeout(() => {
+                drop.remove();
+            }, (duration + delay) * 1000);
+        }
+
+        function startRain() {
+            if (rainInterval) clearInterval(rainInterval);
+            // Create a new drop on average every 200ms
+            rainInterval = setInterval(createRaindrop, 200);
+        }
+
+        function stopRain() {
+            if (rainInterval) clearInterval(rainInterval);
+            if (rainContainer) rainContainer.innerHTML = ''; // Clear all existing drops
+        }
+
 
         // --- Initialization & Game Flow ---
         async function initializeTelegramIntegration() {
@@ -1575,7 +1677,8 @@
                         await processReferralOnLoad(telegramUserId, telegramUserData, initialUserData);
                         if (loadingTextEl) loadingTextEl.textContent = "Finalizing...";
                         gameState = 'ready'; setInternalPause(false);
-                        showAnnouncementPopup();
+                        // The call to show the announcement popup is now disabled
+                        showInitialControls();
                         updateScoreUI(); updateReferralLinkUI(telegramUserId); updateActualCryptoBalancesUI();
                         setTimeout(() => { onWindowResize(); resolve(); }, 100);
                     } else { if (loadingTextEl) loadingTextEl.textContent = "User Profile Error."; reject("User Fetch/Init Failed"); }
@@ -1586,64 +1689,74 @@
             console.log("Initializing App..."); gameState = 'initializing'; setInternalPause(true);
             if (loadingTextEl) loadingTextEl.textContent = "Loading Game Assets...";
 
-            // Initialize AdsGram SDK
-            if (window.Adsgram) {
-                try {
-                    AdController = window.Adsgram.init({ blockId: "int-14190" });
-                    console.log("AdsGram SDK Initialized OK");
-                } catch (e) {
-                    console.error("AdsGram SDK Init Failed:", e);
-                }
-            } else {
-                console.warn("AdsGram SDK not found. Ads will not be available.");
-            }
-
-            scene = new THREE.Scene(); camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 150); camera.position.z = cameraFixedZ;
-            renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('game-canvas'), antialias: true, alpha: true });
-            renderer.setSize(gameContainer.clientWidth, gameContainer.clientHeight); renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0; renderer.outputEncoding = THREE.sRGBEncoding; renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); renderer.setClearColor(0x000000, 0);
-
             setupTheme();
-
-            composer = new EffectComposer(renderer); composer.addPass(new RenderPass(scene, camera));
-            bloomPass = new UnrealBloomPass(new THREE.Vector2(gameContainer.clientWidth, gameContainer.clientHeight), 0.6, 0.5, 0.8); composer.addPass(bloomPass);
-
-            scene.add(new THREE.HemisphereLight(0xccccff, 0x555599, 0.7)); const dirLight = new THREE.DirectionalLight(0xffffff, 0.9); dirLight.position.set(5, 8, 6); scene.add(dirLight); scene.add(new THREE.AmbientLight(0x404040, 0.6));
-            new RGBELoader().load('back.hdr', (t) => { t.mapping = THREE.EquirectangularReflectionMapping; scene.environment = t; envMap = t; if (ball?.material) ball.material.needsUpdate = true; }, undefined, e => console.warn("HDR load fail", e));
-            textureLoader.load('ball.jpg', (t) => { t.wrapS = t.wrapT = THREE.RepeatWrapping; ballTexture = t; if (ball?.material) { ball.material.map = t; ball.material.needsUpdate = true; } }, undefined, e => console.warn("Ball tex fail.", e));
-
-            createBall(); platformGroup = new THREE.Group(); scene.add(platformGroup); poleGroup = new THREE.Group(); scene.add(poleGroup);
-
-            window.addEventListener('resize', onWindowResize, false); document.addEventListener('pointerdown', onPointerDown, { passive: false }); document.addEventListener('pointermove', onPointerMove, { passive: false }); document.addEventListener('pointerup', onPointerUp, false); document.addEventListener('pointerleave', onPointerUp, false);
             setupUIListeners();
 
             if (loadingTextEl) loadingTextEl.textContent = "Connecting to Services...";
             try {
                 await initializeTelegramIntegration();
                 console.log("TG/Supabase Init OK. Hiding loading screen.");
-                if (loadingScreen) { loadingScreen.style.opacity = '0'; setTimeout(() => { loadingScreen.style.display = 'none'; }, 500); }
+                if (loadingScreen) {
+                    // Start intro animations after loading screen fades
+                    initialControlsContainer.style.animation = 'slideInUpFade 0.6s var(--transition-timing) 0.6s forwards';
+                    initialControlsContainer.style.opacity = '0'; // Start hidden before animation
+                    loadingScreen.style.opacity = '0';
+                    setTimeout(() => { loadingScreen.style.display = 'none'; }, 500);
+                }
             } catch (e) { console.error("Initialization failed:", e); if (loadingTextEl) loadingTextEl.textContent = "Initialization Failed."; return; }
 
-            onWindowResize(); animate(); console.log("Init complete.");
+            console.log("Init complete.");
         }
         function setupUIListeners() {
              menuButton.addEventListener('click', (e) => { e.stopPropagation(); toggleSideMenu(); });
              settingsButton.addEventListener('click', (e) => { e.stopPropagation(); toggleSettingsPopup(); });
-             menuItemButtons.forEach(b => { b.addEventListener('click', () => { const action = b.getAttribute('data-action'); closeSideMenu(); switch (action) { case 'show-profile': showOverlay(profileOverlay); break; case 'show-withdrawal': showOverlay(withdrawalOverlay); break; case 'show-friends': showOverlay(friendsOverlay); break; case 'show-tasks': showOverlay(tasksOverlay); break; case 'show-events-airdrop': showOverlay(eventsAirdropOverlay); break; case 'show-leaderboard': showOverlay(leaderboardOverlay); break;} }); });
-             overlayCloseButtons.forEach(b => { b.addEventListener('click', () => { const id = b.getAttribute('data-overlay-id'); const o = document.getElementById(id); if (o) { hideOverlay(o); if (id === 'game-over-ui') handlePlayAgain(); } }); });
+             menuItemButtons.forEach(b => { b.addEventListener('click', () => { const action = b.getAttribute('data-action'); closeSideMenu(); switch (action) { case 'show-profile': showOverlay(profileOverlay); break; case 'show-withdrawal': showOverlay(withdrawalOverlay); break; case 'show-friends': showOverlay(friendsOverlay); break; case 'show-tasks': showOverlay(tasksOverlay); break; case 'show-leaderboard': showOverlay(leaderboardOverlay); break;} }); });
+             overlayCloseButtons.forEach(b => { b.addEventListener('click', () => { const id = b.getAttribute('data-overlay-id'); const o = document.getElementById(id); if (o) { hideOverlay(o); } }); });
              document.addEventListener('click', (e) => { if (sideMenu.classList.contains('open') && !sideMenu.contains(e.target) && !menuButton.contains(e.target)) closeSideMenu(); if (settingsPopup.style.display === 'block' && !settingsPopup.contains(e.target) && !settingsButton.contains(e.target)) closeSettingsPopup(); });
              menuOverlayDimmer.addEventListener('click', closeSideMenu);
              settingsPopup.addEventListener('click', e => e.stopPropagation()); sideMenu.addEventListener('click', e => e.stopPropagation());
-             [profileOverlay, withdrawalOverlay, friendsOverlay, tasksOverlay, eventsAirdropOverlay, leaderboardOverlay, gameOverUI, startGameModal, announcementPopupEl].forEach(overlay => { if (overlay) { overlay.addEventListener('click', e => { if (!e.target.closest('button') && !e.target.closest('a') && !e.target.closest('input') && !e.target.closest('select') && !e.target.closest('.theme-switch') && !e.target.closest('#referral-list-container') && !e.target.closest('.withdrawal-accordion-header') && !e.target.closest('.leaderboard-list-container')) { e.stopPropagation(); } }); } });
+             [profileOverlay, withdrawalOverlay, friendsOverlay, tasksOverlay, leaderboardOverlay, gameOverUI, announcementPopupEl].forEach(overlay => { if (overlay) { overlay.addEventListener('click', e => { if (!e.target.closest('.overlay-content') && !e.target.closest('.modal-buttons')) { e.stopPropagation(); } }); } });
              if (initialControlsContainer) initialControlsContainer.addEventListener('click', e => e.stopPropagation());
 
              if (announcementCloseButtonEl) announcementCloseButtonEl.addEventListener('click', hideAnnouncementPopup);
-
              restartButton.addEventListener('click', handlePlayAgain);
-             if (watchAdButton) watchAdButton.addEventListener('click', handleWatchAdForSave);
-             difficultyButtons.forEach(button => { button.addEventListener('click', () => { if (isTimedGameActive || gameState === 'playing') return; handleDifficultySelection(button.getAttribute('data-difficulty')); }); });
-             startGameButton.addEventListener('click', () => { if (gameState === 'ready') { startNormalButton.disabled = false; startBoostButton.disabled = false; startBoostButton.textContent = '+1 Pt/Platform'; showOverlay(startGameModal); } });
-             startNormalButton.addEventListener('click', () => { adBonusActiveForThisGame = false; hideOverlay(startGameModal); startGame(); });
-             startBoostButton.addEventListener('click', handleWatchAdForBoost);
+
+             startGameButton.addEventListener('click', () => {
+                if (gameState === 'ready') {
+                    initiateAdForGame();
+                }
+             });
+
+            tapTarget.addEventListener('click', (e) => { // MODIFIED: Added event object 'e'
+                if (!isTappingGameActive || internalPauseState) return;
+                currentTaps++;
+                currentScoreEl.textContent = formatNumber(currentTaps);
+                triggerScoreAnimation(currentScoreEl.parentElement);
+
+                tapTarget.classList.add('tapped');
+                setTimeout(() => tapTarget.classList.remove('tapped'), 100);
+
+                // MODIFIED: Create the +1 animation
+                const pointsPerTap = currentUserReferralCount > 0 ? Math.min(currentUserReferralCount, 9) : 1;
+                const plusOne = document.createElement('div');
+                plusOne.textContent = `+${pointsPerTap}`;
+                plusOne.className = 'plus-one-animation';
+                
+                // Position based on click coordinates relative to the viewport
+                plusOne.style.left = `${e.clientX}px`;
+                plusOne.style.top = `${e.clientY}px`;
+
+                if (tapAnimationContainer) {
+                    tapAnimationContainer.appendChild(plusOne);
+                }
+                
+                // Remove the element after animation ends (1000ms duration)
+                setTimeout(() => {
+                    plusOne.remove();
+                }, 1000);
+            });
+
+
              if (copyReferralLinkButton) { copyReferralLinkButton.addEventListener('click', async () => { const link = referralLinkDisplay.textContent; if (link && link !== "Generating link..." && link !== "Link Unavailable") { const success = await copyToClipboard(link); copyReferralLinkButton.textContent = success ? "Copied!" : "Failed"; } else { copyReferralLinkButton.textContent = "Error"; } setTimeout(() => { copyReferralLinkButton.textContent = "Copy"; }, 1500); }); }
 
             allAccordionHeaders.forEach(header => { header.addEventListener('click', () => toggleAccordion(header)); });
@@ -1657,7 +1770,7 @@
 
             leaderboardTabButtons.forEach(button => { button.addEventListener('click', () => switchLeaderboardTab(button.dataset.tab)); });
          }
-        function handleDifficultySelection(difficulty) { selectedDifficulty = difficulty; difficultyButtons.forEach(btn => { btn.classList.toggle('active', btn.getAttribute('data-difficulty') === difficulty); }); console.log("Selected difficulty:", selectedDifficulty); }
+
         function showInitialControls() {
             console.log("showInitialControls called. Current gameState:", gameState);
             if (initialControlsContainer) {
@@ -1668,7 +1781,11 @@
                 headerTimerDisplayEl.classList.remove('visible');
                 console.log("Header timer display should be hidden.");
             }
-            if (startGameButton) startGameButton.disabled = false;
+            if (startGameButton) {
+                startGameButton.disabled = false;
+                // For testing, the button text can be simpler
+                startGameButton.textContent = 'Play Game';
+            }
             updateScoreUI();
         }
         function hideInitialControls() {
@@ -1684,222 +1801,108 @@
                 console.log("Header timer display made visible.");
             }
         }
-        function updateHeaderTimerDisplay() { if (headerTimerDisplayEl) headerTimerDisplayEl.textContent = formatTime(currentGameCountdown); }
-        function updateGameTimer() { if (internalPauseState) return; if (currentGameCountdown > 0 && isTimedGameActive && gameState === 'playing') { currentGameCountdown--; updateHeaderTimerDisplay(); } if (currentGameCountdown <= 0 && isTimedGameActive && gameState === 'playing') { console.log("Timer ended!"); handleGameOver("Time's Up!"); } }
+        function updateHeaderTimerDisplay() { if (headerTimerDisplayEl) headerTimerDisplayEl.textContent = formatTime(tapGameCountdown); }
 
-        async function startGame() {
-            if (gameState !== 'ready') {
-                console.warn("Cannot start game, not in ready state. Current state:", gameState);
+        function initiateAdForGame() {
+            startGameButton.disabled = true;
+            startGameButton.textContent = 'Loading...';
+
+            if (typeof show_9292240 !== 'function') {
+                alert("Ad service not available. Please try again later.");
+                startGameButton.disabled = false;
+                startGameButton.textContent = 'Play Game (Watch Ad)';
                 return;
             }
+            startGameButton.textContent = 'Loading Ad...';
 
-            gameState = 'starting'; // Set state to 'starting' to prevent race conditions with UI
-            console.log("Game state changed to: starting");
-
-            currentGameCountdown = GAME_DURATION_SECONDS;
-            isTimedGameActive = true;
-
-            hideInitialControlsAndShowTimer();
-            updateHeaderTimerDisplay();
-
-            await prepareGameForStart();
-
-            gameState = 'playing'; // Now the game is officially playing
-            console.log("Game state changed to: playing");
-            setInternalPause(false);
-
-            if (gameTimerIntervalId) clearInterval(gameTimerIntervalId);
-            gameTimerIntervalId = setInterval(updateGameTimer, 1000);
-
-            clock.getDelta();
-            animateCameraZoom(cameraZoomedInZ, cameraZoomDuration);
-            console.log("Game started! Ad Bonus:", adBonusActiveForThisGame, "Refs:", currentUserReferralCount);
+            show_9292240().then(() => {
+                startTappingGame();
+            }).catch((error) => {
+                console.error("Ad for game failed:", error);
+                alert("Ad failed to load. Please try again to play.");
+                startGameButton.disabled = false;
+                startGameButton.textContent = 'Play Game (Watch Ad)';
+            });
         }
 
-        async function prepareGameForStart() {
-             console.log("Preparing game board for difficulty:", selectedDifficulty);
-             if (adTimerIntervalId) { clearInterval(adTimerIntervalId); adTimerIntervalId = null; }
-             if (gameTimerIntervalId) { clearInterval(gameTimerIntervalId); gameTimerIntervalId = null; }
-             // gameState check already done in startGame, but keep here as safeguard
-             if (gameState === 'error') { return Promise.reject("Game Error State"); }
-             if (cameraZoomRequestId) cancelAnimationFrame(cameraZoomRequestId); cameraZoomRequestId = null; isCameraZooming = false;
-             if (!ball) createBall(); else { const ballColorHex = parseColorHex(getCssVariable('--ball-color')); ball.material.color.setHex(ballColorHex); }
-             ball.position.set(ballStartX, initialBallY, ballStartZ); ballPreviousY = ball.position.y; currentBallVelocityY = 0;
-             activePlatforms.forEach(p => disposePlatformSegments(p)); activePlatforms = [];
-             if (platformGroup) { while(platformGroup.children.length > 0) disposePlatformSegments(platformGroup.children[0]); platformGroup.rotation.y = 0; } else { platformGroup = new THREE.Group(); scene.add(platformGroup); }
-             Object.keys(activePoleSegments).forEach(y => disposePoleSegment(parseFloat(y))); activePoleSegments = {};
-             if (poleGroup) { while(poleGroup.children.length > 0) { const child = poleGroup.children[0]; poleGroup.remove(child); if(child.geometry) child.geometry.dispose(); if(child.material) child.material.dispose(); } } else { poleGroup = new THREE.Group(); scene.add(poleGroup); }
-             currentScore = 0; updateScoreUI(); scoreIncrementedForPlatform = {}; platformColorIndex = 0; shakeIntensity = 0;
-             nextPlatformY = initialBallY - platformSpacingY * 2; lastSafePlatformY = nextPlatformY + platformSpacingY;
-             for (let i = 0; i < 15; i++) { createPlatform(nextPlatformY); createPoleSegment(nextPlatformY); nextPlatformY -= platformSpacingY; }
-             closeAllOverlays(); // Ensure other overlays are closed before game starts
-             if (camera && ball) { const camY = ball.position.y + cameraVerticalOffset; const lookY = ball.position.y + cameraLookAtOffset; camera.position.set(0, camY, cameraFixedZ); camera.lookAt(0, lookY, 0); }
-             setTimeout(onWindowResize, 50); return Promise.resolve();
-         }
+
+        function startTappingGame() {
+            gameState = 'playing';
+            isTappingGameActive = true;
+            currentTaps = 0;
+            currentScore = 0;
+            currentScoreEl.textContent = '0'; // Show taps during game
+            hideInitialControlsAndShowTimer();
+            tappingGameContainer.classList.remove('hidden');
+            
+            startRain(); // MODIFIED: Start the rain effect
+
+            tapGameCountdown = GAME_DURATION_SECONDS;
+            updateHeaderTimerDisplay();
+            setInternalPause(false);
+
+            if (tapGameTimerId) clearInterval(tapGameTimerId);
+            tapGameTimerId = setInterval(() => {
+                if (internalPauseState) return;
+
+                if (tapGameCountdown > 0) {
+                    tapGameCountdown--;
+                    updateHeaderTimerDisplay();
+                }
+                if (tapGameCountdown <= 0) {
+                    handleTappingGameOver();
+                }
+            }, 1000);
+        }
+
+        async function handleTappingGameOver() {
+            if (gameState !== 'playing') return;
+            gameState = 'gameOver';
+            isTappingGameActive = false;
+            clearInterval(tapGameTimerId);
+            tappingGameContainer.classList.add('hidden');
+            if (headerTimerDisplayEl) headerTimerDisplayEl.classList.remove('visible');
+            
+            stopRain(); // MODIFIED: Stop the rain effect
+
+            // Calculate final score based on taps and referral bonus
+            const pointsPerTap = currentUserReferralCount > 0 ? Math.min(currentUserReferralCount, 9) : 1;
+            const finalScore = currentTaps * pointsPerTap;
+            currentScore = finalScore;
+
+            console.log(`Game Over! Taps: ${currentTaps}, Pts/Tap: ${pointsPerTap}, Final Score: ${finalScore}`);
+
+            // Show Game Over UI
+            gameOverMessageP.innerHTML = `Time's Up!<br>Final Score: <span id="final-score">${formatNumber(finalScore)}</span>`;
+            watchAdButton.style.display = 'none'; // No ad to save score
+            restartButton.textContent = "Play Again";
+            showOverlay(gameOverUI);
+
+            // Save score to backend
+            if (finalScore > 0) {
+                try {
+                    await updateUserScoreInBackend(finalScore);
+                    console.log("Score saved successfully.");
+                } catch (error) {
+                    console.error("Score save failed:", error);
+                    gameOverMessageP.innerHTML += "<br><small>(Save Failed)</small>";
+                }
+            }
+        }
+
         function handlePlayAgain() {
             hideOverlay(gameOverUI);
             gameState = 'ready';
-            setInternalPause(false);
-            isTimedGameActive = false;
-            adBonusActiveForThisGame = false;
-            currentGameCountdown = 0;
+            currentScore = 0;
+            updateScoreUI();
             showInitialControls();
+            stopRain(); // MODIFIED: Ensure rain is stopped
         }
-
-        // --- Game Logic: Physics, Collisions, Generation ---
-        function generatePlatforms() { if (!ball || !camera || internalPauseState || gameState !== 'playing' || !isTimedGameActive) return; const generationTriggerY = nextPlatformY + platformSpacingY * 8; while (ball.position.y < generationTriggerY && nextPlatformY > -1000) { createPlatform(nextPlatformY); createPoleSegment(nextPlatformY); nextPlatformY -= platformSpacingY; } const removalThresholdY_Above = camera.position.y + 15; activePlatforms.forEach(p => { if (p.position.y > removalThresholdY_Above && !p.userData.fadeOut) startFadeOut(p); }); for (const yPos in activePoleSegments) { const seg = activePoleSegments[yPos]; if (parseFloat(yPos) > removalThresholdY_Above && seg && !seg.userData.fadeOut) startFadeOut(seg); } }
-        function updateBallPosition() { if (!ball || internalPauseState || gameState !== 'playing' || !isTimedGameActive) return; currentBallVelocityY += gravity; ball.position.y += currentBallVelocityY; ball.position.x = ballStartX; ball.position.z = ballStartZ; if (ball.position.y < nextPlatformY - platformSpacingY * 5) { handleGameOver("Fell Off!"); } }
-        function disposePlatformSegments(platform) { if (!platform) return; platform.traverse(object => { if (object.isMesh) { if (object.geometry) object.geometry.dispose(); if (object.material) { ['map', 'emissiveMap', 'aoMap', 'metalnessMap', 'roughnessMap', 'normalMap', 'displacementMap', 'alphaMap', 'envMap'].forEach(prop => { if (object.material[prop]?.dispose) object.material[prop].dispose(); }); if (Array.isArray(object.material)) { object.material.forEach(m => m.dispose()); } else { object.material.dispose(); } } } }); if (platform.parent) platform.parent.remove(platform); }
-        function disposePoleSegment(yPos) { const segment = activePoleSegments[yPos]; if (segment) { if (segment.geometry) segment.geometry.dispose(); if (segment.material) segment.material.dispose(); if (segment.parent) segment.parent.remove(segment); delete activePoleSegments[yPos]; return true; } return false; }
-        function startFadeOut(object) { if (!object || !object.userData || object.userData.fadeOut) return; object.userData.fadeOut = true; object.userData.fadeProgress = 0; }
-        function destroyPlatformAndPole(platform) {
-            if (!platform || !platform.userData || platform.userData.fadeOut) return;
-            const platformY = platform.userData.y;
-            if (!scoreIncrementedForPlatform[platformY]) {
-                let basePoints = currentUserReferralCount > 0 ? Math.min(currentUserReferralCount, 9) : 1;
-                let adBonus = adBonusActiveForThisGame ? 1 : 0;
-                let pointsForPlatform = basePoints + adBonus;
-                currentScore += pointsForPlatform; updateScoreUI();
-                scoreIncrementedForPlatform[platformY] = true;
-                console.log(`Scored: ${pointsForPlatform} (Base: ${basePoints}, Ad: ${adBonus}, Refs: ${currentUserReferralCount})`);
-            }
-            startFadeOut(platform); const poleSegment = activePoleSegments[platformY];
-            if (poleSegment) startFadeOut(poleSegment);
-        }
-        function updateFadingObjects(deltaTime) { if (gameState !== 'playing' && gameState !== 'gameOver') return; const fadeSpeed = 1.0 / (FADE_DURATION / 1000); const platformsToRemoveIndexes = []; const poleYPositionsToRemove = []; for (let i = activePlatforms.length - 1; i >= 0; i--) { const p = activePlatforms[i]; if (p.userData.fadeOut) { p.userData.fadeProgress += fadeSpeed * deltaTime; const progress = Math.min(p.userData.fadeProgress, 1); const scale = 1.0 - progress * 0.5; p.scale.set(scale, 1, scale); p.traverse((child) => { if (child.isMesh && child.material) { child.material.opacity = 1.0 - progress; child.material.transparent = true; child.material.needsUpdate = true; } }); if (progress >= 1) platformsToRemoveIndexes.push(i); } } for (let i = platformsToRemoveIndexes.length - 1; i >= 0; i--) { const index = platformsToRemoveIndexes[i]; disposePlatformSegments(activePlatforms[index]); activePlatforms.splice(index, 1); } for (const y in activePoleSegments) { const segment = activePoleSegments[y]; if (segment?.userData.fadeOut) { segment.userData.fadeProgress += fadeSpeed * deltaTime; const progress = Math.min(segment.userData.fadeProgress, 1); if (segment.material) { segment.material.opacity = 1.0 - progress; segment.material.transparent = true; segment.material.needsUpdate = true; } const scale = 1.0 - progress; segment.scale.set(scale, scale, scale); if (progress >= 1) poleYPositionsToRemove.push(parseFloat(y)); } } poleYPositionsToRemove.forEach(y => disposePoleSegment(y)); }
-        function checkCollisions() { if (!ball || internalPauseState || gameState !== 'playing' || !isTimedGameActive || currentBallVelocityY >= 0) return; const ballRadius = 0.25; const ballBottomY = ball.position.y - ballRadius; let candidatePlatform = null; let highestCandidateY = -Infinity; for (let i = 0; i < activePlatforms.length; i++) { const platform = activePlatforms[i]; if (!platform || !platform.userData || platform.userData.fadeOut) continue; const platformSurfaceY = platform.position.y; if (ballPreviousY - ballRadius >= platformSurfaceY && ballBottomY <= platformSurfaceY) { if (platformSurfaceY > highestCandidateY) { highestCandidateY = platformSurfaceY; candidatePlatform = platform; } } } if (!candidatePlatform) return; const platformData = candidatePlatform.userData; const collisionY = platformData.y; const ballAngle = Math.atan2(ball.position.z - platformGroup.position.z, ball.position.x - platformGroup.position.x); const towerRotation = platformGroup.rotation.y; const platformInternalRotation = candidatePlatform.rotation.y; let angleRelativeToPlatform = THREE.MathUtils.euclideanModulo( ballAngle - towerRotation - platformInternalRotation, 2 * Math.PI ); const gapStart = platformData.gapStartAngle; const gapEnd = platformData.gapEndAngle; let isInGap; if (gapStart < gapEnd) { isInGap = angleRelativeToPlatform >= gapStart && angleRelativeToPlatform < gapEnd; } else { isInGap = angleRelativeToPlatform >= gapStart || angleRelativeToPlatform < gapEnd; } const ballDistFromCenter = Math.hypot(ball.position.x, ball.position.z); const isInsidePoleRadius = ballDistFromCenter < poleRadius; if (isInGap || isInsidePoleRadius) { destroyPlatformAndPole(candidatePlatform); } else { let hitSegmentData = null; for (const segmentData of platformData.segmentAngles) { let segStart = segmentData.startAngle; let segEnd = segmentData.endAngle; let angleFallsInSegment; if (segStart < segEnd) { angleFallsInSegment = angleRelativeToPlatform >= segStart && angleRelativeToPlatform < segEnd; } else { angleFallsInSegment = angleRelativeToPlatform >= segStart || angleRelativeToPlatform < segEnd; } if (angleFallsInSegment) { hitSegmentData = segmentData; break; } } if (hitSegmentData) { if (hitSegmentData.isDanger) { lastSafePlatformY = collisionY - platformSpacingY; handleGameOver("Hit Danger Zone!"); startShake(0.7); } else { lastSafePlatformY = collisionY; ball.position.y = collisionY + ballRadius + 0.01; currentBallVelocityY = bounceSpeed; Object.keys(scoreIncrementedForPlatform).forEach(keyY => { if (parseFloat(keyY) < collisionY) delete scoreIncrementedForPlatform[keyY]; }); startShake(0.3); } } else { console.warn("Collision: Not in gap, but no segment hit?", { ballAngle, towerRotation, platformInternalRotation, angleRelativeToPlatform}); destroyPlatformAndPole(candidatePlatform); } } }
-        async function handleGameOver(reason = "Unknown Reason") {
-            if (gameState !== 'playing') return;
-            console.log(`Game Over! Reason: ${reason}. Score: ${currentScore}`);
-            gameState = 'gameOver'; setInternalPause(true); isTimedGameActive = false;
-            if (gameTimerIntervalId) { clearInterval(gameTimerIntervalId); gameTimerIntervalId = null; }
-            if (headerTimerDisplayEl) headerTimerDisplayEl.classList.remove('visible');
-            gameOverMessageP.innerHTML = `${reason}<br>Score: <span id="final-score">${formatNumber(currentScore)}</span>`;
-            showOverlay(gameOverUI);
-            if (restartButton) restartButton.disabled = false;
-            if (watchAdButton) {
-                const showAdSdk = !!AdController; // Check if AdsGram controller is available
-                if (telegramUserId && currentScore > 0 && showAdSdk) {
-                    watchAdButton.style.display = 'block';
-                    watchAdButton.disabled = false;
-                } else {
-                    watchAdButton.style.display = 'none';
-                }
-            }
-            if (watchAdButton.style.display === 'none' && currentScore > 0 && telegramUserId) {
-                 console.log("Attempting direct score save (no ad shown or available)...");
-                 try { await updateUserScoreInBackend(currentScore); console.log("Score saved directly successfully."); }
-                 catch (error) { console.error("Direct score save failed:", error); gameOverMessageP.innerHTML += "<br><small>(Save Failed)</small>"; }
-             } else if (currentScore <= 0) { console.log("Zero score, not saving."); }
-            startShake(0.5);
-        }
-        function handleWatchAdForBoost() {
-            if (gameState !== 'ready' || !AdController) {
-                alert("Ad service not available.");
-                return;
-            }
-            startNormalButton.disabled = true;
-            startBoostButton.disabled = true;
-            startBoostButton.textContent = 'Loading Ad...';
-
-            AdController.show().then((result) => {
-                console.log("Ad for boost completed:", result);
-                // Assume .then() means the user should get the reward
-                adBonusActiveForThisGame = true;
-                hideOverlay(startGameModal);
-                startGame();
-            }).catch((result) => {
-                console.error("Ad for boost failed:", result);
-                alert("Ad failed. Starting normally.");
-                adBonusActiveForThisGame = false;
-                hideOverlay(startGameModal);
-                startGame();
-            }).finally(() => {
-                // This block is for cleaning up UI, but startGame() already takes over.
-                // If the user cancels the modal after an ad error, this would be useful.
-                startNormalButton.disabled = false;
-                startBoostButton.disabled = false;
-                startBoostButton.textContent = '+1 Pt/Platform';
-            });
-        }
-        function handleWatchAdForSave() {
-            if (gameState !== 'gameOver' || !telegramUserId || currentScore <= 0 || !AdController) {
-                alert("Ad service not ready or score not eligible.");
-                return;
-            }
-            if (restartButton) restartButton.disabled = true;
-            if (watchAdButton) watchAdButton.disabled = true;
-            const originalMessage = gameOverMessageP.innerHTML;
-            gameOverMessageP.textContent = `Loading Ad to Save Score...`;
-
-            AdController.show().then(async (result) => {
-                console.log("Ad for save completed:", result);
-                try {
-                    await updateUserScoreInBackend(currentScore);
-                    gameOverMessageP.textContent = `Score Saved! Final: ${formatNumber(currentScore)}`;
-                    if (watchAdButton) watchAdButton.style.display = 'none'; // Hide after successful use
-                } catch (error) {
-                    console.error("Score save after ad failed:", error);
-                    alert("Could not save score after ad.");
-                    gameOverMessageP.innerHTML = originalMessage; // Restore original message
-                    if (watchAdButton) watchAdButton.disabled = false;
-                }
-            }).catch((result) => {
-                console.error("Ad for save failed to show/complete:", result);
-                alert("Ad failed. Score not saved.");
-                gameOverMessageP.innerHTML = originalMessage; // Restore original message
-                if (watchAdButton) watchAdButton.disabled = false;
-            }).finally(() => {
-                if (restartButton) restartButton.disabled = false;
-            });
-        }
-        function startShake(intensity) { shakeIntensity = Math.max(shakeIntensity, intensity); }
-
-        // --- Input Handling ---
-        function onPointerDown(e){ let target = e.target; let isUI = false; if (headerBar.contains(target) || (sideMenu.classList.contains('open') && sideMenu.contains(target)) || (menuOverlayDimmer.classList.contains('visible') && target === menuOverlayDimmer) || (settingsPopup.style.display === 'block' && settingsPopup.contains(target)) || (profileOverlay.style.display === 'flex' && profileOverlay.contains(target)) || (withdrawalOverlay.style.display === 'flex' && withdrawalOverlay.contains(target)) || (friendsOverlay.style.display === 'flex' && friendsOverlay.contains(target)) || (tasksOverlay.style.display === 'flex' && tasksOverlay.contains(target)) || (eventsAirdropOverlay.style.display === 'flex' && eventsAirdropOverlay.contains(target)) || (leaderboardOverlay.style.display === 'flex' && leaderboardOverlay.contains(target)) || (gameOverUI.style.display === 'block' && gameOverUI.contains(target)) || (startGameModal.style.display === 'block' && startGameModal.contains(target)) || (announcementPopupEl.style.display === 'block' && announcementPopupEl.contains(target)) || (initialControlsContainer && !initialControlsContainer.classList.contains('hidden') && initialControlsContainer.contains(target)) || target.closest('.icon-button') || target.closest('button') || target.closest('a') || target.closest('input') || target.closest('select') || target.closest('.theme-switch') || target.closest('#referral-list-container') || target.closest('.withdrawal-accordion-header') || target.closest('.leaderboard-list-container') ) { isUI = true; } if (target === renderer?.domElement && gameState === 'playing' && isTimedGameActive && !internalPauseState) { isUI = false; } else if (target === renderer?.domElement) { isUI = true; } if (isUI) { isPointerDown = false; } else { isPointerDown = true; previousPointerX = e.clientX ?? e.touches?.[0]?.clientX; if (previousPointerX === undefined) { isPointerDown = false; return; } document.body.style.cursor = 'grabbing'; if (e.cancelable && e.touches && gameContainer.contains(target)) { e.preventDefault(); } } }
-        function onPointerMove(e){ if (!isPointerDown || gameState !== 'playing' || !isTimedGameActive || internalPauseState) return; const currentX = e.clientX ?? e.touches?.[0]?.clientX; if (currentX === undefined) return; const deltaX = currentX - previousPointerX; if (platformGroup) { platformGroup.rotation.y += deltaX * rotationSensitivity; } previousPointerX = currentX; if (e.cancelable && e.touches) { e.preventDefault(); } }
-        function onPointerUp(e){ if (isPointerDown) { isPointerDown = false; document.body.style.cursor = 'default'; } }
 
         // --- Render Loop & Resize ---
-        function onWindowResize() { if (!camera || !renderer || !gameContainer || !composer) return; const w = window.innerWidth; const h = window.innerHeight; if (w > 0 && h > 0) { camera.aspect = w / h; camera.updateProjectionMatrix(); renderer.setSize(w, h); composer.setSize(w, h); } else { console.warn("Window resize with zero dimensions."); } }
-        function animateCameraZoom(targetZ, duration) { if (!camera || isCameraZooming) return; if (cameraZoomRequestId) cancelAnimationFrame(cameraZoomRequestId); isCameraZooming = true; const startZ = camera.position.z; const startTime = performance.now(); function step(now) { const elapsed = now - startTime; const prog = Math.min(elapsed / duration, 1); const ease = t => t * (2 - t); const newZ = startZ + (targetZ - startZ) * ease(prog); camera.position.z = newZ; if (prog < 1) { cameraZoomRequestId = requestAnimationFrame(step); } else { camera.position.z = targetZ; isCameraZooming = false; cameraZoomRequestId = null; } } cameraZoomRequestId = requestAnimationFrame(step); }
-        function animate() {
-            requestAnimationFrame(animate);
-            const dt = clock.getDelta();
-
-            if (starField && starField.visible) starField.rotation.y += dt * 0.01;
-
-            if (gameState === 'playing' && isTimedGameActive && !internalPauseState) {
-                updateBallPosition(); checkCollisions(); generatePlatforms();
-                if (ball) { ballPreviousY = ball.position.y; }
-            }
-            if (gameState === 'playing' || gameState === 'gameOver') { updateFadingObjects(dt); }
-
-            let camY = camera ? camera.position.y : (initialBallY + cameraVerticalOffset);
-            let lookY = ball ? (ball.position.y + cameraLookAtOffset) : (initialBallY + cameraLookAtOffset);
-
-            if (ball && camera && (gameState === 'playing' || gameState === 'gameOver')) {
-                const targetCamY = ball.position.y + cameraVerticalOffset;
-                const lerpedY = THREE.MathUtils.lerp(camera.position.y, targetCamY, cameraFollowLerpFactor * dt * 60);
-                if (lerpedY < camera.position.y || (currentBallVelocityY > 0.05 && gameState === 'playing' && !internalPauseState) || ball.position.y < camera.position.y - cameraVerticalOffset - 2) { camY = lerpedY; }
-                lookY = ball.position.y + cameraLookAtOffset;
-            } else if (camera && gameState === 'ready') {
-                camY = initialBallY + cameraVerticalOffset; lookY = initialBallY + cameraLookAtOffset;
-                camera.position.y = camY; camera.lookAt(0, lookY, 0);
-            }
-
-            let shakeX = 0, shakeY = 0;
-            if (shakeIntensity > 0.01) {
-                shakeX = (Math.random() - 0.5) * 2 * maxShakeOffset * shakeIntensity; shakeY = (Math.random() - 0.5) * 2 * maxShakeOffset * shakeIntensity;
-                if (gameState === 'playing' && isTimedGameActive && !internalPauseState) { shakeIntensity *= Math.pow(shakeDecreaseFactor, dt * 60); }
-                else if (gameState !== 'playing') { shakeIntensity *= Math.pow(shakeDecreaseFactor * 0.8, dt * 60); }
-            } else { shakeIntensity = 0; }
-
-            if (camera && gameState !== 'ready') { camera.position.y = camY + shakeY; camera.position.x = 0 + shakeX; camera.lookAt(0 + shakeX, lookY + shakeY, 0); }
-            else if (camera && gameState === 'ready') { camera.position.set(0, initialBallY + cameraVerticalOffset, camera.position.z); camera.lookAt(0, initialBallY + cameraLookAtOffset, 0); }
-
-            if (composer) { composer.render(dt); }
-            else if (renderer && scene && camera) { renderer.render(scene, camera); }
+        function onWindowResize() {
+            // Kept for potential future use, but not critical for a tapping game
+            console.log("Window resized.");
         }
 
         // --- Lifecycle Listeners ---
