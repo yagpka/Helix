@@ -672,7 +672,8 @@
         #menu-overlay-dimmer.visible { display: block; opacity: 1; }
     </style>
 
-    <script src='//whephiwums.com/sdk.js' data-zone='9292240' data-sdk='show_9292240'></script>
+    <!-- AdsGram SDK -->
+    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
 </head>
 <body>
 
@@ -951,6 +952,9 @@
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlob2d1YXVja25ha2tteXdxdW5tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY0NTk4MzgsImV4cCI6MjA2MjAzNTgzOH0.GjX0iJnQWrdD1-T2H1cMG9yXOeHfo3eQK5Sk8F3NN6w';
         const GAME_DURATION_SECONDS = 60;
         const TELEGRAM_CHANNEL_URL = "https://t.me/helix_cryptodrop";
+
+        // --- AdsGram Ad Controller ---
+        const AdController = window.Adsgram && window.Adsgram.init({ blockId: "int-14190" });
 
         let currentScore = 0;
         let gameState = 'initializing';
@@ -1805,21 +1809,22 @@
 
         function initiateAdForGame() {
             startGameButton.disabled = true;
-            startGameButton.textContent = 'Loading...';
+            startGameButton.textContent = 'Loading Ad...';
 
-            if (typeof show_9292240 !== 'function') {
-                alert("Ad service not available. Please try again later.");
+            if (!AdController) {
+                alert("Ad service is not available. Please try again later.");
+                console.error("AdsGram AdController not initialized.");
                 startGameButton.disabled = false;
                 startGameButton.textContent = 'Play Game (Watch Ad)';
                 return;
             }
-            startGameButton.textContent = 'Loading Ad...';
 
-            show_9292240().then(() => {
+            AdController.show().then((result) => {
+                console.log("AdsGram ad finished successfully.", result);
                 startTappingGame();
-            }).catch((error) => {
-                console.error("Ad for game failed:", error);
-                alert("Ad failed to load. Please try again to play.");
+            }).catch((result) => {
+                console.error("AdsGram ad failed or was skipped.", result);
+                alert("The ad could not be shown. Please try again to play.");
                 startGameButton.disabled = false;
                 startGameButton.textContent = 'Play Game (Watch Ad)';
             });
