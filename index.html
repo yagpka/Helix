@@ -9,11 +9,17 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Press+Start+2P&display=swap" rel="stylesheet">
     
-    <!-- === SDKs are correctly included === -->
+    <!-- SDKs -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
 </head>
 <body>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="spinner"></div>
+        <p>Loading Game...</p>
+    </div>
 
     <div class="app-container">
         <!-- TOP BAR: PROFILE & POINTS -->
@@ -60,13 +66,13 @@
                 <div class="timed-rewards-container">
                     <div id="treasure-box" class="timed-reward-box">
                         <div class="reward-icon">🎁</div>
-                        <div id="treasure-timer" class="reward-timer">03:00</div>
-                        <button id="treasure-claim-button" class="reward-claim-button">Claim</button>
+                        <div id="treasure-timer" class="reward-timer">00:00</div>
+                        <button id="treasure-claim-button" class="reward-claim-button" disabled>Claim</button>
                     </div>
                     <div id="ticket-box" class="timed-reward-box">
                         <div class="reward-icon">🎟️</div>
-                        <div id="ticket-timer" class="reward-timer">05:00</div>
-                        <button id="ticket-claim-button" class="reward-claim-button">Claim</button>
+                        <div id="ticket-timer" class="reward-timer">00:00</div>
+                        <button id="ticket-claim-button" class="reward-claim-button" disabled>Claim</button>
                     </div>
                 </div>
 
@@ -166,8 +172,7 @@
         </nav>
     </div>
 
-    <!-- === THIS IS THE ONLY LINE ADDED === -->
-    <!-- It must be before script.js so the library is available -->
+    <!-- Supabase Client Library (must be before script.js) -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <script src="script.js"></script>
