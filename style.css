@@ -30,6 +30,8 @@ body {
     margin: 0 auto;
     background-color: var(--bg-color);
     position: relative;
+    opacity: 0; /* Initially hidden */
+    transition: opacity 0.5s ease-in;
 }
 
 /* --- Top Bar & Nav --- */
@@ -188,3 +190,36 @@ body {
 .task-reward { font-size: 1.1rem; color: var(--jackpot-glow); font-weight: 600; white-space: nowrap; }
 .claim-button { padding: 10px 20px; font-size: 0.9rem; font-weight: 600; color: white; background-color: var(--primary-glow); border: none; border-radius: 8px; cursor: pointer; transition: background-color 0.2s ease; }
 .claim-button:disabled { background-color: #555; color: #999; cursor: not-allowed; }
+
+/* === LOADING OVERLAY STYLES (NEW) === */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    transition: opacity 0.5s ease-out;
+}
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #444;
+    border-top: 5px solid var(--primary-glow);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+.loading-overlay p {
+    font-family: var(--pixel-font);
+    color: var(--text-color);
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
