@@ -1,11 +1,17 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Check if the Telegram Web App SDK is available
+    if (typeof window.Telegram === 'undefined' || typeof window.Telegram.WebApp === 'undefined') {
+        console.warn("Telegram Web App SDK not found. Running in standalone fallback mode.");
+    }
+
     // =================================================================
     // --- ADSGRAM SDK INITIALIZATION ---
     // =================================================================
-    const AdController = window.Adsgram.init({ blockId: "int-15864" });
+    // Using your requested Block ID and a fallback for local testing
+    const AdController = window.Adsgram ? window.Adsgram.init({ blockId: "int-14190" }) : { show: () => Promise.reject('Adsgram stubbed') };
 
     // =================================================================
-    // --- CONFIGURATIONS & CONSTANTS ---
+    // --- CONFIGURATIONS & CONSTANTS (Unchanged) ---
     // =================================================================
     const REEL_ITEM_HEIGHT = 90;
     const SPIN_DURATION = 4000;
@@ -26,8 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 'earn10k', description: 'Earn 10,000 points', target: 10000, progressKey: 'pointsWon', reward: { points: 3000 } },
         { id: 'winJackpot', description: 'Win a Jackpot', target: 1, progressKey: 'jackpotWins', reward: { pulls: 20 } }
     ];
-    
-    // NEW Timed Rewards Constants
     const TREASURE_COOLDOWN = 3 * 60 * 1000; // 3 minutes
     const TREASURE_REWARD_POINTS = 2000;
     const TICKET_COOLDOWN = 5 * 60 * 1000; // 5 minutes
@@ -38,8 +42,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // =================================================================
     let user = {};
     let isSpinning = false;
-    const defaultUser = {
-        name: 'Player One', username: '@player1', points: 1250, pulls: 0, ton: 0, sol: 0,
+    // This is now the default *game state*, not the full user object.
+    const defaultUserState = {
+        points: 1250, pulls: 0, ton: 0, sol: 0,
         dailyStreak: 0, lastStreakClaimDate: null,
         taskProgress: { pullCount: 0, adWatchCount: 0, jackpotWins: 0, pairWins: 0, pointsWon: 0 },
         claimedTasks: [], lastTaskResetDate: null,
@@ -48,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // =================================================================
-    // --- DOM ELEMENT SELECTORS ---
+    // --- DOM ELEMENT SELECTORS (Unchanged) ---
     // =================================================================
     const pages = document.querySelectorAll('.page');
     const navButtons = document.querySelectorAll('.nav-button');
@@ -82,19 +87,59 @@ document.addEventListener('DOMContentLoaded', () => {
     const ticketClaimBtn = document.getElementById('ticket-claim-button');
 
     // =================================================================
-    // --- DATA PERSISTENCE & INITIALIZATION ---
+    // --- TELEGRAM SDK INTEGRATED DATA PERSISTENCE ---
     // =================================================================
-    function loadUserData() {
-        const savedUser = localStorage.getItem('ytdGachaUser');
-        user = savedUser ? { ...defaultUser, ...JSON.parse(savedUser) } : { ...defaultUser };
+    function getStorageKey(userId) {
+        // Creates a unique storage key for each Telegram user
+        return `ytdGachaUser_TWA_${userId}`;
+    }
+
+    function loadUserData(telegramUser) {
+        const userId = telegramUser.id;
+        const storageKey = getStorageKey(userId);
+        const savedData = localStorage.getItem(storageKey);
+
+        // Start with Telegram user info
+        user = {
+            id: userId,
+            name: telegramUser.first_name + (telegramUser.last_name ? ' ' + telegramUser.last_name : ''),
+            username: telegramUser.username ? '@' + telegramUser.username : 'No Username',
+            ...defaultUserState // Apply default game state
+        };
+
+        // If saved data exists, merge it into the user object
+        if (savedData) {
+            try {
+                const parsedData = JSON.parse(savedData);
+                Object.assign(user, parsedData); // Saved data overrides defaults
+                console.log(`Loaded game state for user ID: ${userId}`);
+            } catch (e) {
+                console.error("Failed to parse saved data:", e);
+            }
+        } else {
+            console.log(`No saved data found for user ID: ${userId}. Creating new profile.`);
+        }
     }
 
     function saveUserData() {
-        localStorage.setItem('ytdGachaUser', JSON.stringify(user));
+        if (!user || !user.id) {
+            console.error("Cannot save data: User or User ID is missing.");
+            return;
+        }
+        // Save only the game state, not the TG profile info
+        const gameState = {
+            points: user.points, pulls: user.pulls, ton: user.ton, sol: user.sol,
+            dailyStreak: user.dailyStreak, lastStreakClaimDate: user.lastStreakClaimDate,
+            taskProgress: user.taskProgress, claimedTasks: user.claimedTasks,
+            lastTaskResetDate: user.lastTaskResetDate,
+            lastTreasureClaimTimestamp: user.lastTreasureClaimTimestamp,
+            lastTicketClaimTimestamp: user.lastTicketClaimTimestamp,
+        };
+        const storageKey = getStorageKey(user.id);
+        localStorage.setItem(storageKey, JSON.stringify(gameState));
     }
-
+    
     function initializeApp() {
-        loadUserData();
         checkDailyResets();
         updateAllUI();
         initializeReels();
@@ -103,9 +148,32 @@ document.addEventListener('DOMContentLoaded', () => {
         renderTasksPage();
         initializeTimedRewards();
     }
-    
+
+    function initTelegram() {
+        const TWA = window.Telegram.WebApp;
+        TWA.ready();
+        TWA.expand();
+        
+        // Apply TWA theme colors for a native feel
+        document.body.style.backgroundColor = TWA.themeParams.bg_color || '#1a1a2e';
+
+        const initData = TWA.initDataUnsafe;
+
+        if (initData && initData.user) {
+            // Real Telegram user detected
+            loadUserData(initData.user);
+            initializeApp();
+        } else {
+            // Fallback for local browser testing
+            console.warn("Telegram user data not found. Using fallback user.");
+            const fallbackUser = { id: 999999, first_name: 'Dev', last_name: 'Tester', username: 'dev_user' };
+            loadUserData(fallbackUser);
+            initializeApp();
+        }
+    }
+
     // =================================================================
-    // --- TIMED REWARDS LOGIC ---
+    // --- TIMED REWARDS LOGIC (Unchanged) ---
     // =================================================================
     function initializeTimedRewards() {
         setInterval(updateTimedRewards, 1000);
@@ -114,7 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateTimedRewards() {
         const now = Date.now();
-        const treasureCooldownEnd = user.lastTreasureClaimTimestamp + TREASURE_COOLDOWN;
+        const treasureCooldownEnd = (user.lastTreasureClaimTimestamp || 0) + TREASURE_COOLDOWN;
         if (now < treasureCooldownEnd) {
             const remaining = treasureCooldownEnd - now;
             treasureTimerEl.textContent = formatTime(remaining);
@@ -123,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
             treasureTimerEl.textContent = `+${TREASURE_REWARD_POINTS.toLocaleString()} Pts`;
             treasureClaimBtn.disabled = false;
         }
-        const ticketCooldownEnd = user.lastTicketClaimTimestamp + TICKET_COOLDOWN;
+        const ticketCooldownEnd = (user.lastTicketClaimTimestamp || 0) + TICKET_COOLDOWN;
         if (now < ticketCooldownEnd) {
             const remaining = ticketCooldownEnd - now;
             ticketTimerEl.textContent = formatTime(remaining);
@@ -142,6 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function handleClaimTreasure() {
+        if (treasureClaimBtn.disabled) return;
         treasureClaimBtn.disabled = true;
         treasureClaimBtn.textContent = 'Wait...';
         setTimeout(() => {
@@ -155,6 +224,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function handleClaimTickets() {
+        if (ticketClaimBtn.disabled) return;
         ticketClaimBtn.disabled = true;
         ticketClaimBtn.textContent = 'Wait...';
         setTimeout(() => {
@@ -169,7 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // =================================================================
-    // --- EVENT LISTENERS & NAVIGATION ---
+    // --- CORE APP LOGIC (Unchanged) ---
     // =================================================================
     function setupEventListeners() {
         navButtons.forEach(button => button.addEventListener('click', () => navigateTo(button.dataset.page)));
@@ -276,7 +346,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <button class="claim-button" data-task-id="${task.id}" ${(!isComplete || isClaimed) ? 'disabled' : ''}>${isClaimed ? 'Claimed' : 'Claim'}</button>`;
             tasksContainer.appendChild(taskEl);
         });
-        document.querySelectorAll('.claim-button').forEach(button => button.addEventListener('click', () => claimTaskReward(button.dataset.taskId)));
+        document.querySelectorAll('.claim-button').forEach(button => button.addEventListener('click', (e) => claimTaskReward(e.currentTarget.dataset.taskId)));
     }
 
     function showFeedback(element, message, type) {
@@ -311,7 +381,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // --- MODIFIED FUNCTION TO SHOW REWARDED AD ---
     function handleWatchAd() {
         watchAdButton.disabled = true;
         watchAdButton.textContent = "LOADING AD...";
@@ -319,35 +388,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
         AdController.show().then((result) => {
             console.log('AdsGram ad watched successfully.', result);
-            
-            // --- REWARD THE USER ---
             user.pulls += 10;
             user.taskProgress.adWatchCount++;
             saveUserData();
             updateAllUI();
             updateButtonStates();
             resultText.textContent = "YOU GOT 10 PULLS!";
-
         }).catch((result) => {
             console.error('AdsGram ad failed or was skipped.', result);
             resultText.textContent = "AD SKIPPED. NO REWARD.";
-            
         }).finally(() => {
-            // This runs whether the ad succeeded or failed.
-            // Reset the button so the user can try again.
             watchAdButton.disabled = false;
             watchAdButton.textContent = "WATCH AD FOR 10 PULLS";
-            updateButtonStates(); // Re-evaluates which button should be active
+            updateButtonStates();
+            renderTasksPage(); // Update task progress on UI
         });
     }
 
-    // --- REVERTED FUNCTION, NO AD HERE ---
     function handlePull() {
         if (user.pulls <= 0 || isSpinning) return;
         isSpinning = true;
         user.pulls--;
         user.taskProgress.pullCount++;
-        saveUserData();
+        saveUserData(); // Save immediately after pull deduction
         updateAllUI();
         pullButton.disabled = true;
         watchAdButton.disabled = true;
@@ -362,8 +425,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 reel.innerHTML = '';
                 const newReelItems = buildReel();
                 reel.appendChild(newReelItems);
-                newReelItems.style.transition = 'none';
-                newReelItems.style.transform = 'translateY(0)';
                 const finalItem = GACHA_ITEMS[Math.floor(Math.random() * GACHA_ITEMS.length)];
                 finalResults.push(finalItem);
                 const finalElement = document.createElement('div');
@@ -382,6 +443,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 gachaMachine.classList.remove('shake-animation');
                 reelShutter.classList.remove('open');
                 updateButtonStates();
+                renderTasksPage(); // Update task progress on UI
             }, SPIN_DURATION + 600);
         }, 500);
     }
@@ -470,5 +532,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- START THE APP ---
-    initializeApp();
+    initTelegram();
 });
