@@ -84,7 +84,7 @@ body {
 .ad-button:hover:not(:disabled) { background-color: var(--primary-glow); color: white; box-shadow: 0 0 15px rgba(169, 114, 255, 0.5); }
 .ad-button:disabled { color: #555; cursor: not-allowed; }
 
-/* --- NEW TIMED REWARDS STYLES --- */
+/* --- TIMED REWARDS STYLES --- */
 .timed-rewards-container {
     display: flex;
     justify-content: space-around;
@@ -136,8 +136,6 @@ body {
     cursor: not-allowed;
     box-shadow: none;
 }
-/* --- END NEW STYLES --- */
-
 
 /* --- Profile & Generic Page Styles --- */
 .profile-card { background-color: var(--machine-color); border-radius: 24px; padding: 30px; text-align: center; border: 1px solid #3a3a5a; }
