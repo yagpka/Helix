@@ -3,15 +3,21 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof window.Telegram === 'undefined' || typeof window.Telegram.WebApp === 'undefined') {
         console.warn("Telegram Web App SDK not found. Running in standalone fallback mode.");
     }
+    
+    // =================================================================
+    // --- SUPABASE CLIENT INITIALIZATION ---
+    // =================================================================
+    const SUPABASE_URL = 'https://vddnlobgtnwwplburlja.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZkZG5sb2JndG53d3BsYnVybGphIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDEyMTcsImV4cCI6MjA3NTUxNzIxN30.2zYyICX5QyNDcLcGWia1F04yXPfNH6M09aczNlsLFSM';
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     // =================================================================
     // --- ADSGRAM SDK INITIALIZATION ---
     // =================================================================
-    // Using your requested Block ID and a fallback for local testing
     const AdController = window.Adsgram ? window.Adsgram.init({ blockId: "int-14190" }) : { show: () => Promise.reject('Adsgram stubbed') };
 
     // =================================================================
-    // --- CONFIGURATIONS & CONSTANTS (Unchanged) ---
+    // --- CONFIGURATIONS & CONSTANTS ---
     // =================================================================
     const REEL_ITEM_HEIGHT = 90;
     const SPIN_DURATION = 4000;
@@ -25,35 +31,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const STREAK_REWARDS = [
         { day: 1, points: 2000, pulls: 3 }, { day: 2, points: 4000, pulls: 5 }, { day: 3, points: 6000, pulls: 7 }, { day: 4, points: 8000, pulls: 9 }, { day: 5, points: 10000, pulls: 10 }, { day: 6, points: 12000, pulls: 11 }, { day: 7, points: 15000, pulls: 15 }
     ];
+    // This now matches the task_key in your database
     const DAILY_TASKS = [
-        { id: 'pull10', description: 'Pull the lever 10 times', target: 10, progressKey: 'pullCount', reward: { points: 500 } },
-        { id: 'watch2', description: 'Watch 2 Ads', target: 2, progressKey: 'adWatchCount', reward: { pulls: 5 } },
-        { id: 'winPair', description: 'Win a Pair 3 times', target: 3, progressKey: 'pairWins', reward: { points: 2500 } },
-        { id: 'earn10k', description: 'Earn 10,000 points', target: 10000, progressKey: 'pointsWon', reward: { points: 3000 } },
-        { id: 'winJackpot', description: 'Win a Jackpot', target: 1, progressKey: 'jackpotWins', reward: { pulls: 20 } }
+        { id: 'pull10', description: 'Pull the lever 10 times', progressKey: 'pull10' },
+        { id: 'watch2', description: 'Watch 2 Ads', progressKey: 'watch2' },
+        { id: 'winPair', description: 'Win a Pair 3 times', progressKey: 'winPair' },
+        { id: 'earn10k', description: 'Earn 10,000 points', progressKey: 'earn10k' },
+        { id: 'winJackpot', description: 'Win a Jackpot', progressKey: 'winJackpot' }
     ];
     const TREASURE_COOLDOWN = 3 * 60 * 1000; // 3 minutes
     const TREASURE_REWARD_POINTS = 2000;
     const TICKET_COOLDOWN = 5 * 60 * 1000; // 5 minutes
     const TICKET_REWARD_PULLS = 10;
-
+    
     // =================================================================
     // --- STATE MANAGEMENT ---
     // =================================================================
-    let user = {};
+    let user = {}; // Will hold profile data from Supabase
+    let tasks = {}; // Will hold task definitions from Supabase
+    let taskProgress = {}; // Will hold today's task progress
     let isSpinning = false;
-    // This is now the default *game state*, not the full user object.
-    const defaultUserState = {
-        points: 1250, pulls: 0, ton: 0, sol: 0,
-        dailyStreak: 0, lastStreakClaimDate: null,
-        taskProgress: { pullCount: 0, adWatchCount: 0, jackpotWins: 0, pairWins: 0, pointsWon: 0 },
-        claimedTasks: [], lastTaskResetDate: null,
-        lastTreasureClaimTimestamp: null,
-        lastTicketClaimTimestamp: null,
-    };
-
+    
     // =================================================================
-    // --- DOM ELEMENT SELECTORS (Unchanged) ---
+    // --- DOM ELEMENT SELECTORS ---
     // =================================================================
     const pages = document.querySelectorAll('.page');
     const navButtons = document.querySelectorAll('.nav-button');
@@ -85,58 +85,145 @@ document.addEventListener('DOMContentLoaded', () => {
     const treasureClaimBtn = document.getElementById('treasure-claim-button');
     const ticketTimerEl = document.getElementById('ticket-timer');
     const ticketClaimBtn = document.getElementById('ticket-claim-button');
-
+    
     // =================================================================
-    // --- TELEGRAM SDK INTEGRATED DATA PERSISTENCE ---
+    // --- SUPABASE DATA PERSISTENCE ---
     // =================================================================
-    function getStorageKey(userId) {
-        // Creates a unique storage key for each Telegram user
-        return `ytdGachaUser_TWA_${userId}`;
-    }
+    async function loadUserData(telegramUser) {
+        const { data, error } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('telegram_id', telegramUser.id)
+            .single();
 
-    function loadUserData(telegramUser) {
-        const userId = telegramUser.id;
-        const storageKey = getStorageKey(userId);
-        const savedData = localStorage.getItem(storageKey);
-
-        // Start with Telegram user info
-        user = {
-            id: userId,
-            name: telegramUser.first_name + (telegramUser.last_name ? ' ' + telegramUser.last_name : ''),
-            username: telegramUser.username ? '@' + telegramUser.username : 'No Username',
-            ...defaultUserState // Apply default game state
-        };
-
-        // If saved data exists, merge it into the user object
-        if (savedData) {
-            try {
-                const parsedData = JSON.parse(savedData);
-                Object.assign(user, parsedData); // Saved data overrides defaults
-                console.log(`Loaded game state for user ID: ${userId}`);
-            } catch (e) {
-                console.error("Failed to parse saved data:", e);
-            }
-        } else {
-            console.log(`No saved data found for user ID: ${userId}. Creating new profile.`);
-        }
-    }
-
-    function saveUserData() {
-        if (!user || !user.id) {
-            console.error("Cannot save data: User or User ID is missing.");
+        if (error && error.code !== 'PGRST116') { // PGRST116 means no rows found
+            console.error("Error fetching profile:", error);
             return;
         }
-        // Save only the game state, not the TG profile info
-        const gameState = {
-            points: user.points, pulls: user.pulls, ton: user.ton, sol: user.sol,
-            dailyStreak: user.dailyStreak, lastStreakClaimDate: user.lastStreakClaimDate,
-            taskProgress: user.taskProgress, claimedTasks: user.claimedTasks,
-            lastTaskResetDate: user.lastTaskResetDate,
-            lastTreasureClaimTimestamp: user.lastTreasureClaimTimestamp,
-            lastTicketClaimTimestamp: user.lastTicketClaimTimestamp,
-        };
-        const storageKey = getStorageKey(user.id);
-        localStorage.setItem(storageKey, JSON.stringify(gameState));
+
+        if (data) {
+            // User exists, load their data
+            user = data;
+            console.log(`Loaded profile for user ID: ${user.telegram_id}`);
+        } else {
+            // User doesn't exist, create a new profile
+            const { data: newUser, error: createError } = await supabase
+                .from('profiles')
+                .insert({
+                    telegram_id: telegramUser.id,
+                    username: telegramUser.username ? '@' + telegramUser.username : 'No Username',
+                    full_name: telegramUser.first_name + (telegramUser.last_name ? ' ' + telegramUser.last_name : ''),
+                    points: 1250 // Starting points for new user
+                })
+                .select()
+                .single();
+
+            if (createError) {
+                console.error("Error creating profile:", createError);
+                return;
+            }
+            user = newUser;
+            console.log(`Created new profile for user ID: ${user.telegram_id}`);
+        }
+
+        // After loading or creating a profile, fetch tasks and progress
+        await fetchTasksAndProgress();
+    }
+    
+    async function fetchTasksAndProgress() {
+        // Fetch all task definitions
+        const { data: taskDefs, error: taskError } = await supabase.from('tasks').select('*');
+        if (taskError) return console.error("Error fetching tasks:", taskError);
+        
+        // Organize tasks by their key for easy access
+        tasks = taskDefs.reduce((acc, task) => {
+            acc[task.task_key] = task;
+            return acc;
+        }, {});
+
+        // Fetch today's progress for the user
+        const today = getTodayDateString();
+        const { data: progress, error: progressError } = await supabase
+            .from('user_task_progress')
+            .select('*, tasks(task_key)')
+            .eq('user_id', user.id)
+            .eq('date', today);
+        
+        if (progressError) return console.error("Error fetching task progress:", progressError);
+
+        // Organize progress by task key
+        taskProgress = progress.reduce((acc, p) => {
+            acc[p.tasks.task_key] = p;
+            return acc;
+        }, {});
+    }
+    
+    // Generic function to update the user's profile in Supabase
+    async function updateUserProfile(updateData) {
+        const { error } = await supabase
+            .from('profiles')
+            .update(updateData)
+            .eq('id', user.id);
+            
+        if (error) {
+            console.error("Error updating profile:", error);
+        } else {
+            // Update local user object for immediate UI feedback
+            Object.assign(user, updateData);
+        }
+    }
+
+    // Function to update or insert task progress
+    async function updateTaskProgress(taskKey, incrementValue = 1) {
+        if (!tasks[taskKey]) return; // Exit if task doesn't exist
+
+        const taskId = tasks[taskKey].id;
+        const currentProg = taskProgress[taskKey]?.current_progress || 0;
+        const newProgress = currentProg + incrementValue;
+
+        // Use upsert to create a progress entry if it doesn't exist for today, or update it if it does
+        const { data, error } = await supabase
+            .from('user_task_progress')
+            .upsert({
+                user_id: user.id,
+                task_id: taskId,
+                date: getTodayDateString(),
+                current_progress: newProgress,
+                // If it's already claimed, keep it claimed
+                is_claimed: taskProgress[taskKey]?.is_claimed || false 
+            }, { onConflict: 'user_id, task_id, date' })
+            .select(`*, tasks(task_key)`)
+            .single();
+
+        if (error) {
+            console.error(`Error updating progress for ${taskKey}:`, error);
+        } else {
+            // Update local state
+            taskProgress[data.tasks.task_key] = data;
+        }
+    }
+
+    // =================================================================
+    // --- INITIALIZATION ---
+    // =================================================================
+    async function initTelegram() {
+        const TWA = window.Telegram.WebApp;
+        TWA.ready();
+        TWA.expand();
+        document.body.style.backgroundColor = TWA.themeParams.bg_color || '#1a1a2e';
+
+        const initData = TWA.initDataUnsafe;
+        let telegramUser;
+
+        if (initData && initData.user) {
+            telegramUser = initData.user;
+        } else {
+            console.warn("Telegram user data not found. Using fallback user.");
+            telegramUser = { id: 999999, first_name: 'Dev', last_name: 'Tester', username: 'dev_user' };
+        }
+        
+        await loadUserData(telegramUser);
+        initializeApp();
     }
     
     function initializeApp() {
@@ -148,32 +235,9 @@ document.addEventListener('DOMContentLoaded', () => {
         renderTasksPage();
         initializeTimedRewards();
     }
-
-    function initTelegram() {
-        const TWA = window.Telegram.WebApp;
-        TWA.ready();
-        TWA.expand();
-        
-        // Apply TWA theme colors for a native feel
-        document.body.style.backgroundColor = TWA.themeParams.bg_color || '#1a1a2e';
-
-        const initData = TWA.initDataUnsafe;
-
-        if (initData && initData.user) {
-            // Real Telegram user detected
-            loadUserData(initData.user);
-            initializeApp();
-        } else {
-            // Fallback for local browser testing
-            console.warn("Telegram user data not found. Using fallback user.");
-            const fallbackUser = { id: 999999, first_name: 'Dev', last_name: 'Tester', username: 'dev_user' };
-            loadUserData(fallbackUser);
-            initializeApp();
-        }
-    }
-
+    
     // =================================================================
-    // --- TIMED REWARDS LOGIC (Unchanged) ---
+    // --- TIMED REWARDS LOGIC ---
     // =================================================================
     function initializeTimedRewards() {
         setInterval(updateTimedRewards, 1000);
@@ -182,7 +246,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateTimedRewards() {
         const now = Date.now();
-        const treasureCooldownEnd = (user.lastTreasureClaimTimestamp || 0) + TREASURE_COOLDOWN;
+        const lastTreasureClaim = user.last_treasure_claim ? new Date(user.last_treasure_claim).getTime() : 0;
+        const treasureCooldownEnd = lastTreasureClaim + TREASURE_COOLDOWN;
         if (now < treasureCooldownEnd) {
             const remaining = treasureCooldownEnd - now;
             treasureTimerEl.textContent = formatTime(remaining);
@@ -191,7 +256,9 @@ document.addEventListener('DOMContentLoaded', () => {
             treasureTimerEl.textContent = `+${TREASURE_REWARD_POINTS.toLocaleString()} Pts`;
             treasureClaimBtn.disabled = false;
         }
-        const ticketCooldownEnd = (user.lastTicketClaimTimestamp || 0) + TICKET_COOLDOWN;
+
+        const lastTicketClaim = user.last_ticket_claim ? new Date(user.last_ticket_claim).getTime() : 0;
+        const ticketCooldownEnd = lastTicketClaim + TICKET_COOLDOWN;
         if (now < ticketCooldownEnd) {
             const remaining = ticketCooldownEnd - now;
             ticketTimerEl.textContent = formatTime(remaining);
@@ -209,37 +276,37 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
     }
 
-    function handleClaimTreasure() {
+    async function handleClaimTreasure() {
         if (treasureClaimBtn.disabled) return;
         treasureClaimBtn.disabled = true;
-        treasureClaimBtn.textContent = 'Wait...';
-        setTimeout(() => {
-            user.points += TREASURE_REWARD_POINTS;
-            user.lastTreasureClaimTimestamp = Date.now();
-            saveUserData();
-            updateAllUI();
-            updateTimedRewards();
-            treasureClaimBtn.textContent = 'Claim';
-        }, 1500);
+        
+        const newPoints = user.points + TREASURE_REWARD_POINTS;
+        await updateUserProfile({
+            points: newPoints,
+            last_treasure_claim: new Date().toISOString()
+        });
+        
+        updateAllUI();
+        updateTimedRewards();
     }
-    
-    function handleClaimTickets() {
+
+    async function handleClaimTickets() {
         if (ticketClaimBtn.disabled) return;
         ticketClaimBtn.disabled = true;
-        ticketClaimBtn.textContent = 'Wait...';
-        setTimeout(() => {
-            user.pulls += TICKET_REWARD_PULLS;
-            user.lastTicketClaimTimestamp = Date.now();
-            saveUserData();
-            updateAllUI();
-            updateButtonStates();
-            updateTimedRewards();
-            ticketClaimBtn.textContent = 'Claim';
-        }, 1500);
+
+        const newPulls = user.pulls + TICKET_REWARD_PULLS;
+        await updateUserProfile({
+            pulls: newPulls,
+            last_ticket_claim: new Date().toISOString()
+        });
+
+        updateAllUI();
+        updateButtonStates();
+        updateTimedRewards();
     }
 
     // =================================================================
-    // --- CORE APP LOGIC (Unchanged) ---
+    // --- CORE APP LOGIC ---
     // =================================================================
     function setupEventListeners() {
         navButtons.forEach(button => button.addEventListener('click', () => navigateTo(button.dataset.page)));
@@ -261,12 +328,12 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function updateAllUI() {
         pointsValueTop.textContent = Math.floor(user.points).toLocaleString();
-        profileNameEl.textContent = user.name;
+        profileNameEl.textContent = user.full_name;
         profileUsernameEl.textContent = user.username;
         profilePointsEl.textContent = Math.floor(user.points).toLocaleString();
         pullsAmountEl.textContent = user.pulls;
-        tonBalanceEl.textContent = user.ton.toFixed(2);
-        solBalanceEl.textContent = user.sol.toFixed(4);
+        tonBalanceEl.textContent = parseFloat(user.ton_balance).toFixed(2);
+        solBalanceEl.textContent = parseFloat(user.sol_balance).toFixed(4);
     }
     
     function updateButtonStates() {
@@ -284,20 +351,19 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function checkDailyResets() {
         const today = getTodayDateString();
-        if (user.lastTaskResetDate !== today) {
-            user.taskProgress = { pullCount: 0, adWatchCount: 0, jackpotWins: 0, pairWins: 0, pointsWon: 0 };
-            user.claimedTasks = [];
-            user.lastTaskResetDate = today;
-        }
-        const lastClaimDate = user.lastStreakClaimDate ? new Date(user.lastStreakClaimDate) : null;
-        if (lastClaimDate) {
+        // Task reset is handled by fetching only today's progress on load.
+        // This logic now only handles the daily streak.
+        const lastClaimDateStr = user.last_streak_claim_date;
+        if (lastClaimDateStr && lastClaimDateStr !== today) {
+            const lastClaimDate = new Date(lastClaimDateStr);
             const yesterday = new Date();
             yesterday.setDate(yesterday.getDate() - 1);
-            if (lastClaimDate.toISOString().split('T')[0] !== yesterday.toISOString().split('T')[0] && user.lastStreakClaimDate !== today) {
-                user.dailyStreak = 0;
+            
+            // If the last claim was not yesterday, reset the streak.
+            if (lastClaimDate.toISOString().split('T')[0] !== yesterday.toISOString().split('T')[0]) {
+                updateUserProfile({ daily_streak: 0 });
             }
         }
-        saveUserData();
     }
     
     function getTodayDateString() {
@@ -318,9 +384,9 @@ document.addEventListener('DOMContentLoaded', () => {
             dayEl.dataset.day = reward.day;
             let rewardText = reward.points ? `🎁 ${reward.points.toLocaleString()}` : `🎟️ ${reward.pulls}`;
             dayEl.innerHTML = `<div class="day-label">Day ${reward.day}</div><div class="day-reward">${rewardText}</div>`;
-            if (user.dailyStreak >= reward.day) {
+            if (user.daily_streak >= reward.day) {
                 dayEl.classList.add('claimed');
-            } else if (user.dailyStreak + 1 === reward.day && user.lastStreakClaimDate !== today) {
+            } else if (user.daily_streak + 1 === reward.day && user.last_streak_claim_date !== today) {
                 dayEl.classList.add('active');
                 dayEl.onclick = () => claimStreakReward(reward.day);
             }
@@ -330,23 +396,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderDailyTasks() {
         tasksContainer.innerHTML = '';
-        DAILY_TASKS.forEach(task => {
-            const progress = user.taskProgress[task.progressKey] || 0;
-            const isComplete = progress >= task.target;
-            const isClaimed = user.claimedTasks.includes(task.id);
+        DAILY_TASKS.forEach(taskDef => {
+            const task = tasks[taskDef.progressKey];
+            if (!task) return; // Skip if task definition not loaded yet
+            
+            const progress = taskProgress[task.task_key]?.current_progress || 0;
+            const isClaimed = taskProgress[task.task_key]?.is_claimed || false;
+            const isComplete = progress >= task.target_value;
+
             const taskEl = document.createElement('div');
             taskEl.className = 'task-item';
-            let rewardText = task.reward.points ? `+${task.reward.points.toLocaleString()} PTS` : `+${task.reward.pulls} Pulls`;
+            let rewardText = task.reward_type === 'points' 
+                ? `+${task.reward_amount.toLocaleString()} PTS` 
+                : `+${task.reward_amount} Pulls`;
+
             taskEl.innerHTML = `
                 <div class="task-info">
-                    <p>${task.description} (${progress}/${task.target})</p>
-                    <div class="progress-bar"><div class="progress-bar-inner" style="width: ${Math.min(100, (progress / task.target) * 100)}%;"></div></div>
+                    <p>${task.description} (${progress}/${task.target_value})</p>
+                    <div class="progress-bar"><div class="progress-bar-inner" style="width: ${Math.min(100, (progress / task.target_value) * 100)}%;"></div></div>
                 </div>
                 <div class="task-reward">${rewardText}</div>
-                <button class="claim-button" data-task-id="${task.id}" ${(!isComplete || isClaimed) ? 'disabled' : ''}>${isClaimed ? 'Claimed' : 'Claim'}</button>`;
+                <button class="claim-button" data-task-key="${task.task_key}" ${(!isComplete || isClaimed) ? 'disabled' : ''}>${isClaimed ? 'Claimed' : 'Claim'}</button>`;
             tasksContainer.appendChild(taskEl);
         });
-        document.querySelectorAll('.claim-button').forEach(button => button.addEventListener('click', (e) => claimTaskReward(e.currentTarget.dataset.taskId)));
+        document.querySelectorAll('.claim-button').forEach(button => button.addEventListener('click', (e) => claimTaskReward(e.currentTarget.dataset.taskKey)));
     }
 
     function showFeedback(element, message, type) {
@@ -355,29 +428,53 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => { element.textContent = ''; element.className = 'feedback-message'; }, 4000);
     }
     
-    function claimStreakReward(day) {
+    async function claimStreakReward(day) {
         const today = getTodayDateString();
-        if (user.lastStreakClaimDate === today || user.dailyStreak + 1 !== day) return;
+        if (user.last_streak_claim_date === today || user.daily_streak + 1 !== day) return;
+        
         const reward = STREAK_REWARDS.find(r => r.day === day);
-        if (reward.points) user.points += reward.points;
-        if (reward.pulls) user.pulls += reward.pulls;
-        user.dailyStreak++;
-        user.lastStreakClaimDate = today;
-        saveUserData();
+        let updateData = {
+            daily_streak: user.daily_streak + 1,
+            last_streak_claim_date: today
+        };
+        if (reward.points) updateData.points = user.points + reward.points;
+        if (reward.pulls) updateData.pulls = user.pulls + reward.pulls;
+
+        await updateUserProfile(updateData);
         updateAllUI();
         renderTasksPage();
     }
 
-    function claimTaskReward(taskId) {
-        if (user.claimedTasks.includes(taskId)) return;
-        const task = DAILY_TASKS.find(t => t.id === taskId);
-        if (user.taskProgress[task.progressKey] >= task.target) {
-            if (task.reward.points) user.points += task.reward.points;
-            if (task.reward.pulls) user.pulls += task.reward.pulls;
-            user.claimedTasks.push(taskId);
-            saveUserData();
-            updateAllUI();
-            renderTasksPage();
+    async function claimTaskReward(taskKey) {
+        const progressData = taskProgress[taskKey];
+        if (!progressData || progressData.is_claimed) return;
+
+        const taskDef = tasks[taskKey];
+        if (progressData.current_progress >= taskDef.target_value) {
+            let profileUpdate = {};
+            if (taskDef.reward_type === 'points') {
+                profileUpdate.points = user.points + taskDef.reward_amount;
+            } else if (taskDef.reward_type === 'pulls') {
+                profileUpdate.pulls = user.pulls + taskDef.reward_amount;
+            }
+            
+            // Update profile with rewards
+            await updateUserProfile(profileUpdate);
+
+            // Mark task as claimed in the database
+            const { error } = await supabase
+                .from('user_task_progress')
+                .update({ is_claimed: true })
+                .eq('id', progressData.id);
+
+            if (error) {
+                console.error("Error claiming task:", error);
+            } else {
+                // Update local state and UI
+                progressData.is_claimed = true;
+                updateAllUI();
+                renderTasksPage();
+            }
         }
     }
     
@@ -386,13 +483,12 @@ document.addEventListener('DOMContentLoaded', () => {
         watchAdButton.textContent = "LOADING AD...";
         resultText.textContent = "PLEASE WAIT";
 
-        AdController.show().then((result) => {
+        AdController.show().then(async (result) => {
             console.log('AdsGram ad watched successfully.', result);
-            user.pulls += 10;
-            user.taskProgress.adWatchCount++;
-            saveUserData();
+            await updateUserProfile({ pulls: user.pulls + 10 });
+            await updateTaskProgress('watch2');
+            
             updateAllUI();
-            updateButtonStates();
             resultText.textContent = "YOU GOT 10 PULLS!";
         }).catch((result) => {
             console.error('AdsGram ad failed or was skipped.', result);
@@ -401,22 +497,24 @@ document.addEventListener('DOMContentLoaded', () => {
             watchAdButton.disabled = false;
             watchAdButton.textContent = "WATCH AD FOR 10 PULLS";
             updateButtonStates();
-            renderTasksPage(); // Update task progress on UI
+            renderTasksPage();
         });
     }
 
-    function handlePull() {
+    async function handlePull() {
         if (user.pulls <= 0 || isSpinning) return;
         isSpinning = true;
-        user.pulls--;
-        user.taskProgress.pullCount++;
-        saveUserData(); // Save immediately after pull deduction
+        
+        await updateUserProfile({ pulls: user.pulls - 1 });
+        await updateTaskProgress('pull10');
+
         updateAllUI();
         pullButton.disabled = true;
         watchAdButton.disabled = true;
         resultText.classList.remove('win', 'jackpot');
         resultText.textContent = 'GET READY...';
         reelShutter.classList.add('open');
+        
         setTimeout(() => {
             gachaMachine.classList.add('shake-animation');
             resultText.textContent = 'SPINNING...';
@@ -438,39 +536,46 @@ document.addEventListener('DOMContentLoaded', () => {
                 }, 100 + index * 200);
             });
             setTimeout(() => {
-                checkWin(finalResults);
+                checkWin(finalResults); // This will handle point updates
                 isSpinning = false;
                 gachaMachine.classList.remove('shake-animation');
                 reelShutter.classList.remove('open');
                 updateButtonStates();
-                renderTasksPage(); // Update task progress on UI
             }, SPIN_DURATION + 600);
         }, 500);
     }
 
-    function checkWin(results) {
+    async function checkWin(results) {
         const symbols = results.map(r => r.symbol);
         let pointsWon = 0;
+        let isJackpot = false;
+        let isPair = false;
+
         if (symbols[0] === symbols[1] && symbols[1] === symbols[2]) {
             pointsWon = results[0].points * 10;
             resultText.textContent = `JACKPOT! +${pointsWon}`;
             resultText.classList.add('jackpot');
-            user.taskProgress.jackpotWins++;
+            isJackpot = true;
         } else if (symbols[0] === symbols[1] || symbols[1] === symbols[2] || symbols[0] === symbols[2]) {
             const pairSymbol = symbols[0] === symbols[1] ? symbols[0] : (symbols[0] === symbols[2] ? symbols[0] : symbols[1]);
             pointsWon = results.find(r => r.symbol === pairSymbol).points * 2;
             resultText.textContent = `PAIR! +${pointsWon}`;
             resultText.classList.add('win');
-            user.taskProgress.pairWins++;
+            isPair = true;
         } else {
             results.forEach(item => pointsWon += item.points);
             resultText.textContent = `+${pointsWon} PTS`;
             resultText.classList.add('win');
         }
-        user.points += pointsWon;
-        user.taskProgress.pointsWon += pointsWon;
-        saveUserData();
+
+        // Batch database updates
+        await updateUserProfile({ points: user.points + pointsWon });
+        await updateTaskProgress('earn10k', pointsWon);
+        if (isJackpot) await updateTaskProgress('winJackpot');
+        if (isPair) await updateTaskProgress('winPair');
+        
         updateAllUI();
+        renderTasksPage(); // Update task UI after win
     }
 
     function buildReel() {
@@ -490,45 +595,72 @@ document.addEventListener('DOMContentLoaded', () => {
         reels.forEach(reel => { reel.innerHTML = ''; reel.appendChild(buildReel()); });
     }
     
-    function handleExchange() {
+    async function handleExchange() {
         const pointsToExchange = parseInt(pointsToExchangeInput.value, 10);
         if (isNaN(pointsToExchange) || pointsToExchange <= 0) return showFeedback(exchangeFeedbackEl, "Please enter a valid number.", "error");
         if (pointsToExchange > user.points) return showFeedback(exchangeFeedbackEl, "You do not have enough points.", "error");
         if (pointsToExchange % POINTS_PER_BLOCK !== 0) return showFeedback(exchangeFeedbackEl, `Exchange in blocks of ${POINTS_PER_BLOCK.toLocaleString()}.`, "error");
+        
         const blocks = pointsToExchange / POINTS_PER_BLOCK;
         const tonGained = blocks * TON_PER_BLOCK;
         const solGained = blocks * SOL_PER_BLOCK;
-        user.points -= pointsToExchange;
-        user.ton += tonGained;
-        user.sol += solGained;
-        saveUserData();
+        
+        await updateUserProfile({
+            points: user.points - pointsToExchange,
+            ton_balance: parseFloat(user.ton_balance) + tonGained,
+            sol_balance: parseFloat(user.sol_balance) + solGained
+        });
+
+        // Log the transaction
+        await supabase.from('transaction_logs').insert({
+            user_id: user.id,
+            transaction_type: 'exchange',
+            points_exchanged: pointsToExchange,
+            status: 'completed'
+        });
+
         updateAllUI();
         pointsToExchangeInput.value = '';
         showFeedback(exchangeFeedbackEl, `Exchanged for ${tonGained.toFixed(2)} TON & ${solGained.toFixed(4)} SOL!`, "success");
     }
 
-    function handleWithdraw() {
+    async function handleWithdraw() {
         const currency = cryptoSelect.value;
         const amount = parseFloat(withdrawalAmountInput.value);
         const address = walletAddressInput.value.trim();
+        
         if (isNaN(amount) || amount <= 0) return showFeedback(withdrawalFeedbackEl, "Please enter a valid amount.", "error");
         if (address === '') return showFeedback(withdrawalFeedbackEl, "Please enter a wallet address.", "error");
-        const fee = amount * (WITHDRAWAL_FEE_PERCENT / 100);
-        const totalDeducted = amount + fee;
+
+        let newBalance;
         if (currency === 'ton') {
             if (amount < MIN_TON_WITHDRAWAL) return showFeedback(withdrawalFeedbackEl, `Minimum TON withdrawal is ${MIN_TON_WITHDRAWAL}.`, "error");
-            if (totalDeducted > user.ton) return showFeedback(withdrawalFeedbackEl, `Insufficient TON. Total needed: ${totalDeducted.toFixed(2)}`, "error");
-            user.ton -= totalDeducted;
+            if (amount > user.ton_balance) return showFeedback(withdrawalFeedbackEl, `Insufficient TON balance.`, "error");
+            newBalance = { ton_balance: parseFloat(user.ton_balance) - amount };
         } else if (currency === 'sol') {
             if (amount < MIN_SOL_WITHDRAWAL) return showFeedback(withdrawalFeedbackEl, `Minimum SOL withdrawal is ${MIN_SOL_WITHDRAWAL}.`, "error");
-            if (totalDeducted > user.sol) return showFeedback(withdrawalFeedbackEl, `Insufficient SOL. Total needed: ${totalDeducted.toFixed(4)}`, "error");
-            user.sol -= totalDeducted;
+            if (amount > user.sol_balance) return showFeedback(withdrawalFeedbackEl, `Insufficient SOL balance.`, "error");
+            newBalance = { sol_balance: parseFloat(user.sol_balance) - amount };
         }
-        saveUserData();
+        
+        // A 1.5% fee would be handled by your backend/server logic before processing the actual withdrawal.
+        // For now, we just deduct the requested amount and log it as pending.
+        await updateUserProfile(newBalance);
+
+        // Log the withdrawal request
+        await supabase.from('transaction_logs').insert({
+            user_id: user.id,
+            transaction_type: 'withdrawal',
+            currency: currency.toUpperCase(),
+            amount: amount,
+            withdrawal_address: address,
+            status: 'pending'
+        });
+
         updateAllUI();
         withdrawalAmountInput.value = '';
         walletAddressInput.value = '';
-        showFeedback(withdrawalFeedbackEl, `Withdrawal of ${amount.toFixed(4)} ${currency.toUpperCase()} is processing.`, "success");
+        showFeedback(withdrawalFeedbackEl, `Withdrawal request of ${amount} ${currency.toUpperCase()} submitted for processing.`, "success");
     }
 
     // --- START THE APP ---
