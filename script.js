@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Check if the Telegram Web App SDK is available
+    // Check if Telegram Web App SDK is available
     if (typeof window.Telegram === 'undefined' || typeof window.Telegram.WebApp === 'undefined') {
         console.warn("Telegram Web App SDK not found. Running in standalone fallback mode.");
     }
@@ -9,7 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // =================================================================
     const SUPABASE_URL = 'https://vddnlobgtnwwplburlja.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZkZG5sb2JndG53d3BsYnVybGphIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDEyMTcsImV4cCI6MjA3NTUxNzIxN30.2zYyICX5QyNDcLcGWia1F04yXPfNH6M09aczNlsLFSM';
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // CORRECTED: Use window.supabase which is loaded from the CDN script
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     // =================================================================
     // --- ADSGRAM SDK INITIALIZATION ---
@@ -32,13 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { day: 1, points: 2000, pulls: 3 }, { day: 2, points: 4000, pulls: 5 }, { day: 3, points: 6000, pulls: 7 }, { day: 4, points: 8000, pulls: 9 }, { day: 5, points: 10000, pulls: 10 }, { day: 6, points: 12000, pulls: 11 }, { day: 7, points: 15000, pulls: 15 }
     ];
     // This now matches the task_key in your database
-    const DAILY_TASKS = [
-        { id: 'pull10', description: 'Pull the lever 10 times', progressKey: 'pull10' },
-        { id: 'watch2', description: 'Watch 2 Ads', progressKey: 'watch2' },
-        { id: 'winPair', description: 'Win a Pair 3 times', progressKey: 'winPair' },
-        { id: 'earn10k', description: 'Earn 10,000 points', progressKey: 'earn10k' },
-        { id: 'winJackpot', description: 'Win a Jackpot', progressKey: 'winJackpot' }
-    ];
+    const DAILY_TASK_KEYS = ['pull10', 'watch2', 'winPair', 'earn10k', 'winJackpot'];
     const TREASURE_COOLDOWN = 3 * 60 * 1000; // 3 minutes
     const TREASURE_REWARD_POINTS = 2000;
     const TICKET_COOLDOWN = 5 * 60 * 1000; // 5 minutes
@@ -102,18 +97,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (data) {
-            // User exists, load their data
             user = data;
             console.log(`Loaded profile for user ID: ${user.telegram_id}`);
         } else {
-            // User doesn't exist, create a new profile
             const { data: newUser, error: createError } = await supabase
                 .from('profiles')
                 .insert({
                     telegram_id: telegramUser.id,
                     username: telegramUser.username ? '@' + telegramUser.username : 'No Username',
                     full_name: telegramUser.first_name + (telegramUser.last_name ? ' ' + telegramUser.last_name : ''),
-                    points: 1250 // Starting points for new user
+                    points: 1250 // Starting points
                 })
                 .select()
                 .single();
@@ -125,23 +118,18 @@ document.addEventListener('DOMContentLoaded', () => {
             user = newUser;
             console.log(`Created new profile for user ID: ${user.telegram_id}`);
         }
-
-        // After loading or creating a profile, fetch tasks and progress
         await fetchTasksAndProgress();
     }
     
     async function fetchTasksAndProgress() {
-        // Fetch all task definitions
         const { data: taskDefs, error: taskError } = await supabase.from('tasks').select('*');
         if (taskError) return console.error("Error fetching tasks:", taskError);
         
-        // Organize tasks by their key for easy access
         tasks = taskDefs.reduce((acc, task) => {
             acc[task.task_key] = task;
             return acc;
         }, {});
 
-        // Fetch today's progress for the user
         const today = getTodayDateString();
         const { data: progress, error: progressError } = await supabase
             .from('user_task_progress')
@@ -151,37 +139,34 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (progressError) return console.error("Error fetching task progress:", progressError);
 
-        // Organize progress by task key
         taskProgress = progress.reduce((acc, p) => {
             acc[p.tasks.task_key] = p;
             return acc;
         }, {});
     }
     
-    // Generic function to update the user's profile in Supabase
     async function updateUserProfile(updateData) {
-        const { error } = await supabase
+        const { data: updatedUser, error } = await supabase
             .from('profiles')
             .update(updateData)
-            .eq('id', user.id);
+            .eq('id', user.id)
+            .select()
+            .single();
             
         if (error) {
             console.error("Error updating profile:", error);
         } else {
-            // Update local user object for immediate UI feedback
-            Object.assign(user, updateData);
+            user = updatedUser; // Update local user object with the fresh data from DB
         }
     }
 
-    // Function to update or insert task progress
     async function updateTaskProgress(taskKey, incrementValue = 1) {
-        if (!tasks[taskKey]) return; // Exit if task doesn't exist
+        if (!tasks[taskKey]) return;
 
         const taskId = tasks[taskKey].id;
         const currentProg = taskProgress[taskKey]?.current_progress || 0;
         const newProgress = currentProg + incrementValue;
 
-        // Use upsert to create a progress entry if it doesn't exist for today, or update it if it does
         const { data, error } = await supabase
             .from('user_task_progress')
             .upsert({
@@ -189,7 +174,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 task_id: taskId,
                 date: getTodayDateString(),
                 current_progress: newProgress,
-                // If it's already claimed, keep it claimed
                 is_claimed: taskProgress[taskKey]?.is_claimed || false 
             }, { onConflict: 'user_id, task_id, date' })
             .select(`*, tasks(task_key)`)
@@ -198,7 +182,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (error) {
             console.error(`Error updating progress for ${taskKey}:`, error);
         } else {
-            // Update local state
             taskProgress[data.tasks.task_key] = data;
         }
     }
@@ -249,8 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const lastTreasureClaim = user.last_treasure_claim ? new Date(user.last_treasure_claim).getTime() : 0;
         const treasureCooldownEnd = lastTreasureClaim + TREASURE_COOLDOWN;
         if (now < treasureCooldownEnd) {
-            const remaining = treasureCooldownEnd - now;
-            treasureTimerEl.textContent = formatTime(remaining);
+            treasureTimerEl.textContent = formatTime(treasureCooldownEnd - now);
             treasureClaimBtn.disabled = true;
         } else {
             treasureTimerEl.textContent = `+${TREASURE_REWARD_POINTS.toLocaleString()} Pts`;
@@ -260,8 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const lastTicketClaim = user.last_ticket_claim ? new Date(user.last_ticket_claim).getTime() : 0;
         const ticketCooldownEnd = lastTicketClaim + TICKET_COOLDOWN;
         if (now < ticketCooldownEnd) {
-            const remaining = ticketCooldownEnd - now;
-            ticketTimerEl.textContent = formatTime(remaining);
+            ticketTimerEl.textContent = formatTime(ticketCooldownEnd - now);
             ticketClaimBtn.disabled = true;
         } else {
             ticketTimerEl.textContent = `+${TICKET_REWARD_PULLS} Pulls`;
@@ -280,9 +261,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (treasureClaimBtn.disabled) return;
         treasureClaimBtn.disabled = true;
         
-        const newPoints = user.points + TREASURE_REWARD_POINTS;
         await updateUserProfile({
-            points: newPoints,
+            points: user.points + TREASURE_REWARD_POINTS,
             last_treasure_claim: new Date().toISOString()
         });
         
@@ -294,9 +274,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (ticketClaimBtn.disabled) return;
         ticketClaimBtn.disabled = true;
 
-        const newPulls = user.pulls + TICKET_REWARD_PULLS;
         await updateUserProfile({
-            pulls: newPulls,
+            pulls: user.pulls + TICKET_REWARD_PULLS,
             last_ticket_claim: new Date().toISOString()
         });
 
@@ -327,6 +306,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function updateAllUI() {
+        if (!user || !user.id) return; // Prevent UI updates if user data isn't loaded
         pointsValueTop.textContent = Math.floor(user.points).toLocaleString();
         profileNameEl.textContent = user.full_name;
         profileUsernameEl.textContent = user.username;
@@ -337,7 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function updateButtonStates() {
-        if (isSpinning) return;
+        if (isSpinning || !user.id) return;
         if (user.pulls > 0) {
             pullButton.disabled = false;
             watchAdButton.disabled = true;
@@ -349,19 +329,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    function checkDailyResets() {
+    async function checkDailyResets() {
         const today = getTodayDateString();
-        // Task reset is handled by fetching only today's progress on load.
-        // This logic now only handles the daily streak.
         const lastClaimDateStr = user.last_streak_claim_date;
         if (lastClaimDateStr && lastClaimDateStr !== today) {
             const lastClaimDate = new Date(lastClaimDateStr);
             const yesterday = new Date();
             yesterday.setDate(yesterday.getDate() - 1);
             
-            // If the last claim was not yesterday, reset the streak.
             if (lastClaimDate.toISOString().split('T')[0] !== yesterday.toISOString().split('T')[0]) {
-                updateUserProfile({ daily_streak: 0 });
+                await updateUserProfile({ daily_streak: 0 });
             }
         }
     }
@@ -396,8 +373,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderDailyTasks() {
         tasksContainer.innerHTML = '';
-        DAILY_TASKS.forEach(taskDef => {
-            const task = tasks[taskDef.progressKey];
+        DAILY_TASK_KEYS.forEach(taskKey => {
+            const task = tasks[taskKey];
             if (!task) return; // Skip if task definition not loaded yet
             
             const progress = taskProgress[task.task_key]?.current_progress || 0;
@@ -419,7 +396,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <button class="claim-button" data-task-key="${task.task_key}" ${(!isComplete || isClaimed) ? 'disabled' : ''}>${isClaimed ? 'Claimed' : 'Claim'}</button>`;
             tasksContainer.appendChild(taskEl);
         });
-        document.querySelectorAll('.claim-button').forEach(button => button.addEventListener('click', (e) => claimTaskReward(e.currentTarget.dataset.taskKey)));
+        tasksContainer.querySelectorAll('.claim-button').forEach(button => button.addEventListener('click', (e) => claimTaskReward(e.currentTarget.dataset.taskKey)));
     }
 
     function showFeedback(element, message, type) {
@@ -435,10 +412,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const reward = STREAK_REWARDS.find(r => r.day === day);
         let updateData = {
             daily_streak: user.daily_streak + 1,
-            last_streak_claim_date: today
+            last_streak_claim_date: today,
+            points: user.points + (reward.points || 0),
+            pulls: user.pulls + (reward.pulls || 0)
         };
-        if (reward.points) updateData.points = user.points + reward.points;
-        if (reward.pulls) updateData.pulls = user.pulls + reward.pulls;
 
         await updateUserProfile(updateData);
         updateAllUI();
@@ -452,26 +429,21 @@ document.addEventListener('DOMContentLoaded', () => {
         const taskDef = tasks[taskKey];
         if (progressData.current_progress >= taskDef.target_value) {
             let profileUpdate = {};
-            if (taskDef.reward_type === 'points') {
-                profileUpdate.points = user.points + taskDef.reward_amount;
-            } else if (taskDef.reward_type === 'pulls') {
-                profileUpdate.pulls = user.pulls + taskDef.reward_amount;
-            }
+            if (taskDef.reward_type === 'points') profileUpdate.points = user.points + taskDef.reward_amount;
+            else if (taskDef.reward_type === 'pulls') profileUpdate.pulls = user.pulls + taskDef.reward_amount;
             
-            // Update profile with rewards
             await updateUserProfile(profileUpdate);
 
-            // Mark task as claimed in the database
-            const { error } = await supabase
+            const { data: updatedProgress, error } = await supabase
                 .from('user_task_progress')
                 .update({ is_claimed: true })
-                .eq('id', progressData.id);
+                .eq('id', progressData.id)
+                .select('*, tasks(task_key)')
+                .single();
 
-            if (error) {
-                console.error("Error claiming task:", error);
-            } else {
-                // Update local state and UI
-                progressData.is_claimed = true;
+            if (error) console.error("Error claiming task:", error);
+            else {
+                taskProgress[updatedProgress.tasks.task_key] = updatedProgress;
                 updateAllUI();
                 renderTasksPage();
             }
@@ -483,16 +455,13 @@ document.addEventListener('DOMContentLoaded', () => {
         watchAdButton.textContent = "LOADING AD...";
         resultText.textContent = "PLEASE WAIT";
 
-        AdController.show().then(async (result) => {
-            console.log('AdsGram ad watched successfully.', result);
+        AdController.show().then(async () => {
             await updateUserProfile({ pulls: user.pulls + 10 });
             await updateTaskProgress('watch2');
-            
             updateAllUI();
             resultText.textContent = "YOU GOT 10 PULLS!";
-        }).catch((result) => {
-            console.error('AdsGram ad failed or was skipped.', result);
-            resultText.textContent = "AD SKIPPED. NO REWARD.";
+        }).catch(() => {
+            resultText.textContent = "AD FAILED. NO REWARD.";
         }).finally(() => {
             watchAdButton.disabled = false;
             watchAdButton.textContent = "WATCH AD FOR 10 PULLS";
@@ -535,8 +504,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     newReelItems.style.transform = `translateY(-${stopPosition}px)`;
                 }, 100 + index * 200);
             });
-            setTimeout(() => {
-                checkWin(finalResults); // This will handle point updates
+            setTimeout(async () => {
+                await checkWin(finalResults);
                 isSpinning = false;
                 gachaMachine.classList.remove('shake-animation');
                 reelShutter.classList.remove('open');
@@ -547,9 +516,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function checkWin(results) {
         const symbols = results.map(r => r.symbol);
-        let pointsWon = 0;
-        let isJackpot = false;
-        let isPair = false;
+        let pointsWon = 0; let isJackpot = false; let isPair = false;
 
         if (symbols[0] === symbols[1] && symbols[1] === symbols[2]) {
             pointsWon = results[0].points * 10;
@@ -568,14 +535,13 @@ document.addEventListener('DOMContentLoaded', () => {
             resultText.classList.add('win');
         }
 
-        // Batch database updates
         await updateUserProfile({ points: user.points + pointsWon });
         await updateTaskProgress('earn10k', pointsWon);
         if (isJackpot) await updateTaskProgress('winJackpot');
         if (isPair) await updateTaskProgress('winPair');
         
         updateAllUI();
-        renderTasksPage(); // Update task UI after win
+        renderTasksPage();
     }
 
     function buildReel() {
@@ -611,13 +577,7 @@ document.addEventListener('DOMContentLoaded', () => {
             sol_balance: parseFloat(user.sol_balance) + solGained
         });
 
-        // Log the transaction
-        await supabase.from('transaction_logs').insert({
-            user_id: user.id,
-            transaction_type: 'exchange',
-            points_exchanged: pointsToExchange,
-            status: 'completed'
-        });
+        await supabase.from('transaction_logs').insert({ user_id: user.id, transaction_type: 'exchange', points_exchanged: pointsToExchange, status: 'completed' });
 
         updateAllUI();
         pointsToExchangeInput.value = '';
@@ -643,19 +603,9 @@ document.addEventListener('DOMContentLoaded', () => {
             newBalance = { sol_balance: parseFloat(user.sol_balance) - amount };
         }
         
-        // A 1.5% fee would be handled by your backend/server logic before processing the actual withdrawal.
-        // For now, we just deduct the requested amount and log it as pending.
         await updateUserProfile(newBalance);
 
-        // Log the withdrawal request
-        await supabase.from('transaction_logs').insert({
-            user_id: user.id,
-            transaction_type: 'withdrawal',
-            currency: currency.toUpperCase(),
-            amount: amount,
-            withdrawal_address: address,
-            status: 'pending'
-        });
+        await supabase.from('transaction_logs').insert({ user_id: user.id, transaction_type: 'withdrawal', currency: currency.toUpperCase(), amount: amount, withdrawal_address: address, status: 'pending' });
 
         updateAllUI();
         withdrawalAmountInput.value = '';
