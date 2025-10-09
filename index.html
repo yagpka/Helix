@@ -29,6 +29,8 @@
                 <span>POINTS</span>
                 <strong id="points-value">0</strong>
             </div>
+            <!-- NEW MUTE BUTTON -->
+            <button id="mute-button" class="mute-button">🔊</button>
         </header>
 
         <!-- MAIN CONTENT: ALL PAGES -->
@@ -105,13 +107,11 @@
                         <div class="wallet-form">
                             <label for="points-to-exchange">Points to Exchange:</label>
                             <input type="number" id="points-to-exchange" placeholder="e.g., 1000000">
-                            <!-- NEW -->
                             <label for="exchange-crypto-select">Exchange For:</label>
                             <select id="exchange-crypto-select">
                                 <option value="ton">TON</option>
                                 <option value="sol">SOL</option>
                             </select>
-                            <!-- END NEW -->
                             <button id="exchange-button" class="action-button">Exchange</button>
                             <div id="exchange-feedback" class="feedback-message"></div>
                         </div>
@@ -141,7 +141,6 @@
                             <div id="withdrawal-feedback" class="feedback-message"></div>
                         </div>
                     </div>
-                    <!-- NEW WITHDRAWAL HISTORY SECTION -->
                     <div class="wallet-section">
                         <details id="history-details">
                             <summary class="expandable-header">Withdrawal History</summary>
@@ -150,7 +149,6 @@
                             </div>
                         </details>
                     </div>
-                    <!-- END NEW SECTION -->
                 </div>
             </section>
 
