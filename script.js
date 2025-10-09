@@ -8,7 +8,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     const SUPABASE_URL = 'https://vddnlobgtnwwplburlja.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZkZG5sb2JndG53d3BsYnVybGphIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDEyMTcsImV4cCI6MjA3NTUxNzIxN30.2zYyICX5QyNDcLcGWia1F04yXPfNH6M09aczNlsLFSM';
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Initialize Adsgram controllers with their respective block IDs
     const AdController = window.Adsgram ? window.Adsgram.init({ blockId: "int-14190" }) : { show: () => Promise.reject('Adsgram stubbed') };
+    const TreasureAdController = window.Adsgram ? window.Adsgram.init({ blockId: "int-15943" }) : { show: () => Promise.reject('Adsgram stubbed') };
+    const TicketAdController = window.Adsgram ? window.Adsgram.init({ blockId: "int-15944" }) : { show: () => Promise.reject('Adsgram stubbed') };
+
 
     // =================================================================
     // --- CONFIGURATIONS & CONSTANTS ---
@@ -57,7 +62,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const exchangeButton = document.getElementById('exchange-button');
     const withdrawButton = document.getElementById('withdraw-button');
     const pointsToExchangeInput = document.getElementById('points-to-exchange');
-    const exchangeCryptoSelect = document.getElementById('exchange-crypto-select'); // NEW
+    const exchangeCryptoSelect = document.getElementById('exchange-crypto-select');
     const exchangeFeedbackEl = document.getElementById('exchange-feedback');
     const withdrawalAmountInput = document.getElementById('withdrawal-amount');
     const cryptoSelect = document.getElementById('crypto-select');
@@ -69,8 +74,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const treasureClaimBtn = document.getElementById('treasure-claim-button');
     const ticketTimerEl = document.getElementById('ticket-timer');
     const ticketClaimBtn = document.getElementById('ticket-claim-button');
-    const historyDetails = document.getElementById('history-details'); // NEW
-    const withdrawalHistoryContainer = document.getElementById('withdrawal-history-container'); // NEW
+    const historyDetails = document.getElementById('history-details');
+    const withdrawalHistoryContainer = document.getElementById('withdrawal-history-container');
 
     // =================================================================
     // --- DATA & INITIALIZATION LOGIC ---
@@ -175,7 +180,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         withdrawButton.addEventListener('click', handleWithdraw);
         treasureClaimBtn.addEventListener('click', handleClaimTreasure);
         ticketClaimBtn.addEventListener('click', handleClaimTickets);
-        historyDetails.addEventListener('toggle', handleHistoryToggle); // NEW
+        historyDetails.addEventListener('toggle', handleHistoryToggle);
     }
     
     function navigateTo(pageId) {
@@ -183,7 +188,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById(pageId).classList.add('active');
         navButtons.forEach(button => button.classList.toggle('active', button.dataset.page === pageId));
         if (pageId === 'tasks-page') renderTasksPage();
-        if (pageId === 'wallet-page') fetchAndRenderWithdrawalHistory(); // NEW - Pre-fetch history
+        if (pageId === 'wallet-page') fetchAndRenderWithdrawalHistory();
     }
     
     function updateAllUI() {
@@ -299,8 +304,40 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
     function formatTime(ms) { const totalSeconds = Math.ceil(ms / 1000); const minutes = Math.floor(totalSeconds / 60); const seconds = totalSeconds % 60; return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`; }
-    async function handleClaimTreasure() { if (treasureClaimBtn.disabled) return; treasureClaimBtn.disabled = true; await updateUserProfile({ points: user.points + TREASURE_REWARD_POINTS, last_treasure_claim: new Date().toISOString() }); updateAllUI(); updateTimedRewards(); }
-    async function handleClaimTickets() { if (ticketClaimBtn.disabled) return; ticketClaimBtn.disabled = true; await updateUserProfile({ pulls: user.pulls + TICKET_REWARD_PULLS, last_ticket_claim: new Date().toISOString() }); updateAllUI(); updateButtonStates(); updateTimedRewards(); }
+    
+    async function handleClaimTreasure() {
+        if (treasureClaimBtn.disabled) return;
+        treasureClaimBtn.disabled = true;
+        treasureClaimBtn.textContent = 'Loading...';
+
+        TreasureAdController.show().then(async () => {
+            await updateUserProfile({ points: user.points + TREASURE_REWARD_POINTS, last_treasure_claim: new Date().toISOString() });
+            updateAllUI();
+        }).catch(() => {
+            console.error("Treasure ad failed to show.");
+        }).finally(() => {
+            treasureClaimBtn.textContent = 'Claim';
+            updateTimedRewards(); // This will re-evaluate if the button should be enabled or disabled
+        });
+    }
+
+    async function handleClaimTickets() {
+        if (ticketClaimBtn.disabled) return;
+        ticketClaimBtn.disabled = true;
+        ticketClaimBtn.textContent = 'Loading...';
+
+        TicketAdController.show().then(async () => {
+            await updateUserProfile({ pulls: user.pulls + TICKET_REWARD_PULLS, last_ticket_claim: new Date().toISOString() });
+            updateAllUI();
+            updateButtonStates();
+        }).catch(() => {
+            console.error("Ticket ad failed to show.");
+        }).finally(() => {
+            ticketClaimBtn.textContent = 'Claim';
+            updateTimedRewards(); // This will re-evaluate if the button should be enabled or disabled
+        });
+    }
+    
     async function claimStreakReward(day) { const today = getTodayDateString(); if (user.last_streak_claim_date === today || user.daily_streak + 1 !== day) return; const reward = STREAK_REWARDS.find(r => r.day === day); await updateUserProfile({ daily_streak: user.daily_streak + 1, last_streak_claim_date: today, points: user.points + (reward.points || 0), pulls: user.pulls + (reward.pulls || 0) }); updateAllUI(); updateButtonStates(); renderTasksPage(); }
     async function claimTaskReward(taskKey) {
         const progressData = taskProgress[taskKey]; if (!progressData || progressData.is_claimed) return;
