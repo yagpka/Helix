@@ -3,6 +3,45 @@ document.addEventListener('DOMContentLoaded', async () => {
     const appContainer = document.querySelector('.app-container');
 
     // =================================================================
+    // --- AUDIO INITIALIZATION (NEW) ---
+    // =================================================================
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    let isMuted = false;
+    let musicStarted = false;
+
+    const backgroundMusic = new Audio('https://cdn.pixabay.com/download/audio/2022/12/28/audio_299a22ac62.mp3');
+    backgroundMusic.loop = true;
+    backgroundMusic.volume = 0.3;
+
+    const spinSfx = new Audio('https://cdn.pixabay.com/download/audio/2021/08/04/audio_39236c0715.mp3');
+    spinSfx.volume = 0.6;
+
+    const tapSfx = new Audio('https://cdn.pixabay.com/download/audio/2022/03/15/audio_2b29ba3237.mp3');
+    tapSfx.volume = 0.5;
+
+    // --- Function to play sound effects ---
+    const playSfx = (sfx) => {
+        if (!isMuted) {
+            sfx.currentTime = 0; // Rewind to the start
+            sfx.play();
+        }
+    };
+
+    // --- Function to start music on first interaction ---
+    const startMusic = () => {
+        if (musicStarted || audioContext.state === 'suspended') {
+            audioContext.resume();
+        }
+        if (!musicStarted) {
+            backgroundMusic.play().catch(e => console.error("Audio autoplay was blocked.", e));
+            musicStarted = true;
+            // Remove the event listener after the first tap
+            document.body.removeEventListener('click', startMusic);
+            document.body.removeEventListener('touchend', startMusic);
+        }
+    };
+    
+    // =================================================================
     // --- SUPABASE & SDK INITIALIZATION ---
     // =================================================================
     const SUPABASE_URL = 'https://vddnlobgtnwwplburlja.supabase.co';
@@ -41,6 +80,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const pages = document.querySelectorAll('.page');
     const navButtons = document.querySelectorAll('.nav-button');
     const profileButton = document.getElementById('profile-button');
+    const muteButton = document.getElementById('mute-button'); // NEW
     const pointsValueTop = document.getElementById('points-value');
     const profileNameEl = document.getElementById('profile-name');
     const profileUsernameEl = document.getElementById('profile-username');
@@ -57,7 +97,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const exchangeButton = document.getElementById('exchange-button');
     const withdrawButton = document.getElementById('withdraw-button');
     const pointsToExchangeInput = document.getElementById('points-to-exchange');
-    const exchangeCryptoSelect = document.getElementById('exchange-crypto-select'); // NEW
+    const exchangeCryptoSelect = document.getElementById('exchange-crypto-select');
     const exchangeFeedbackEl = document.getElementById('exchange-feedback');
     const withdrawalAmountInput = document.getElementById('withdrawal-amount');
     const cryptoSelect = document.getElementById('crypto-select');
@@ -69,8 +109,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const treasureClaimBtn = document.getElementById('treasure-claim-button');
     const ticketTimerEl = document.getElementById('ticket-timer');
     const ticketClaimBtn = document.getElementById('ticket-claim-button');
-    const historyDetails = document.getElementById('history-details'); // NEW
-    const withdrawalHistoryContainer = document.getElementById('withdrawal-history-container'); // NEW
+    const historyDetails = document.getElementById('history-details');
+    const withdrawalHistoryContainer = document.getElementById('withdrawal-history-container');
 
     // =================================================================
     // --- DATA & INITIALIZATION LOGIC ---
@@ -92,20 +132,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         await loadInitialData(telegramUser);
         await checkDailyResets();
         
-        // Initial render of all components that depend on data
         updateAllUI();
         updateButtonStates();
         renderTasksPage();
         initializeTimedRewards();
         
-        // Hide loading screen and show the app
         loadingOverlay.style.opacity = '0';
         appContainer.style.opacity = '1';
         setTimeout(() => loadingOverlay.style.display = 'none', 500);
     };
 
     const loadInitialData = async (telegramUser) => {
-        // Step 1: Get or Create User Profile
         let { data: profileData, error: profileError } = await supabase.from('profiles').select('*').eq('telegram_id', telegramUser.id).single();
         if (profileError && profileError.code !== 'PGRST116') throw new Error('Could not fetch profile');
         
@@ -121,7 +158,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         user = profileData;
 
-        // Step 2: Fetch Task Definitions and Today's Progress in parallel (ROBUST METHOD)
         const today = getTodayDateString();
         const [taskDefsResult, progressResult] = await Promise.all([
             supabase.from('tasks').select('*'),
@@ -131,11 +167,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (taskDefsResult.error) throw new Error('Could not fetch task definitions');
         if (progressResult.error) throw new Error('Could not fetch task progress');
 
-        // Map definitions and progress into easy-to-use objects
         tasks = taskDefsResult.data.reduce((acc, task) => { acc[task.id] = task; return acc; }, {});
         const progressByTaskId = progressResult.data.reduce((acc, p) => { acc[p.task_id] = p; return acc; }, {});
         
-        // Combine them using the task_key for consistency
         taskProgress = {};
         for (const taskId in tasks) {
             const task = tasks[taskId];
@@ -144,10 +178,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
     
     async function updateUserProfile(updateData) {
-        Object.assign(user, updateData); // Optimistic update
+        Object.assign(user, updateData);
         const { data: updatedUser, error } = await supabase.from('profiles').update(updateData).eq('id', user.id).select().single();
         if (error) console.error("Error updating profile:", error);
-        else user = updatedUser; // Sync with DB
+        else user = updatedUser;
     }
 
     async function updateTaskProgress(taskKey, incrementValue = 1) {
@@ -156,7 +190,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const currentProg = taskProgress[taskKey]?.current_progress || 0;
         const newProgress = currentProg + incrementValue;
-        taskProgress[taskKey].current_progress = newProgress; // Optimistic update
+        taskProgress[taskKey].current_progress = newProgress;
         
         await supabase.from('user_task_progress').upsert({
             user_id: user.id, task_id: taskDef.id, date: getTodayDateString(), current_progress: newProgress
@@ -167,6 +201,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     // --- UI & EVENT LISTENERS ---
     // =================================================================
     function setupEventListeners() {
+        // --- Music start listeners (removed after first tap) ---
+        document.body.addEventListener('click', startMusic, { once: true });
+        document.body.addEventListener('touchend', startMusic, { once: true });
+        
+        // --- Universal button tap sound ---
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('click', () => playSfx(tapSfx));
+        });
+
+        // --- Mute button listener ---
+        muteButton.addEventListener('click', () => {
+            isMuted = !isMuted;
+            backgroundMusic.muted = isMuted;
+            muteButton.textContent = isMuted ? '🔇' : '🔊';
+        });
+
         navButtons.forEach(button => button.addEventListener('click', () => navigateTo(button.dataset.page)));
         profileButton.addEventListener('click', () => navigateTo('profile-page'));
         pullButton.addEventListener('click', handlePull);
@@ -175,7 +225,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         withdrawButton.addEventListener('click', handleWithdraw);
         treasureClaimBtn.addEventListener('click', handleClaimTreasure);
         ticketClaimBtn.addEventListener('click', handleClaimTickets);
-        historyDetails.addEventListener('toggle', handleHistoryToggle); // NEW
+        historyDetails.addEventListener('toggle', handleHistoryToggle);
     }
     
     function navigateTo(pageId) {
@@ -183,7 +233,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById(pageId).classList.add('active');
         navButtons.forEach(button => button.classList.toggle('active', button.dataset.page === pageId));
         if (pageId === 'tasks-page') renderTasksPage();
-        if (pageId === 'wallet-page') fetchAndRenderWithdrawalHistory(); // NEW - Pre-fetch history
+        if (pageId === 'wallet-page') fetchAndRenderWithdrawalHistory();
     }
     
     function updateAllUI() {
@@ -240,7 +290,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (user.daily_streak >= reward.day) dayEl.classList.add('claimed');
             else if (user.daily_streak + 1 === reward.day && user.last_streak_claim_date !== today) {
                 dayEl.classList.add('active');
-                dayEl.onclick = () => claimStreakReward(reward.day);
+                dayEl.onclick = () => { playSfx(tapSfx); claimStreakReward(reward.day); };
             }
             streakContainer.appendChild(dayEl);
         });
@@ -268,7 +318,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <button class="claim-button" data-task-key="${taskDef.task_key}" ${(!isComplete || isClaimed) ? 'disabled' : ''}>${isClaimed ? 'Claimed' : 'Claim'}</button>`;
             tasksContainer.appendChild(taskEl);
         });
-        tasksContainer.querySelectorAll('.claim-button').forEach(button => button.addEventListener('click', (e) => claimTaskReward(e.currentTarget.dataset.taskKey)));
+        tasksContainer.querySelectorAll('.claim-button').forEach(button => {
+            button.addEventListener('click', (e) => {
+                playSfx(tapSfx);
+                claimTaskReward(e.currentTarget.dataset.taskKey);
+            });
+        });
     }
 
     function showFeedback(element, message, type) {
@@ -310,30 +365,27 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (taskDef.reward_type === 'points') profileUpdate.points = user.points + taskDef.reward_amount;
             else if (taskDef.reward_type === 'pulls') profileUpdate.pulls = user.pulls + taskDef.reward_amount;
             await updateUserProfile(profileUpdate);
-            progressData.is_claimed = true; // Optimistic update
+            progressData.is_claimed = true;
             await supabase.from('user_task_progress').update({ is_claimed: true }).match({ user_id: user.id, task_id: taskDef.id, date: getTodayDateString() });
             updateAllUI(); updateButtonStates(); renderTasksPage();
         }
     }
     function handleWatchAd() { watchAdButton.disabled = true; watchAdButton.textContent = "LOADING AD..."; AdController.show().then(async () => { await updateUserProfile({ pulls: user.pulls + 10 }); await updateTaskProgress('watch2'); updateAllUI(); updateButtonStates(); resultText.textContent = "YOU GOT 10 PULLS!"; }).catch(() => { resultText.textContent = "AD FAILED. NO REWARD."; }).finally(() => { watchAdButton.disabled = false; watchAdButton.textContent = "WATCH AD FOR 10 PULLS"; updateButtonStates(); renderTasksPage(); }); }
-    async function handlePull() { if (user.pulls <= 0 || isSpinning) return; isSpinning = true; await updateUserProfile({ pulls: user.pulls - 1 }); await updateTaskProgress('pull10'); updateAllUI(); pullButton.disabled = true; watchAdButton.disabled = true; resultText.classList.remove('win', 'jackpot'); resultText.textContent = 'GET READY...'; reelShutter.classList.add('open'); setTimeout(() => { gachaMachine.classList.add('shake-animation'); resultText.textContent = 'SPINNING...'; const finalResults = []; reels.forEach((reel, index) => { reel.innerHTML = ''; const newReelItems = buildReel(); reel.appendChild(newReelItems); const finalItem = GACHA_ITEMS[Math.floor(Math.random() * GACHA_ITEMS.length)]; finalResults.push(finalItem); const finalElement = document.createElement('div'); finalElement.className = 'reel-item'; finalElement.textContent = finalItem.symbol; newReelItems.appendChild(finalElement); const stopPosition = (newReelItems.children.length - 1) * REEL_ITEM_HEIGHT; setTimeout(() => { newReelItems.style.transition = `transform ${SPIN_DURATION / 1000}s cubic-bezier(0.34, 1.56, 0.64, 1)`; newReelItems.style.transform = `translateY(-${stopPosition}px)`; }, 100 + index * 200); }); setTimeout(async () => { await checkWin(finalResults); isSpinning = false; gachaMachine.classList.remove('shake-animation'); reelShutter.classList.remove('open'); updateButtonStates(); }, SPIN_DURATION + 600); }, 500); }
+    async function handlePull() { if (user.pulls <= 0 || isSpinning) return; isSpinning = true; playSfx(spinSfx); await updateUserProfile({ pulls: user.pulls - 1 }); await updateTaskProgress('pull10'); updateAllUI(); pullButton.disabled = true; watchAdButton.disabled = true; resultText.classList.remove('win', 'jackpot'); resultText.textContent = 'GET READY...'; reelShutter.classList.add('open'); setTimeout(() => { gachaMachine.classList.add('shake-animation'); resultText.textContent = 'SPINNING...'; const finalResults = []; reels.forEach((reel, index) => { reel.innerHTML = ''; const newReelItems = buildReel(); reel.appendChild(newReelItems); const finalItem = GACHA_ITEMS[Math.floor(Math.random() * GACHA_ITEMS.length)]; finalResults.push(finalItem); const finalElement = document.createElement('div'); finalElement.className = 'reel-item'; finalElement.textContent = finalItem.symbol; newReelItems.appendChild(finalElement); const stopPosition = (newReelItems.children.length - 1) * REEL_ITEM_HEIGHT; setTimeout(() => { newReelItems.style.transition = `transform ${SPIN_DURATION / 1000}s cubic-bezier(0.34, 1.56, 0.64, 1)`; newReelItems.style.transform = `translateY(-${stopPosition}px)`; }, 100 + index * 200); }); setTimeout(async () => { await checkWin(finalResults); isSpinning = false; gachaMachine.classList.remove('shake-animation'); reelShutter.classList.remove('open'); updateButtonStates(); }, SPIN_DURATION + 600); }, 500); }
     async function checkWin(results) { const symbols = results.map(r => r.symbol); let pointsWon = 0; let isJackpot = false; let isPair = false; if (symbols[0] === symbols[1] && symbols[1] === symbols[2]) { pointsWon = results[0].points * 10; resultText.textContent = `JACKPOT! +${pointsWon}`; resultText.classList.add('jackpot'); isJackpot = true; } else if (symbols[0] === symbols[1] || symbols[1] === symbols[2] || symbols[0] === symbols[2]) { const pairSymbol = symbols[0] === symbols[1] ? symbols[0] : (symbols[0] === symbols[2] ? symbols[0] : symbols[1]); pointsWon = results.find(r => r.symbol === pairSymbol).points * 2; resultText.textContent = `PAIR! +${pointsWon}`; resultText.classList.add('win'); isPair = true; } else { results.forEach(item => pointsWon += item.points); resultText.textContent = `+${pointsWon} PTS`; resultText.classList.add('win'); } await updateUserProfile({ points: user.points + pointsWon }); await updateTaskProgress('earn10k', pointsWon); if (isJackpot) await updateTaskProgress('winJackpot'); if (isPair) await updateTaskProgress('winPair'); updateAllUI(); renderTasksPage(); }
     function buildReel() { const reelItems = document.createElement('div'); reelItems.className = 'reel-items'; for (let i = 0; i < 50; i++) { const item = GACHA_ITEMS[Math.floor(Math.random() * GACHA_ITEMS.length)]; const div = document.createElement('div'); div.className = 'reel-item'; div.textContent = item.symbol; reelItems.appendChild(div); } return reelItems; }
     function initializeReels() { reels.forEach(reel => { reel.innerHTML = ''; reel.appendChild(buildReel()); }); }
 
-    // --- MODIFIED & NEW WALLET FUNCTIONS ---
+    // --- WALLET FUNCTIONS ---
     async function handleExchange() {
         const pointsToExchange = parseInt(pointsToExchangeInput.value, 10);
         const selectedCrypto = exchangeCryptoSelect.value;
-        
         if (isNaN(pointsToExchange) || pointsToExchange <= 0) return showFeedback(exchangeFeedbackEl, "Please enter a valid number.", "error");
         if (pointsToExchange > user.points) return showFeedback(exchangeFeedbackEl, "You do not have enough points.", "error");
         if (pointsToExchange % POINTS_PER_BLOCK !== 0) return showFeedback(exchangeFeedbackEl, `Exchange in blocks of ${POINTS_PER_BLOCK.toLocaleString()}.`, "error");
-
         const blocks = pointsToExchange / POINTS_PER_BLOCK;
         let profileUpdate = { points: user.points - pointsToExchange };
         let feedbackMessage = '';
-
         if (selectedCrypto === 'ton') {
             const tonGained = blocks * TON_PER_BLOCK;
             profileUpdate.ton_balance = parseFloat(user.ton_balance) + tonGained;
@@ -343,7 +395,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             profileUpdate.sol_balance = parseFloat(user.sol_balance) + solGained;
             feedbackMessage = `Exchanged for ${solGained.toFixed(4)} SOL!`;
         }
-
         await updateUserProfile(profileUpdate);
         await supabase.from('transaction_logs').insert({ user_id: user.id, transaction_type: 'exchange', points_exchanged: pointsToExchange, currency: selectedCrypto.toUpperCase(), status: 'completed' });
         updateAllUI();
@@ -353,33 +404,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     async function handleWithdraw() { const currency = cryptoSelect.value; const amount = parseFloat(withdrawalAmountInput.value); const address = walletAddressInput.value.trim(); if (isNaN(amount) || amount <= 0) return showFeedback(withdrawalFeedbackEl, "Please enter a valid amount.", "error"); if (address === '') return showFeedback(withdrawalFeedbackEl, "Please enter a wallet address.", "error"); let newBalance; if (currency === 'ton') { if (amount < MIN_TON_WITHDRAWAL) return showFeedback(withdrawalFeedbackEl, `Minimum TON withdrawal is ${MIN_TON_WITHDRAWAL}.`, "error"); if (amount > user.ton_balance) return showFeedback(withdrawalFeedbackEl, `Insufficient TON balance.`, "error"); newBalance = { ton_balance: parseFloat(user.ton_balance) - amount }; } else if (currency === 'sol') { if (amount < MIN_SOL_WITHDRAWAL) return showFeedback(withdrawalFeedbackEl, `Minimum SOL withdrawal is ${MIN_SOL_WITHDRAWAL}.`, "error"); if (amount > user.sol_balance) return showFeedback(withdrawalFeedbackEl, `Insufficient SOL balance.`, "error"); newBalance = { sol_balance: parseFloat(user.sol_balance) - amount }; } await updateUserProfile(newBalance); await supabase.from('transaction_logs').insert({ user_id: user.id, transaction_type: 'withdrawal', currency: currency.toUpperCase(), amount: amount, withdrawal_address: address, status: 'pending' }); updateAllUI(); withdrawalAmountInput.value = ''; walletAddressInput.value = ''; showFeedback(withdrawalFeedbackEl, `Withdrawal request of ${amount} ${currency.toUpperCase()} submitted for processing.`, "success"); fetchAndRenderWithdrawalHistory(); }
 
-    async function handleHistoryToggle(event) {
-        if (event.target.open) {
-            await fetchAndRenderWithdrawalHistory();
-        }
-    }
+    async function handleHistoryToggle(event) { if (event.target.open) { await fetchAndRenderWithdrawalHistory(); } }
 
     async function fetchAndRenderWithdrawalHistory() {
         withdrawalHistoryContainer.innerHTML = '<div class="spinner" style="margin: 20px auto;"></div>';
-        
-        const { data, error } = await supabase
-            .from('transaction_logs')
-            .select('*')
-            .eq('user_id', user.id)
-            .eq('transaction_type', 'withdrawal')
-            .order('created_at', { ascending: false });
-
-        if (error) {
-            console.error('Error fetching withdrawal history:', error);
-            withdrawalHistoryContainer.innerHTML = '<p class="no-history" style="color: var(--error-color);">Could not load history.</p>';
-            return;
-        }
-
-        if (data.length === 0) {
-            withdrawalHistoryContainer.innerHTML = '<p class="no-history">No withdrawal history yet.</p>';
-            return;
-        }
-
+        const { data, error } = await supabase.from('transaction_logs').select('*').eq('user_id', user.id).eq('transaction_type', 'withdrawal').order('created_at', { ascending: false });
+        if (error) { console.error('Error fetching withdrawal history:', error); withdrawalHistoryContainer.innerHTML = '<p class="no-history" style="color: var(--error-color);">Could not load history.</p>'; return; }
+        if (data.length === 0) { withdrawalHistoryContainer.innerHTML = '<p class="no-history">No withdrawal history yet.</p>'; return; }
         withdrawalHistoryContainer.innerHTML = data.map(tx => `
             <div class="history-item">
                 <div class="history-details">
