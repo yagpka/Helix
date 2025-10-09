@@ -57,6 +57,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const exchangeButton = document.getElementById('exchange-button');
     const withdrawButton = document.getElementById('withdraw-button');
     const pointsToExchangeInput = document.getElementById('points-to-exchange');
+    const exchangeCryptoSelect = document.getElementById('exchange-crypto-select'); // NEW
     const exchangeFeedbackEl = document.getElementById('exchange-feedback');
     const withdrawalAmountInput = document.getElementById('withdrawal-amount');
     const cryptoSelect = document.getElementById('crypto-select');
@@ -68,7 +69,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     const treasureClaimBtn = document.getElementById('treasure-claim-button');
     const ticketTimerEl = document.getElementById('ticket-timer');
     const ticketClaimBtn = document.getElementById('ticket-claim-button');
-    
+    const historyDetails = document.getElementById('history-details'); // NEW
+    const withdrawalHistoryContainer = document.getElementById('withdrawal-history-container'); // NEW
+
     // =================================================================
     // --- DATA & INITIALIZATION LOGIC ---
     // =================================================================
@@ -172,6 +175,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         withdrawButton.addEventListener('click', handleWithdraw);
         treasureClaimBtn.addEventListener('click', handleClaimTreasure);
         ticketClaimBtn.addEventListener('click', handleClaimTickets);
+        historyDetails.addEventListener('toggle', handleHistoryToggle); // NEW
     }
     
     function navigateTo(pageId) {
@@ -179,6 +183,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById(pageId).classList.add('active');
         navButtons.forEach(button => button.classList.toggle('active', button.dataset.page === pageId));
         if (pageId === 'tasks-page') renderTasksPage();
+        if (pageId === 'wallet-page') fetchAndRenderWithdrawalHistory(); // NEW - Pre-fetch history
     }
     
     function updateAllUI() {
@@ -315,8 +320,77 @@ document.addEventListener('DOMContentLoaded', async () => {
     async function checkWin(results) { const symbols = results.map(r => r.symbol); let pointsWon = 0; let isJackpot = false; let isPair = false; if (symbols[0] === symbols[1] && symbols[1] === symbols[2]) { pointsWon = results[0].points * 10; resultText.textContent = `JACKPOT! +${pointsWon}`; resultText.classList.add('jackpot'); isJackpot = true; } else if (symbols[0] === symbols[1] || symbols[1] === symbols[2] || symbols[0] === symbols[2]) { const pairSymbol = symbols[0] === symbols[1] ? symbols[0] : (symbols[0] === symbols[2] ? symbols[0] : symbols[1]); pointsWon = results.find(r => r.symbol === pairSymbol).points * 2; resultText.textContent = `PAIR! +${pointsWon}`; resultText.classList.add('win'); isPair = true; } else { results.forEach(item => pointsWon += item.points); resultText.textContent = `+${pointsWon} PTS`; resultText.classList.add('win'); } await updateUserProfile({ points: user.points + pointsWon }); await updateTaskProgress('earn10k', pointsWon); if (isJackpot) await updateTaskProgress('winJackpot'); if (isPair) await updateTaskProgress('winPair'); updateAllUI(); renderTasksPage(); }
     function buildReel() { const reelItems = document.createElement('div'); reelItems.className = 'reel-items'; for (let i = 0; i < 50; i++) { const item = GACHA_ITEMS[Math.floor(Math.random() * GACHA_ITEMS.length)]; const div = document.createElement('div'); div.className = 'reel-item'; div.textContent = item.symbol; reelItems.appendChild(div); } return reelItems; }
     function initializeReels() { reels.forEach(reel => { reel.innerHTML = ''; reel.appendChild(buildReel()); }); }
-    async function handleExchange() { const pointsToExchange = parseInt(pointsToExchangeInput.value, 10); if (isNaN(pointsToExchange) || pointsToExchange <= 0) return showFeedback(exchangeFeedbackEl, "Please enter a valid number.", "error"); if (pointsToExchange > user.points) return showFeedback(exchangeFeedbackEl, "You do not have enough points.", "error"); if (pointsToExchange % POINTS_PER_BLOCK !== 0) return showFeedback(exchangeFeedbackEl, `Exchange in blocks of ${POINTS_PER_BLOCK.toLocaleString()}.`, "error"); const blocks = pointsToExchange / POINTS_PER_BLOCK; const tonGained = blocks * TON_PER_BLOCK; const solGained = blocks * SOL_PER_BLOCK; await updateUserProfile({ points: user.points - pointsToExchange, ton_balance: parseFloat(user.ton_balance) + tonGained, sol_balance: parseFloat(user.sol_balance) + solGained }); await supabase.from('transaction_logs').insert({ user_id: user.id, transaction_type: 'exchange', points_exchanged: pointsToExchange, status: 'completed' }); updateAllUI(); pointsToExchangeInput.value = ''; showFeedback(exchangeFeedbackEl, `Exchanged for ${tonGained.toFixed(2)} TON & ${solGained.toFixed(4)} SOL!`, "success"); }
-    async function handleWithdraw() { const currency = cryptoSelect.value; const amount = parseFloat(withdrawalAmountInput.value); const address = walletAddressInput.value.trim(); if (isNaN(amount) || amount <= 0) return showFeedback(withdrawalFeedbackEl, "Please enter a valid amount.", "error"); if (address === '') return showFeedback(withdrawalFeedbackEl, "Please enter a wallet address.", "error"); let newBalance; if (currency === 'ton') { if (amount < MIN_TON_WITHDRAWAL) return showFeedback(withdrawalFeedbackEl, `Minimum TON withdrawal is ${MIN_TON_WITHDRAWAL}.`, "error"); if (amount > user.ton_balance) return showFeedback(withdrawalFeedbackEl, `Insufficient TON balance.`, "error"); newBalance = { ton_balance: parseFloat(user.ton_balance) - amount }; } else if (currency === 'sol') { if (amount < MIN_SOL_WITHDRAWAL) return showFeedback(withdrawalFeedbackEl, `Minimum SOL withdrawal is ${MIN_SOL_WITHDRAWAL}.`, "error"); if (amount > user.sol_balance) return showFeedback(withdrawalFeedbackEl, `Insufficient SOL balance.`, "error"); newBalance = { sol_balance: parseFloat(user.sol_balance) - amount }; } await updateUserProfile(newBalance); await supabase.from('transaction_logs').insert({ user_id: user.id, transaction_type: 'withdrawal', currency: currency.toUpperCase(), amount: amount, withdrawal_address: address, status: 'pending' }); updateAllUI(); withdrawalAmountInput.value = ''; walletAddressInput.value = ''; showFeedback(withdrawalFeedbackEl, `Withdrawal request of ${amount} ${currency.toUpperCase()} submitted for processing.`, "success"); }
+
+    // --- MODIFIED & NEW WALLET FUNCTIONS ---
+    async function handleExchange() {
+        const pointsToExchange = parseInt(pointsToExchangeInput.value, 10);
+        const selectedCrypto = exchangeCryptoSelect.value;
+        
+        if (isNaN(pointsToExchange) || pointsToExchange <= 0) return showFeedback(exchangeFeedbackEl, "Please enter a valid number.", "error");
+        if (pointsToExchange > user.points) return showFeedback(exchangeFeedbackEl, "You do not have enough points.", "error");
+        if (pointsToExchange % POINTS_PER_BLOCK !== 0) return showFeedback(exchangeFeedbackEl, `Exchange in blocks of ${POINTS_PER_BLOCK.toLocaleString()}.`, "error");
+
+        const blocks = pointsToExchange / POINTS_PER_BLOCK;
+        let profileUpdate = { points: user.points - pointsToExchange };
+        let feedbackMessage = '';
+
+        if (selectedCrypto === 'ton') {
+            const tonGained = blocks * TON_PER_BLOCK;
+            profileUpdate.ton_balance = parseFloat(user.ton_balance) + tonGained;
+            feedbackMessage = `Exchanged for ${tonGained.toFixed(2)} TON!`;
+        } else if (selectedCrypto === 'sol') {
+            const solGained = blocks * SOL_PER_BLOCK;
+            profileUpdate.sol_balance = parseFloat(user.sol_balance) + solGained;
+            feedbackMessage = `Exchanged for ${solGained.toFixed(4)} SOL!`;
+        }
+
+        await updateUserProfile(profileUpdate);
+        await supabase.from('transaction_logs').insert({ user_id: user.id, transaction_type: 'exchange', points_exchanged: pointsToExchange, currency: selectedCrypto.toUpperCase(), status: 'completed' });
+        updateAllUI();
+        pointsToExchangeInput.value = '';
+        showFeedback(exchangeFeedbackEl, feedbackMessage, "success");
+    }
+
+    async function handleWithdraw() { const currency = cryptoSelect.value; const amount = parseFloat(withdrawalAmountInput.value); const address = walletAddressInput.value.trim(); if (isNaN(amount) || amount <= 0) return showFeedback(withdrawalFeedbackEl, "Please enter a valid amount.", "error"); if (address === '') return showFeedback(withdrawalFeedbackEl, "Please enter a wallet address.", "error"); let newBalance; if (currency === 'ton') { if (amount < MIN_TON_WITHDRAWAL) return showFeedback(withdrawalFeedbackEl, `Minimum TON withdrawal is ${MIN_TON_WITHDRAWAL}.`, "error"); if (amount > user.ton_balance) return showFeedback(withdrawalFeedbackEl, `Insufficient TON balance.`, "error"); newBalance = { ton_balance: parseFloat(user.ton_balance) - amount }; } else if (currency === 'sol') { if (amount < MIN_SOL_WITHDRAWAL) return showFeedback(withdrawalFeedbackEl, `Minimum SOL withdrawal is ${MIN_SOL_WITHDRAWAL}.`, "error"); if (amount > user.sol_balance) return showFeedback(withdrawalFeedbackEl, `Insufficient SOL balance.`, "error"); newBalance = { sol_balance: parseFloat(user.sol_balance) - amount }; } await updateUserProfile(newBalance); await supabase.from('transaction_logs').insert({ user_id: user.id, transaction_type: 'withdrawal', currency: currency.toUpperCase(), amount: amount, withdrawal_address: address, status: 'pending' }); updateAllUI(); withdrawalAmountInput.value = ''; walletAddressInput.value = ''; showFeedback(withdrawalFeedbackEl, `Withdrawal request of ${amount} ${currency.toUpperCase()} submitted for processing.`, "success"); fetchAndRenderWithdrawalHistory(); }
+
+    async function handleHistoryToggle(event) {
+        if (event.target.open) {
+            await fetchAndRenderWithdrawalHistory();
+        }
+    }
+
+    async function fetchAndRenderWithdrawalHistory() {
+        withdrawalHistoryContainer.innerHTML = '<div class="spinner" style="margin: 20px auto;"></div>';
+        
+        const { data, error } = await supabase
+            .from('transaction_logs')
+            .select('*')
+            .eq('user_id', user.id)
+            .eq('transaction_type', 'withdrawal')
+            .order('created_at', { ascending: false });
+
+        if (error) {
+            console.error('Error fetching withdrawal history:', error);
+            withdrawalHistoryContainer.innerHTML = '<p class="no-history" style="color: var(--error-color);">Could not load history.</p>';
+            return;
+        }
+
+        if (data.length === 0) {
+            withdrawalHistoryContainer.innerHTML = '<p class="no-history">No withdrawal history yet.</p>';
+            return;
+        }
+
+        withdrawalHistoryContainer.innerHTML = data.map(tx => `
+            <div class="history-item">
+                <div class="history-details">
+                    <p>Amount: <strong>${tx.amount} ${tx.currency}</strong></p>
+                    <p class="history-address">To: ${tx.withdrawal_address}</p>
+                </div>
+                <div class="history-status ${tx.status}">${tx.status}</div>
+                <div class="history-date">${new Date(tx.created_at).toLocaleString()}</div>
+            </div>
+        `).join('');
+    }
 
     // --- START THE APP ---
     main().catch(error => {
