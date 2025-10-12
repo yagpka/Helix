@@ -95,16 +95,31 @@ body {
 .reward-claim-button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(77, 255, 145, 0.5); }
 .reward-claim-button:disabled { background-color: #555; color: #999; cursor: not-allowed; box-shadow: none; }
 
-/* --- Profile & Generic Page Styles --- */
-.profile-card { background-color: var(--machine-color); border-radius: 24px; padding: 30px; text-align: center; border: 1px solid #3a3a5a; }
+/* --- PROFILE & GENERIC PAGE STYLES --- */
+#profile-page .page-content { padding: 0; } /* Remove padding for full-width sections */
+#profile-page details { background-color: var(--machine-color); border: 1px solid #3a3a5a; border-radius: 16px; margin-bottom: 20px; overflow: hidden; }
+#profile-page summary { padding: 20px; font-size: 1.4rem; font-weight: 600; color: var(--primary-glow); list-style: none; cursor: pointer; position: relative; }
+#profile-page summary::-webkit-details-marker { display: none; }
+#profile-page summary::after { content: '▶'; position: absolute; right: 20px; top: 50%; transform: translateY(-50%) rotate(0deg); transition: transform 0.3s ease; font-size: 1rem; }
+#profile-page details[open] > summary::after { transform: translateY(-50%) rotate(90deg); }
+.profile-card { padding: 0 20px 20px; text-align: center; } /* Adjusted padding */
 .profile-avatar { font-size: 5rem; margin-bottom: 15px; }
 .profile-card h2 { margin: 0; font-size: 1.8rem; }
 .profile-card p { margin: 5px 0 25px; color: #9a9a9a; font-size: 1.1rem; }
 .profile-points { background-color: var(--display-color); padding: 15px; border-radius: 12px; }
 .profile-points span { font-family: var(--pixel-font); font-size: 0.8rem; color: var(--primary-glow); }
 .profile-points strong { display: block; font-size: 2rem; margin-top: 5px; }
-.page-content { text-align: center; padding-top: 20px; }
+#close-profile-button { margin-top: 25px; background: #555; }
+.page-content { text-align: center; }
 .page-title { font-family: var(--pixel-font); color: var(--primary-glow); text-shadow: 0 0 8px var(--primary-glow); margin-bottom: 30px; }
+
+/* --- LEADERBOARD STYLES (NEW) --- */
+.leaderboard-container { padding: 0 20px 20px; }
+#leaderboard-list { max-height: 380px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding-right: 5px; }
+.leaderboard-item { display: flex; align-items: center; background-color: var(--display-color); padding: 10px 15px; border-radius: 8px; }
+.leaderboard-rank { font-size: 1.1rem; font-weight: 600; color: var(--primary-glow); min-width: 40px; }
+.leaderboard-name { flex-grow: 1; font-size: 1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.leaderboard-points { font-size: 1rem; font-weight: 600; color: var(--win-glow); }
 
 /* --- WALLET PAGE STYLES --- */
 .wallet-section { background-color: var(--machine-color); border: 1px solid #3a3a5a; border-radius: 16px; padding: 20px; margin-bottom: 25px; text-align: left; }
@@ -147,13 +162,13 @@ body {
 .claim-button { padding: 10px 20px; font-size: 0.9rem; font-weight: 600; color: white; background-color: var(--primary-glow); border: none; border-radius: 8px; cursor: pointer; transition: background-color 0.2s ease; }
 .claim-button:disabled { background-color: #555; color: #999; cursor: not-allowed; }
 
-/* === LOADING OVERLAY STYLES (NEW) === */
+/* === LOADING OVERLAY STYLES === */
 .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--bg-color); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 100; transition: opacity 0.5s ease-out; }
 .spinner { width: 50px; height: 50px; border: 5px solid #444; border-top: 5px solid var(--primary-glow); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
 .loading-overlay p { font-family: var(--pixel-font); color: var(--text-color); }
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-/* === WITHDRAWAL HISTORY STYLES (NEW) === */
+/* === WITHDRAWAL HISTORY STYLES === */
 .expandable-header {
     margin: -20px -20px 0; /* Adjust to fill parent padding */
     padding: 20px;
@@ -226,4 +241,103 @@ details[open] > summary.expandable-header::after {
     font-size: 0.75rem;
     color: #888;
     margin-top: 5px;
+}
+
+/* === EVENTS PAGE STYLES (NEW) === */
+.stats-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.stat-box {
+    background-color: var(--machine-color);
+    border: 1px solid #3a3a5a;
+    border-radius: 16px;
+    padding: 25px;
+    text-align: center;
+}
+.stat-box h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: var(--primary-glow);
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+.stat-value {
+    margin: 0;
+    font-size: 2.2rem;
+    font-weight: 600;
+    color: var(--win-glow);
+    font-family: var(--ui-font);
+}
+
+/* === ANNOUNCEMENT MODAL STYLES (NEW) === */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+    box-sizing: border-box;
+    opacity: 1;
+    transition: opacity 0.3s ease-in-out;
+}
+.modal-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+.modal-content {
+    background-color: var(--machine-color);
+    padding: 25px;
+    border-radius: 16px;
+    border: 1px solid #3a3a5a;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    text-align: left;
+    transform: scale(1);
+    transition: transform 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+.modal-overlay.hidden .modal-content {
+    transform: scale(0.9);
+}
+.modal-title {
+    margin: 0 0 15px;
+    text-align: center;
+    font-size: 1.5rem;
+    color: var(--primary-glow);
+}
+.announcement-body {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 25px;
+    color: var(--text-color);
+}
+.announcement-body ul {
+    padding-left: 20px;
+    list-style: '✅ ';
+}
+.announcement-body ul li {
+    margin-bottom: 10px;
+}
+.announcement-body strong {
+    color: var(--jackpot-glow);
+}
+.modal-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.action-button.secondary {
+    background: #444;
+}
+.action-button.secondary:hover {
+    background: #555;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
 }
