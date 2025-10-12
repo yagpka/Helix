@@ -1,48 +1,7 @@
 document.addEventListener('DOMContentLoaded', async () => {
+    // --- All DOM element selectors are safely inside the listener ---
     const loadingOverlay = document.getElementById('loading-overlay');
     const appContainer = document.querySelector('.app-container');
-
-    // =================================================================
-    // --- SUPABASE & SDK INITIALIZATION ---
-    // =================================================================
-    const SUPABASE_URL = 'https://vddnlobgtnwwplburlja.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZkZG5sb2JndG53d3BsYnVybGphIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDEyMTcsImV4cCI6MjA3NTUxNzIxN30.2zYyICX5QyNDcLcGWia1F04yXPfNH6M09aczNlsLFSM';
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    // Initialize Adsgram controllers with their respective block IDs
-    const AdController = window.Adsgram ? window.Adsgram.init({ blockId: "int-14190" }) : { show: () => Promise.reject('Adsgram stubbed') };
-    const TreasureAdController = window.Adsgram ? window.Adsgram.init({ blockId: "int-15943" }) : { show: () => Promise.reject('Adsgram stubbed') };
-    const TicketAdController = window.Adsgram ? window.Adsgram.init({ blockId: "int-15944" }) : { show: () => Promise.reject('Adsgram stubbed') };
-
-
-    // =================================================================
-    // --- CONFIGURATIONS & CONSTANTS ---
-    // =================================================================
-    const REEL_ITEM_HEIGHT = 90;
-    const SPIN_DURATION = 4000;
-    const POINTS_PER_BLOCK = 1000000;
-    const TON_PER_BLOCK = 0.3;
-    const SOL_PER_BLOCK = 0.0038;
-    const WITHDRAWAL_FEE_PERCENT = 1.5;
-    const MIN_TON_WITHDRAWAL = 1;
-    const MIN_SOL_WITHDRAWAL = 0.01;
-    const GACHA_ITEMS = [ { symbol: '🍓', points: 5 }, { symbol: '🍌', points: 10 }, { symbol: '🍊', points: 15 }, { symbol: '🍉', points: 20 }, { symbol: '🥑', points: 25 }, { symbol: '🌶️', points: 30 }, { symbol: '🍇', points: 60 }, { symbol: '💎', points: 100 } ];
-    const STREAK_REWARDS = [
-        { day: 1, points: 2000, pulls: 3 }, { day: 2, points: 4000, pulls: 5 }, { day: 3, points: 6000, pulls: 7 }, { day: 4, points: 8000, pulls: 9 }, { day: 5, points: 10000, pulls: 10 }, { day: 6, points: 12000, pulls: 11 }, { day: 7, points: 15000, pulls: 15 }
-    ];
-    const DAILY_TASK_KEYS = ['pull10', 'watch2', 'winPair', 'earn10k', 'winJackpot'];
-    const TREASURE_COOLDOWN = 3 * 60 * 1000;
-    const TREASURE_REWARD_POINTS = 2000;
-    const TICKET_COOLDOWN = 5 * 60 * 1000;
-    const TICKET_REWARD_PULLS = 10;
-    
-    // --- STATE MANAGEMENT ---
-    let user = {}; 
-    let tasks = {}; 
-    let taskProgress = {};
-    let isSpinning = false;
-    
-    // --- DOM ELEMENT SELECTORS ---
     const pages = document.querySelectorAll('.page');
     const navButtons = document.querySelectorAll('.nav-button');
     const profileButton = document.getElementById('profile-button');
@@ -76,7 +35,53 @@ document.addEventListener('DOMContentLoaded', async () => {
     const ticketClaimBtn = document.getElementById('ticket-claim-button');
     const historyDetails = document.getElementById('history-details');
     const withdrawalHistoryContainer = document.getElementById('withdrawal-history-container');
+    const closeProfileButton = document.getElementById('close-profile-button');
+    const leaderboardDetails = document.getElementById('leaderboard-details');
+    const leaderboardList = document.getElementById('leaderboard-list');
+    const totalUsersValueEl = document.getElementById('total-users-value');
+    const totalPointsValueEl = document.getElementById('total-points-value');
+    const announcementModal = document.getElementById('announcement-modal');
+    const closeAnnouncementButton = document.getElementById('close-announcement-button');
+    const shareGameButton = document.getElementById('share-game-button');
 
+    // =================================================================
+    // --- SUPABASE & SDK INITIALIZATION ---
+    // =================================================================
+    const SUPABASE_URL = 'https://vddnlobgtnwwplburlja.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZkZG5sb2JndG53d3BsYnVybGphIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDEyMTcsImV4cCI6MjA3NTUxNzIxN30.2zYyICX5QyNDcLcGWia1F04yXPfNH6M09aczNlsLFSM';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const AdController = window.Adsgram ? window.Adsgram.init({ blockId: "int-14190" }) : { show: () => Promise.reject('Adsgram stubbed') };
+    const TreasureAdController = window.Adsgram ? window.Adsgram.init({ blockId: "int-15943" }) : { show: () => Promise.reject('Adsgram stubbed') };
+    const TicketAdController = window.Adsgram ? window.Adsgram.init({ blockId: "int-15944" }) : { show: () => Promise.reject('Adsgram stubbed') };
+
+    // =================================================================
+    // --- CONFIGURATIONS & CONSTANTS ---
+    // =================================================================
+    const REEL_ITEM_HEIGHT = 90;
+    const SPIN_DURATION = 4000;
+    const POINTS_PER_BLOCK = 1000000;
+    const TON_PER_BLOCK = 0.3;
+    const SOL_PER_BLOCK = 0.0038;
+    const WITHDRAWAL_FEE_PERCENT = 1.5;
+    const MIN_TON_WITHDRAWAL = 1;
+    const MIN_SOL_WITHDRAWAL = 0.01;
+    const GACHA_ITEMS = [ { symbol: '🍓', points: 5 }, { symbol: '🍌', points: 10 }, { symbol: '🍊', points: 15 }, { symbol: '🍉', points: 20 }, { symbol: '🥑', points: 25 }, { symbol: '🌶️', points: 30 }, { symbol: '🍇', points: 60 }, { symbol: '💎', points: 100 } ];
+    const STREAK_REWARDS = [
+        { day: 1, points: 2000, pulls: 3 }, { day: 2, points: 4000, pulls: 5 }, { day: 3, points: 6000, pulls: 7 }, { day: 4, points: 8000, pulls: 9 }, { day: 5, points: 10000, pulls: 10 }, { day: 6, points: 12000, pulls: 11 }, { day: 7, points: 15000, pulls: 15 }
+    ];
+    const DAILY_TASK_KEYS = ['pull10', 'watch2', 'winPair', 'earn10k', 'winJackpot'];
+    const TREASURE_COOLDOWN = 3 * 60 * 1000;
+    const TREASURE_REWARD_POINTS = 2000;
+    const TICKET_COOLDOWN = 5 * 60 * 1000;
+    const TICKET_REWARD_PULLS = 10;
+    
+    // --- STATE MANAGEMENT ---
+    let user = {}; 
+    let tasks = {}; 
+    let taskProgress = {};
+    let isSpinning = false;
+    
     // =================================================================
     // --- DATA & INITIALIZATION LOGIC ---
     // =================================================================
@@ -90,27 +95,33 @@ document.addEventListener('DOMContentLoaded', async () => {
         TWA.expand();
         document.body.style.backgroundColor = TWA.themeParams.bg_color || '#1a1a2e';
 
+        // --- REAL TELEGRAM SDK IMPLEMENTATION ---
+        // The demo/fallback user has been removed.
         const initData = TWA.initDataUnsafe;
-        let telegramUser = initData?.user || { id: 999999, first_name: 'Dev', last_name: 'Tester', username: 'dev_user' };
-        if (!initData?.user) console.warn("Telegram user data not found. Using fallback user.");
+        const telegramUser = initData?.user;
+
+        // If not running inside Telegram or user data is missing, stop loading.
+        if (!telegramUser) {
+            loadingOverlay.innerHTML = `<p style="color: var(--error-color); text-align: center;">Could not verify user.<br>Please launch the game through Telegram.</p>`;
+            return; // Stop the function here
+        }
         
         await loadInitialData(telegramUser);
         await checkDailyResets();
         
-        // Initial render of all components that depend on data
         updateAllUI();
         updateButtonStates();
         renderTasksPage();
         initializeTimedRewards();
         
-        // Hide loading screen and show the app
         loadingOverlay.style.opacity = '0';
         appContainer.style.opacity = '1';
         setTimeout(() => loadingOverlay.style.display = 'none', 500);
+
+        handleAnnouncement();
     };
 
     const loadInitialData = async (telegramUser) => {
-        // Step 1: Get or Create User Profile
         let { data: profileData, error: profileError } = await supabase.from('profiles').select('*').eq('telegram_id', telegramUser.id).single();
         if (profileError && profileError.code !== 'PGRST116') throw new Error('Could not fetch profile');
         
@@ -126,7 +137,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         user = profileData;
 
-        // Step 2: Fetch Task Definitions and Today's Progress in parallel (ROBUST METHOD)
         const today = getTodayDateString();
         const [taskDefsResult, progressResult] = await Promise.all([
             supabase.from('tasks').select('*'),
@@ -136,11 +146,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (taskDefsResult.error) throw new Error('Could not fetch task definitions');
         if (progressResult.error) throw new Error('Could not fetch task progress');
 
-        // Map definitions and progress into easy-to-use objects
         tasks = taskDefsResult.data.reduce((acc, task) => { acc[task.id] = task; return acc; }, {});
         const progressByTaskId = progressResult.data.reduce((acc, p) => { acc[p.task_id] = p; return acc; }, {});
         
-        // Combine them using the task_key for consistency
         taskProgress = {};
         for (const taskId in tasks) {
             const task = tasks[taskId];
@@ -149,10 +157,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
     
     async function updateUserProfile(updateData) {
-        Object.assign(user, updateData); // Optimistic update
+        Object.assign(user, updateData);
         const { data: updatedUser, error } = await supabase.from('profiles').update(updateData).eq('id', user.id).select().single();
         if (error) console.error("Error updating profile:", error);
-        else user = updatedUser; // Sync with DB
+        else user = updatedUser;
     }
 
     async function updateTaskProgress(taskKey, incrementValue = 1) {
@@ -161,7 +169,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const currentProg = taskProgress[taskKey]?.current_progress || 0;
         const newProgress = currentProg + incrementValue;
-        taskProgress[taskKey].current_progress = newProgress; // Optimistic update
+        taskProgress[taskKey].current_progress = newProgress;
         
         await supabase.from('user_task_progress').upsert({
             user_id: user.id, task_id: taskDef.id, date: getTodayDateString(), current_progress: newProgress
@@ -181,6 +189,31 @@ document.addEventListener('DOMContentLoaded', async () => {
         treasureClaimBtn.addEventListener('click', handleClaimTreasure);
         ticketClaimBtn.addEventListener('click', handleClaimTickets);
         historyDetails.addEventListener('toggle', handleHistoryToggle);
+        closeProfileButton.addEventListener('click', () => navigateTo('home-page'));
+        leaderboardDetails.addEventListener('toggle', handleLeaderboardToggle);
+        
+        closeAnnouncementButton.addEventListener('click', () => {
+            announcementModal.classList.add('hidden');
+            // This line is key: it saves a flag in the browser's permanent storage for this site.
+            // The flag will persist even after reloading or closing the app.
+            localStorage.setItem('announcement_v1_seen', 'true');
+        });
+
+        shareGameButton.addEventListener('click', () => {
+             const TWA = window.Telegram.WebApp;
+             // Use the official TWA method to open a share dialog
+             TWA.switchInlineQuery('Come play YTD Gacha Game and help us reach 100 players for a special event!');
+        });
+    }
+
+    function handleAnnouncement() {
+        // This function checks if the flag 'announcement_v1_seen' exists in localStorage.
+        const announcementSeen = localStorage.getItem('announcement_v1_seen');
+        
+        // The modal is only shown if the flag is NOT found (i.e., it returns null).
+        if (!announcementSeen) {
+            announcementModal.classList.remove('hidden');
+        }
     }
     
     function navigateTo(pageId) {
@@ -189,6 +222,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         navButtons.forEach(button => button.classList.toggle('active', button.dataset.page === pageId));
         if (pageId === 'tasks-page') renderTasksPage();
         if (pageId === 'wallet-page') fetchAndRenderWithdrawalHistory();
+        if (pageId === 'events-page') fetchAndRenderEventStats();
     }
     
     function updateAllUI() {
@@ -317,7 +351,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             console.error("Treasure ad failed to show.");
         }).finally(() => {
             treasureClaimBtn.textContent = 'Claim';
-            updateTimedRewards(); // This will re-evaluate if the button should be enabled or disabled
+            updateTimedRewards(); 
         });
     }
 
@@ -334,7 +368,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             console.error("Ticket ad failed to show.");
         }).finally(() => {
             ticketClaimBtn.textContent = 'Claim';
-            updateTimedRewards(); // This will re-evaluate if the button should be enabled or disabled
+            updateTimedRewards();
         });
     }
     
@@ -347,7 +381,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (taskDef.reward_type === 'points') profileUpdate.points = user.points + taskDef.reward_amount;
             else if (taskDef.reward_type === 'pulls') profileUpdate.pulls = user.pulls + taskDef.reward_amount;
             await updateUserProfile(profileUpdate);
-            progressData.is_claimed = true; // Optimistic update
+            progressData.is_claimed = true;
             await supabase.from('user_task_progress').update({ is_claimed: true }).match({ user_id: user.id, task_id: taskDef.id, date: getTodayDateString() });
             updateAllUI(); updateButtonStates(); renderTasksPage();
         }
@@ -358,7 +392,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     function buildReel() { const reelItems = document.createElement('div'); reelItems.className = 'reel-items'; for (let i = 0; i < 50; i++) { const item = GACHA_ITEMS[Math.floor(Math.random() * GACHA_ITEMS.length)]; const div = document.createElement('div'); div.className = 'reel-item'; div.textContent = item.symbol; reelItems.appendChild(div); } return reelItems; }
     function initializeReels() { reels.forEach(reel => { reel.innerHTML = ''; reel.appendChild(buildReel()); }); }
 
-    // --- MODIFIED & NEW WALLET FUNCTIONS ---
+    // --- MODIFIED & NEW WALLET/PROFILE/EVENTS FUNCTIONS ---
     async function handleExchange() {
         const pointsToExchange = parseInt(pointsToExchangeInput.value, 10);
         const selectedCrypto = exchangeCryptoSelect.value;
@@ -427,6 +461,67 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <div class="history-date">${new Date(tx.created_at).toLocaleString()}</div>
             </div>
         `).join('');
+    }
+
+    async function handleLeaderboardToggle(event) {
+        if (event.target.open) {
+            await fetchAndRenderLeaderboard();
+        }
+    }
+    
+    async function fetchAndRenderLeaderboard() {
+        leaderboardList.innerHTML = '<div class="spinner" style="margin: 20px auto;"></div>';
+    
+        const { data, error } = await supabase
+            .from('profiles')
+            .select('full_name, points')
+            .order('points', { ascending: false })
+            .limit(100);
+    
+        if (error) {
+            console.error('Error fetching leaderboard:', error);
+            leaderboardList.innerHTML = '<p class="no-history" style="color: var(--error-color);">Could not load leaderboard.</p>';
+            return;
+        }
+    
+        if (data.length === 0) {
+            leaderboardList.innerHTML = '<p class="no-history">Leaderboard is empty.</p>';
+            return;
+        }
+    
+        leaderboardList.innerHTML = data.map((player, index) => `
+            <div class="leaderboard-item">
+                <span class="leaderboard-rank">#${index + 1}</span>
+                <span class="leaderboard-name">${player.full_name}</span>
+                <span class="leaderboard-points">${Math.floor(player.points).toLocaleString()}</span>
+            </div>
+        `).join('');
+    }
+
+    async function fetchAndRenderEventStats() {
+        totalUsersValueEl.textContent = 'Loading...';
+        totalPointsValueEl.textContent = 'Loading...';
+
+        const { count, error: countError } = await supabase
+            .from('profiles')
+            .select('*', { count: 'exact', head: true });
+
+        if (countError) {
+            console.error('Error fetching total users:', countError);
+            totalUsersValueEl.textContent = 'Error';
+        } else {
+            totalUsersValueEl.textContent = count.toLocaleString();
+        }
+        
+        const { data: totalPoints, error: rpcError } = await supabase
+            .rpc('get_total_points');
+
+        if (rpcError) {
+            console.error('Error fetching total points:', rpcError);
+            totalPointsValueEl.textContent = 'Error';
+        } else {
+            totalPointsValueEl.textContent = Math.floor(totalPoints).toLocaleString();
+        }
     }
 
     // --- START THE APP ---
