@@ -78,18 +78,36 @@
 
             </section>
 
-            <!-- PAGE 2: PROFILE -->
+            <!-- PAGE 2: PROFILE (MODIFIED) -->
             <section id="profile-page" class="page">
-                <div class="profile-card">
-                    <div class="profile-avatar">🧑‍🚀</div>
-                    <h2 id="profile-name">Player One</h2>
-                    <p id="profile-username">@player1</p>
-                    <div class="profile-points">
-                        <span class="pixel-font">TOTAL POINTS</span>
-                        <strong id="profile-points-value">0</strong>
-                    </div>
+                <div class="page-content">
+                     <!-- PROFILE DROPDOWN -->
+                    <details id="profile-details" open>
+                        <summary class="expandable-header">My Profile</summary>
+                        <div class="profile-card">
+                            <div class="profile-avatar">🧑‍🚀</div>
+                            <h2 id="profile-name">Player One</h2>
+                            <p id="profile-username">@player1</p>
+                            <div class="profile-points">
+                                <span class="pixel-font">TOTAL POINTS</span>
+                                <strong id="profile-points-value">0</strong>
+                            </div>
+                             <button id="close-profile-button" class="action-button">Close</button>
+                        </div>
+                    </details>
+            
+                    <!-- LEADERBOARD DROPDOWN -->
+                    <details id="leaderboard-details">
+                        <summary class="expandable-header">Leaderboard</summary>
+                        <div class="leaderboard-container">
+                            <div id="leaderboard-list">
+                                <p class="no-history">Expand to view leaderboard.</p>
+                            </div>
+                        </div>
+                    </details>
                 </div>
             </section>
+
 
             <!-- PAGE 3: WALLET -->
             <section id="wallet-page" class="page">
@@ -105,13 +123,11 @@
                         <div class="wallet-form">
                             <label for="points-to-exchange">Points to Exchange:</label>
                             <input type="number" id="points-to-exchange" placeholder="e.g., 1000000">
-                            <!-- NEW -->
                             <label for="exchange-crypto-select">Exchange For:</label>
                             <select id="exchange-crypto-select">
                                 <option value="ton">TON</option>
                                 <option value="sol">SOL</option>
                             </select>
-                            <!-- END NEW -->
                             <button id="exchange-button" class="action-button">Exchange</button>
                             <div id="exchange-feedback" class="feedback-message"></div>
                         </div>
@@ -141,7 +157,6 @@
                             <div id="withdrawal-feedback" class="feedback-message"></div>
                         </div>
                     </div>
-                    <!-- NEW WITHDRAWAL HISTORY SECTION -->
                     <div class="wallet-section">
                         <details id="history-details">
                             <summary class="expandable-header">Withdrawal History</summary>
@@ -150,7 +165,6 @@
                             </div>
                         </details>
                     </div>
-                    <!-- END NEW SECTION -->
                 </div>
             </section>
 
@@ -175,7 +189,22 @@
 
             <!-- PAGE 5: EVENTS -->
             <section id="events-page" class="page">
-                <div class="page-content"><h1 class="page-title">Special Events</h1><p>Join limited-time events for exclusive rewards.</p></div>
+                <div class="page-content">
+                    <h1 class="page-title">Game Statistics</h1>
+                    <p class="instructions" style="text-align: center; margin-bottom: 30px;">See how our community is growing!</p>
+                    
+                    <div class="stats-container">
+                        <div class="stat-box">
+                            <h2>Total Users</h2>
+                            <p id="total-users-value" class="stat-value">Loading...</p>
+                        </div>
+                        <div class="stat-box">
+                            <h2>Total Points Farmed</h2>
+                            <p id="total-points-value" class="stat-value">Loading...</p>
+                        </div>
+                    </div>
+
+                </div>
             </section>
 
         </main>
@@ -188,6 +217,27 @@
             <button data-page="events-page" class="nav-button" title="Events">🎉</button>
         </nav>
     </div>
+    
+    <!-- ANNOUNCEMENT MODAL -->
+    <div id="announcement-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2 class="modal-title">🎉 Game Update! 🎉</h2>
+            <div class="announcement-body">
+                <p><strong>Hello Players! We've just rolled out some exciting new features:</strong></p>
+                <ul>
+                    <li>🏆 <strong>Leaderboard:</strong> Compete with other players! Check your rank in the Profile section.</li>
+                    <li>📊 <strong>Community Stats:</strong> A new 'Events' tab shows our total players and points farmed.</li>
+                    <li>🎁 <strong>Special Event Coming:</strong> Once we reach <strong>100 players</strong>, a special in-game event with huge rewards will begin!</li>
+                </ul>
+                <p>Help us grow! Share the game with your friends and let's unlock the event together!</p>
+            </div>
+            <div class="modal-actions">
+                <button id="share-game-button" class="action-button">Share Game</button>
+                <button id="close-announcement-button" class="action-button secondary">Close</button>
+            </div>
+        </div>
+    </div>
+
 
     <!-- Supabase Client Library (must be before script.js) -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
