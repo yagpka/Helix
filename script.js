@@ -95,15 +95,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         TWA.expand();
         document.body.style.backgroundColor = TWA.themeParams.bg_color || '#1a1a2e';
 
-        // --- REAL TELEGRAM SDK IMPLEMENTATION ---
-        // The demo/fallback user has been removed.
         const initData = TWA.initDataUnsafe;
         const telegramUser = initData?.user;
 
-        // If not running inside Telegram or user data is missing, stop loading.
         if (!telegramUser) {
             loadingOverlay.innerHTML = `<p style="color: var(--error-color); text-align: center;">Could not verify user.<br>Please launch the game through Telegram.</p>`;
-            return; // Stop the function here
+            return;
         }
         
         await loadInitialData(telegramUser);
@@ -194,26 +191,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         closeAnnouncementButton.addEventListener('click', () => {
             announcementModal.classList.add('hidden');
-            // This line is key: it saves a flag in the browser's permanent storage for this site.
-            // The flag will persist even after reloading or closing the app.
-            localStorage.setItem('announcement_v1_seen', 'true');
+            // The line that saved to localStorage has been removed.
         });
 
         shareGameButton.addEventListener('click', () => {
              const TWA = window.Telegram.WebApp;
-             // Use the official TWA method to open a share dialog
              TWA.switchInlineQuery('Come play YTD Gacha Game and help us reach 100 players for a special event!');
         });
     }
 
+    /**
+     * MODIFIED: This function now always shows the announcement.
+     * The check for localStorage has been removed.
+     */
     function handleAnnouncement() {
-        // This function checks if the flag 'announcement_v1_seen' exists in localStorage.
-        const announcementSeen = localStorage.getItem('announcement_v1_seen');
-        
-        // The modal is only shown if the flag is NOT found (i.e., it returns null).
-        if (!announcementSeen) {
-            announcementModal.classList.remove('hidden');
-        }
+        // Always show the modal every time the game loads.
+        announcementModal.classList.remove('hidden');
     }
     
     function navigateTo(pageId) {
