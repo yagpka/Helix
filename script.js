@@ -59,22 +59,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     // --- CONFIGURATIONS & CONSTANTS ---
     // =================================================================
     const REEL_ITEM_HEIGHT = 90;
-    const SPIN_DURATION = 4000;
+    const SPIN_DURATION = 6000;
     const POINTS_PER_BLOCK = 1000000;
     const TON_PER_BLOCK = 0.3;
     const SOL_PER_BLOCK = 0.0038;
-    const WITHDRAWAL_FEE_PERCENT = 1.5;
+    const WITHDRAWAL_FEE_PERCENT = 5;
     const MIN_TON_WITHDRAWAL = 1;
     const MIN_SOL_WITHDRAWAL = 0.01;
-    const GACHA_ITEMS = [ { symbol: '🍓', points: 5 }, { symbol: '🍌', points: 10 }, { symbol: '🍊', points: 15 }, { symbol: '🍉', points: 20 }, { symbol: '🥑', points: 25 }, { symbol: '🌶️', points: 30 }, { symbol: '🍇', points: 60 }, { symbol: '💎', points: 100 } ];
+    const GACHA_ITEMS = [ { symbol: '🍓', points: 5 }, { symbol: '🍌', points: 10 }, { symbol: '🍊', points: 15 }, { symbol: '🍉', points: 20 }, { symbol: '🥑', points: 25 }, { symbol: '🌶️', points: 30 }, { symbol: '🍇', points: 35 }, { symbol: '💎', points: 40 } ];
     const STREAK_REWARDS = [
-        { day: 1, points: 2000, pulls: 3 }, { day: 2, points: 4000, pulls: 5 }, { day: 3, points: 6000, pulls: 7 }, { day: 4, points: 8000, pulls: 9 }, { day: 5, points: 10000, pulls: 10 }, { day: 6, points: 12000, pulls: 11 }, { day: 7, points: 15000, pulls: 15 }
+        { day: 1, points: 2000, pulls: 3 }, { day: 2, points: 4000, pulls: 5 }, { day: 3, points: 6000, pulls: 7 }, { day: 4, points: 8000, pulls: 9 }, { day: 5, points: 10000, pulls: 10 }, { day: 6, points: 10000, pulls: 11 }, { day: 7, points: 10000, pulls: 12 }
     ];
     const DAILY_TASK_KEYS = ['pull10', 'watch2', 'winPair', 'earn10k', 'winJackpot'];
     const TREASURE_COOLDOWN = 3 * 60 * 1000;
     const TREASURE_REWARD_POINTS = 2000;
     const TICKET_COOLDOWN = 5 * 60 * 1000;
-    const TICKET_REWARD_PULLS = 10;
+    const TICKET_REWARD_PULLS = 6;
     
     // --- STATE MANAGEMENT ---
     let user = {}; 
