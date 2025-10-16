@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', async () => {
-    // --- All DOM element selectors are safely inside the listener ---
+    // --- All DOM element selectors ---
     const loadingOverlay = document.getElementById('loading-overlay');
     const appContainer = document.querySelector('.app-container');
     const pages = document.querySelectorAll('.page');
@@ -29,10 +29,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const withdrawalFeedbackEl = document.getElementById('withdrawal-feedback');
     const streakContainer = document.getElementById('streak-container');
     const tasksContainer = document.getElementById('tasks-container');
-    const treasureTimerEl = document.getElementById('treasure-timer');
-    const treasureClaimBtn = document.getElementById('treasure-claim-button');
-    const ticketTimerEl = document.getElementById('ticket-timer');
-    const ticketClaimBtn = document.getElementById('ticket-claim-button');
     const historyDetails = document.getElementById('history-details');
     const withdrawalHistoryContainer = document.getElementById('withdrawal-history-container');
     const closeProfileButton = document.getElementById('close-profile-button');
@@ -43,6 +39,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     const announcementModal = document.getElementById('announcement-modal');
     const closeAnnouncementButton = document.getElementById('close-announcement-button');
     const shareGameButton = document.getElementById('share-game-button');
+    const tapSound = document.getElementById('tap-sound');
+    const spinSound = document.getElementById('spin-sound');
+    const backgroundMusic = document.getElementById('background-music');
+    const withdrawalGateNotice = document.getElementById('withdrawal-gate-notice');
+    const withdrawalFieldset = document.getElementById('withdrawal-fieldset');
+    const userCountProgress = document.getElementById('user-count-progress');
+    const userProgressBarInner = document.getElementById('user-progress-bar-inner');
+    const treasureBtnFloat = document.getElementById('floating-treasure-button');
+    const ticketBtnFloat = document.getElementById('floating-ticket-button');
+    const treasureTimerFloat = document.getElementById('treasure-timer-float');
+    const ticketTimerFloat = document.getElementById('ticket-timer-float');
 
     // =================================================================
     // --- SUPABASE & SDK INITIALIZATION ---
@@ -51,9 +58,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZkZG5sb2JndG53d3BsYnVybGphIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDEyMTcsImV4cCI6MjA3NTUxNzIxN30.2zYyICX5QyNDcLcGWia1F04yXPfNH6M09aczNlsLFSM';
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    const AdController = window.Adsgram ? window.Adsgram.init({ blockId: "int-14190" }) : { show: () => Promise.reject('Adsgram stubbed') };
-    const TreasureAdController = window.Adsgram ? window.Adsgram.init({ blockId: "int-15943" }) : { show: () => Promise.reject('Adsgram stubbed') };
-    const TicketAdController = window.Adsgram ? window.Adsgram.init({ blockId: "int-15944" }) : { show: () => Promise.reject('Adsgram stubbed') };
+    const AdController = window.Adsgram ? window.Adsgram.init({ blockId: "int-14190" }) : { show: () => { console.log("AD STUB: Main ad show"); return Promise.resolve(); } };
+    const TreasureAdController = window.Adsgram ? window.Adsgram.init({ blockId: "int-15943" }) : { show: () => { console.log("AD STUB: Treasure ad show"); return Promise.resolve(); } };
+    const TicketAdController = window.Adsgram ? window.Adsgram.init({ blockId: "int-15944" }) : { show: () => { console.log("AD STUB: Ticket ad show"); return Promise.resolve(); } };
 
     // =================================================================
     // --- CONFIGURATIONS & CONSTANTS ---
@@ -66,10 +73,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     const WITHDRAWAL_FEE_PERCENT = 5;
     const MIN_TON_WITHDRAWAL = 1;
     const MIN_SOL_WITHDRAWAL = 0.01;
+    const WITHDRAWAL_USER_GATE = 1000;
     const GACHA_ITEMS = [ { symbol: '🍓', points: 5 }, { symbol: '🍌', points: 10 }, { symbol: '🍊', points: 15 }, { symbol: '🍉', points: 20 }, { symbol: '🥑', points: 25 }, { symbol: '🌶️', points: 30 }, { symbol: '🍇', points: 35 }, { symbol: '💎', points: 40 } ];
-    const STREAK_REWARDS = [
-        { day: 1, points: 2000, pulls: 3 }, { day: 2, points: 4000, pulls: 5 }, { day: 3, points: 6000, pulls: 7 }, { day: 4, points: 8000, pulls: 9 }, { day: 5, points: 10000, pulls: 10 }, { day: 6, points: 10000, pulls: 11 }, { day: 7, points: 10000, pulls: 12 }
-    ];
+    const STREAK_REWARDS = [ { day: 1, points: 2000, pulls: 3 }, { day: 2, points: 4000, pulls: 5 }, { day: 3, points: 6000, pulls: 7 }, { day: 4, points: 8000, pulls: 9 }, { day: 5, points: 10000, pulls: 10 }, { day: 6, points: 10000, pulls: 11 }, { day: 7, points: 10000, pulls: 12 } ];
     const DAILY_TASK_KEYS = ['pull10', 'watch2', 'winPair', 'earn10k', 'winJackpot'];
     const TREASURE_COOLDOWN = 3 * 60 * 1000;
     const TREASURE_REWARD_POINTS = 2000;
@@ -81,6 +87,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let tasks = {}; 
     let taskProgress = {};
     let isSpinning = false;
+    let totalUserCount = 0;
     
     // =================================================================
     // --- DATA & INITIALIZATION LOGIC ---
@@ -92,19 +99,21 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const TWA = window.Telegram.WebApp;
         TWA.ready();
-        TWA.expand();
-        document.body.style.backgroundColor = TWA.themeParams.bg_color || '#1a1a2e';
+        
+        const telegramUser = TWA.initDataUnsafe?.user;
 
-        const initData = TWA.initDataUnsafe;
-        const telegramUser = initData?.user;
-
-        if (!telegramUser) {
-            loadingOverlay.innerHTML = `<p style="color: var(--error-color); text-align: center;">Could not verify user.<br>Please launch the game through Telegram.</p>`;
+        // Production check: Halt if not running inside Telegram with valid user data.
+        if (!telegramUser || !telegramUser.id) {
+            loadingOverlay.innerHTML = `<p style="color: var(--error-color); text-align: center;">User authentication failed.<br>Please launch the game through the official Telegram app.</p>`;
             return;
         }
         
+        TWA.expand();
+        document.body.style.setProperty('--bg-color', TWA.themeParams.bg_color || '#0F0F1A');
+        
         await loadInitialData(telegramUser);
         await checkDailyResets();
+        await checkWithdrawalGate();
         
         updateAllUI();
         updateButtonStates();
@@ -116,30 +125,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         setTimeout(() => loadingOverlay.style.display = 'none', 500);
 
         handleAnnouncement();
+        playBGM();
     };
 
     const loadInitialData = async (telegramUser) => {
         let { data: profileData, error: profileError } = await supabase.from('profiles').select('*').eq('telegram_id', telegramUser.id).single();
-        if (profileError && profileError.code !== 'PGRST116') throw new Error('Could not fetch profile');
+        if (profileError && profileError.code !== 'PGRST116') throw new Error(`Could not fetch profile: ${profileError.message}`);
         
         if (!profileData) {
-            const { data: newUser, error: createError } = await supabase.from('profiles').insert({
-                telegram_id: telegramUser.id,
-                username: telegramUser.username ? '@' + telegramUser.username : 'No Username',
-                full_name: telegramUser.first_name + (telegramUser.last_name ? ' ' + telegramUser.last_name : ''),
-                points: 1250
-            }).select().single();
-            if (createError) throw new Error('Could not create profile');
+            const { data: newUser, error: createError } = await supabase.from('profiles').insert({ telegram_id: telegramUser.id, username: telegramUser.username ? '@' + telegramUser.username : 'No Username', full_name: `${telegramUser.first_name} ${telegramUser.last_name || ''}`.trim(), points: 1250, pulls: 20 }).select().single();
+            if (createError) throw new Error(`Could not create profile: ${createError.message}`);
             profileData = newUser;
         }
         user = profileData;
 
         const today = getTodayDateString();
-        const [taskDefsResult, progressResult] = await Promise.all([
-            supabase.from('tasks').select('*'),
-            supabase.from('user_task_progress').select('*').eq('user_id', user.id).eq('date', today)
-        ]);
-
+        const [taskDefsResult, progressResult] = await Promise.all([ supabase.from('tasks').select('*'), supabase.from('user_task_progress').select('*').eq('user_id', user.id).eq('date', today) ]);
         if (taskDefsResult.error) throw new Error('Could not fetch task definitions');
         if (progressResult.error) throw new Error('Could not fetch task progress');
 
@@ -147,379 +148,93 @@ document.addEventListener('DOMContentLoaded', async () => {
         const progressByTaskId = progressResult.data.reduce((acc, p) => { acc[p.task_id] = p; return acc; }, {});
         
         taskProgress = {};
-        for (const taskId in tasks) {
-            const task = tasks[taskId];
-            taskProgress[task.task_key] = progressByTaskId[taskId] || { current_progress: 0, is_claimed: false };
-        }
+        for (const taskId in tasks) { const task = tasks[taskId]; taskProgress[task.task_key] = progressByTaskId[taskId] || { current_progress: 0, is_claimed: false }; }
     };
     
-    async function updateUserProfile(updateData) {
-        Object.assign(user, updateData);
-        const { data: updatedUser, error } = await supabase.from('profiles').update(updateData).eq('id', user.id).select().single();
-        if (error) console.error("Error updating profile:", error);
-        else user = updatedUser;
-    }
-
-    async function updateTaskProgress(taskKey, incrementValue = 1) {
-        const taskDef = Object.values(tasks).find(t => t.task_key === taskKey);
-        if (!taskDef) return;
-
-        const currentProg = taskProgress[taskKey]?.current_progress || 0;
-        const newProgress = currentProg + incrementValue;
-        taskProgress[taskKey].current_progress = newProgress;
-        
-        await supabase.from('user_task_progress').upsert({
-            user_id: user.id, task_id: taskDef.id, date: getTodayDateString(), current_progress: newProgress
-        }, { onConflict: 'user_id, task_id, date' });
-    }
+    async function updateUserProfile(updateData) { Object.assign(user, updateData); const { data: updatedUser, error } = await supabase.from('profiles').update(updateData).eq('id', user.id).select().single(); if (error) console.error("Error updating profile:", error); else user = updatedUser; }
+    async function updateTaskProgress(taskKey, incrementValue = 1) { const taskDef = Object.values(tasks).find(t => t.task_key === taskKey); if (!taskDef) return; const currentProg = taskProgress[taskKey]?.current_progress || 0; const newProgress = currentProg + incrementValue; taskProgress[taskKey].current_progress = newProgress; await supabase.from('user_task_progress').upsert({ user_id: user.id, task_id: taskDef.id, date: getTodayDateString(), current_progress: newProgress }, { onConflict: 'user_id, task_id, date' }); }
     
     // =================================================================
-    // --- UI & EVENT LISTENERS ---
+    // --- UI, SOUND & EVENT LISTENERS ---
     // =================================================================
+    
+    function playTapSound() { if (tapSound) { tapSound.currentTime = 0; tapSound.play().catch(e => {}); } }
+    function playBGM() { if (backgroundMusic) { backgroundMusic.volume = 0.3; backgroundMusic.play().catch(() => { document.body.addEventListener('click', () => backgroundMusic.play(), { once: true }); }); } }
+
     function setupEventListeners() {
+        document.querySelectorAll('button, details > summary, .nav-button, .profile-icon').forEach(el => { el.addEventListener('click', playTapSound); });
         navButtons.forEach(button => button.addEventListener('click', () => navigateTo(button.dataset.page)));
         profileButton.addEventListener('click', () => navigateTo('profile-page'));
         pullButton.addEventListener('click', handlePull);
         watchAdButton.addEventListener('click', handleWatchAd);
         exchangeButton.addEventListener('click', handleExchange);
         withdrawButton.addEventListener('click', handleWithdraw);
-        treasureClaimBtn.addEventListener('click', handleClaimTreasure);
-        ticketClaimBtn.addEventListener('click', handleClaimTickets);
+        treasureBtnFloat.addEventListener('click', handleClaimTreasure);
+        ticketBtnFloat.addEventListener('click', handleClaimTickets);
         historyDetails.addEventListener('toggle', handleHistoryToggle);
         closeProfileButton.addEventListener('click', () => navigateTo('home-page'));
         leaderboardDetails.addEventListener('toggle', handleLeaderboardToggle);
-        
-        closeAnnouncementButton.addEventListener('click', () => {
-            announcementModal.classList.add('hidden');
-            // The line that saved to localStorage has been removed.
-        });
-
-        shareGameButton.addEventListener('click', () => {
-             const TWA = window.Telegram.WebApp;
-             TWA.switchInlineQuery('Come play YTD Gacha Game and help us reach 100 players for a special event!');
-        });
+        closeAnnouncementButton.addEventListener('click', () => announcementModal.classList.add('hidden'));
+        shareGameButton.addEventListener('click', () => { const TWA = window.Telegram.WebApp; if (TWA && TWA.switchInlineQuery) TWA.switchInlineQuery('Come play YTD Gacha Game!'); else alert("Share feature is available only within Telegram."); });
     }
 
-    /**
-     * MODIFIED: This function now always shows the announcement.
-     * The check for localStorage has been removed.
-     */
-    function handleAnnouncement() {
-        // Always show the modal every time the game loads.
-        announcementModal.classList.remove('hidden');
-    }
+    function handleAnnouncement() { announcementModal.classList.remove('hidden'); }
     
-    function navigateTo(pageId) {
-        pages.forEach(page => page.classList.remove('active'));
-        document.getElementById(pageId).classList.add('active');
-        navButtons.forEach(button => button.classList.toggle('active', button.dataset.page === pageId));
-        if (pageId === 'tasks-page') renderTasksPage();
-        if (pageId === 'wallet-page') fetchAndRenderWithdrawalHistory();
-        if (pageId === 'events-page') fetchAndRenderEventStats();
-    }
+    function navigateTo(pageId) { pages.forEach(page => page.classList.remove('active')); document.getElementById(pageId).classList.add('active'); navButtons.forEach(button => button.classList.toggle('active', button.dataset.page === pageId)); if (pageId === 'tasks-page') renderTasksPage(); if (pageId === 'wallet-page') { fetchAndRenderWithdrawalHistory(); checkWithdrawalGate(); } if (pageId === 'events-page') fetchAndRenderEventStats(); }
     
-    function updateAllUI() {
-        if (!user || !user.id) return;
-        pointsValueTop.textContent = Math.floor(user.points).toLocaleString();
-        profileNameEl.textContent = user.full_name;
-        profileUsernameEl.textContent = user.username;
-        profilePointsEl.textContent = Math.floor(user.points).toLocaleString();
-        pullsAmountEl.textContent = user.pulls;
-        tonBalanceEl.textContent = parseFloat(user.ton_balance).toFixed(2);
-        solBalanceEl.textContent = parseFloat(user.sol_balance).toFixed(4);
-    }
+    function updateAllUI() { if (!user || !user.id) return; const oldPoints = parseInt(pointsValueTop.textContent.replace(/,/g, ''), 10); const newPoints = Math.floor(user.points); if (oldPoints !== newPoints) { pointsValueTop.classList.add('pulse'); setTimeout(() => pointsValueTop.classList.remove('pulse'), 600); } pointsValueTop.textContent = newPoints.toLocaleString(); profileNameEl.textContent = user.full_name; profileUsernameEl.textContent = user.username; profilePointsEl.textContent = Math.floor(user.points).toLocaleString(); pullsAmountEl.textContent = user.pulls; tonBalanceEl.textContent = parseFloat(user.ton_balance).toFixed(2); solBalanceEl.textContent = parseFloat(user.sol_balance).toFixed(4); }
     
-    function updateButtonStates() {
-        if (isSpinning || !user?.id) return;
-        if (user.pulls > 0) {
-            pullButton.disabled = false;
-            watchAdButton.disabled = true;
-            resultText.textContent = "PULL THE LEVER!";
-        } else {
-            pullButton.disabled = true;
-            watchAdButton.disabled = false;
-            resultText.textContent = "WATCH AD TO PLAY";
-        }
-    }
+    function updateButtonStates() { if (isSpinning || !user?.id) return; if (user.pulls > 0) { pullButton.disabled = false; watchAdButton.disabled = true; resultText.textContent = "PULL THE LEVER!"; } else { pullButton.disabled = true; watchAdButton.disabled = false; resultText.textContent = "WATCH AD TO PLAY"; } }
     
-    async function checkDailyResets() {
-        const today = getTodayDateString();
-        const lastClaimDateStr = user.last_streak_claim_date;
-        if (lastClaimDateStr && lastClaimDateStr !== today) {
-            const lastClaimDate = new Date(lastClaimDateStr);
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1);
-            if (lastClaimDate.toISOString().split('T')[0] !== yesterday.toISOString().split('T')[0]) {
-                await updateUserProfile({ daily_streak: 0 });
-            }
-        }
-    }
+    async function checkDailyResets() { const today = getTodayDateString(); const lastClaimDateStr = user.last_streak_claim_date; if (lastClaimDateStr && lastClaimDateStr !== today) { const lastClaimDate = new Date(lastClaimDateStr); const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1); if (lastClaimDate.toISOString().split('T')[0] !== yesterday.toISOString().split('T')[0]) { await updateUserProfile({ daily_streak: 0 }); } } }
     
     function getTodayDateString() { return new Date().toISOString().split('T')[0]; }
     
-    function renderTasksPage() {
-        renderDailyStreak();
-        renderDailyTasks();
-    }
+    function renderTasksPage() { renderDailyStreak(); renderDailyTasks(); }
 
     function renderDailyStreak() {
-        streakContainer.innerHTML = '';
-        const today = getTodayDateString();
+        streakContainer.innerHTML = ''; const today = getTodayDateString();
         STREAK_REWARDS.forEach(reward => {
-            const dayEl = document.createElement('div'); dayEl.className = 'streak-day';
-            let rewardText = reward.points ? `🎁 ${reward.points.toLocaleString()}` : `🎟️ ${reward.pulls}`;
-            dayEl.innerHTML = `<div class="day-label">Day ${reward.day}</div><div class="day-reward">${rewardText}</div>`;
-            if (user.daily_streak >= reward.day) dayEl.classList.add('claimed');
-            else if (user.daily_streak + 1 === reward.day && user.last_streak_claim_date !== today) {
-                dayEl.classList.add('active');
-                dayEl.onclick = () => claimStreakReward(reward.day);
-            }
-            streakContainer.appendChild(dayEl);
+            const isClaimed = user.daily_streak >= reward.day; const isClaimable = user.daily_streak + 1 === reward.day && user.last_streak_claim_date !== today;
+            const itemEl = document.createElement('div'); itemEl.className = 'streak-item';
+            if (isClaimable) itemEl.classList.add('active'); if (isClaimed) itemEl.classList.add('claimed');
+            let rewardString = ''; if (reward.points) rewardString += `<strong>+${reward.points.toLocaleString()}</strong> Points`; if (reward.points && reward.pulls) rewardString += ' & '; if (reward.pulls) rewardString += `<strong>+${reward.pulls}</strong> Pulls`;
+            let buttonText = 'Locked'; let buttonClass = ''; if (isClaimable) { buttonText = 'Claim'; buttonClass = 'claimable'; } if (isClaimed) { buttonText = 'Claimed'; buttonClass = 'claimed'; }
+            itemEl.innerHTML = `<div class="streak-info"><h3>Day ${reward.day}</h3><p>${rewardString}</p></div><button class="streak-claim-button ${buttonClass}" ${!isClaimable ? 'disabled' : ''}>${buttonText}</button>`;
+            if (isClaimable) { itemEl.querySelector('button').onclick = () => claimStreakReward(reward.day); }
+            streakContainer.appendChild(itemEl);
         });
     }
 
-    function renderDailyTasks() {
-        tasksContainer.innerHTML = '';
-        DAILY_TASK_KEYS.forEach(taskKey => {
-            const taskDef = Object.values(tasks).find(t => t.task_key === taskKey);
-            if (!taskDef) return;
-            
-            const progress = taskProgress[taskKey]?.current_progress || 0;
-            const isClaimed = taskProgress[taskKey]?.is_claimed || false;
-            const isComplete = progress >= taskDef.target_value;
-
-            const taskEl = document.createElement('div'); taskEl.className = 'task-item';
-            let rewardText = taskDef.reward_type === 'points' ? `+${taskDef.reward_amount.toLocaleString()} PTS` : `+${taskDef.reward_amount} Pulls`;
-
-            taskEl.innerHTML = `
-                <div class="task-info">
-                    <p>${taskDef.description} (${progress}/${taskDef.target_value})</p>
-                    <div class="progress-bar"><div class="progress-bar-inner" style="width: ${Math.min(100, (progress / taskDef.target_value) * 100)}%;"></div></div>
-                </div>
-                <div class="task-reward">${rewardText}</div>
-                <button class="claim-button" data-task-key="${taskDef.task_key}" ${(!isComplete || isClaimed) ? 'disabled' : ''}>${isClaimed ? 'Claimed' : 'Claim'}</button>`;
-            tasksContainer.appendChild(taskEl);
-        });
-        tasksContainer.querySelectorAll('.claim-button').forEach(button => button.addEventListener('click', (e) => claimTaskReward(e.currentTarget.dataset.taskKey)));
-    }
-
-    function showFeedback(element, message, type) {
-        element.textContent = message;
-        element.className = `feedback-message ${type}`;
-        setTimeout(() => { element.textContent = ''; element.className = 'feedback-message'; }, 4000);
-    }
+    function renderDailyTasks() { tasksContainer.innerHTML = ''; if (Object.keys(tasks).length === 0) { tasksContainer.innerHTML = '<p class="placeholder-text">Loading tasks...</p>'; return; } DAILY_TASK_KEYS.forEach(taskKey => { const taskDef = Object.values(tasks).find(t => t.task_key === taskKey); if (!taskDef) return; const progress = taskProgress[taskKey]?.current_progress || 0; const isClaimed = taskProgress[taskKey]?.is_claimed || false; const isComplete = progress >= taskDef.target_value; let rewardText = taskDef.reward_type === 'points' ? `+${taskDef.reward_amount.toLocaleString()} PTS` : `+${taskDef.reward_amount} Pulls`; const taskEl = document.createElement('div'); taskEl.className = 'task-item'; taskEl.innerHTML = `<div class="task-info"><p>${taskDef.description} (${progress}/${taskDef.target_value})</p><div class="progress-bar"><div class="progress-bar-inner" style="width: ${Math.min(100, (progress / taskDef.target_value) * 100)}%;"></div></div></div><div class="task-reward">${rewardText}</div><button class="claim-button" data-task-key="${taskDef.task_key}" ${(!isComplete || isClaimed) ? 'disabled' : ''}>${isClaimed ? 'Claimed' : 'Claim'}</button>`; tasksContainer.appendChild(taskEl); }); tasksContainer.querySelectorAll('.claim-button').forEach(button => button.addEventListener('click', (e) => claimTaskReward(e.currentTarget.dataset.taskKey))); }
+    function showFeedback(element, message, type) { element.textContent = message; element.className = `feedback-message ${type} show`; setTimeout(() => { element.classList.remove('show'); }, 4000); }
     
-    // =================================================================
     // --- GAME ACTIONS ---
-    // =================================================================
     function initializeTimedRewards() { setInterval(updateTimedRewards, 1000); updateTimedRewards(); }
-    function updateTimedRewards() {
-        const now = Date.now();
-        const lastTreasureClaim = user.last_treasure_claim ? new Date(user.last_treasure_claim).getTime() : 0;
-        const treasureCooldownEnd = lastTreasureClaim + TREASURE_COOLDOWN;
-        if (now < treasureCooldownEnd) {
-            treasureTimerEl.textContent = formatTime(treasureCooldownEnd - now); treasureClaimBtn.disabled = true;
-        } else {
-            treasureTimerEl.textContent = `+${TREASURE_REWARD_POINTS.toLocaleString()} Pts`; treasureClaimBtn.disabled = false;
-        }
-        const lastTicketClaim = user.last_ticket_claim ? new Date(user.last_ticket_claim).getTime() : 0;
-        const ticketCooldownEnd = lastTicketClaim + TICKET_COOLDOWN;
-        if (now < ticketCooldownEnd) {
-            ticketTimerEl.textContent = formatTime(ticketCooldownEnd - now); ticketClaimBtn.disabled = true;
-        } else {
-            ticketTimerEl.textContent = `+${TICKET_REWARD_PULLS} Pulls`; ticketClaimBtn.disabled = false;
-        }
-    }
+    
+    function updateTimedRewards() { const now = Date.now(); const lastTreasureClaim = user.last_treasure_claim ? new Date(user.last_treasure_claim).getTime() : 0; const treasureCooldownEnd = lastTreasureClaim + TREASURE_COOLDOWN; if (now < treasureCooldownEnd) { treasureTimerFloat.textContent = formatTime(treasureCooldownEnd - now); treasureBtnFloat.disabled = true; } else { treasureTimerFloat.textContent = ''; treasureBtnFloat.disabled = false; } const lastTicketClaim = user.last_ticket_claim ? new Date(user.last_ticket_claim).getTime() : 0; const ticketCooldownEnd = lastTicketClaim + TICKET_COOLDOWN; if (now < ticketCooldownEnd) { ticketTimerFloat.textContent = formatTime(ticketCooldownEnd - now); ticketBtnFloat.disabled = true; } else { ticketTimerFloat.textContent = ''; ticketBtnFloat.disabled = false; } }
     function formatTime(ms) { const totalSeconds = Math.ceil(ms / 1000); const minutes = Math.floor(totalSeconds / 60); const seconds = totalSeconds % 60; return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`; }
     
-    async function handleClaimTreasure() {
-        if (treasureClaimBtn.disabled) return;
-        treasureClaimBtn.disabled = true;
-        treasureClaimBtn.textContent = 'Loading...';
-
-        TreasureAdController.show().then(async () => {
-            await updateUserProfile({ points: user.points + TREASURE_REWARD_POINTS, last_treasure_claim: new Date().toISOString() });
-            updateAllUI();
-        }).catch(() => {
-            console.error("Treasure ad failed to show.");
-        }).finally(() => {
-            treasureClaimBtn.textContent = 'Claim';
-            updateTimedRewards(); 
-        });
-    }
-
-    async function handleClaimTickets() {
-        if (ticketClaimBtn.disabled) return;
-        ticketClaimBtn.disabled = true;
-        ticketClaimBtn.textContent = 'Loading...';
-
-        TicketAdController.show().then(async () => {
-            await updateUserProfile({ pulls: user.pulls + TICKET_REWARD_PULLS, last_ticket_claim: new Date().toISOString() });
-            updateAllUI();
-            updateButtonStates();
-        }).catch(() => {
-            console.error("Ticket ad failed to show.");
-        }).finally(() => {
-            ticketClaimBtn.textContent = 'Claim';
-            updateTimedRewards();
-        });
-    }
-    
+    async function handleClaimTreasure() { if (treasureBtnFloat.disabled) return; treasureBtnFloat.disabled = true; try { await TreasureAdController.show(); await updateUserProfile({ points: user.points + TREASURE_REWARD_POINTS, last_treasure_claim: new Date().toISOString() }); updateAllUI(); } catch (e) { console.error("Treasure ad failed.", e); } finally { updateTimedRewards(); } }
+    async function handleClaimTickets() { if (ticketBtnFloat.disabled) return; ticketBtnFloat.disabled = true; try { await TicketAdController.show(); await updateUserProfile({ pulls: user.pulls + TICKET_REWARD_PULLS, last_ticket_claim: new Date().toISOString() }); updateAllUI(); updateButtonStates(); } catch (e) { console.error("Ticket ad failed.", e); } finally { updateTimedRewards(); } }
     async function claimStreakReward(day) { const today = getTodayDateString(); if (user.last_streak_claim_date === today || user.daily_streak + 1 !== day) return; const reward = STREAK_REWARDS.find(r => r.day === day); await updateUserProfile({ daily_streak: user.daily_streak + 1, last_streak_claim_date: today, points: user.points + (reward.points || 0), pulls: user.pulls + (reward.pulls || 0) }); updateAllUI(); updateButtonStates(); renderTasksPage(); }
-    async function claimTaskReward(taskKey) {
-        const progressData = taskProgress[taskKey]; if (!progressData || progressData.is_claimed) return;
-        const taskDef = Object.values(tasks).find(t => t.task_key === taskKey);
-        if (progressData.current_progress >= taskDef.target_value) {
-            let profileUpdate = {};
-            if (taskDef.reward_type === 'points') profileUpdate.points = user.points + taskDef.reward_amount;
-            else if (taskDef.reward_type === 'pulls') profileUpdate.pulls = user.pulls + taskDef.reward_amount;
-            await updateUserProfile(profileUpdate);
-            progressData.is_claimed = true;
-            await supabase.from('user_task_progress').update({ is_claimed: true }).match({ user_id: user.id, task_id: taskDef.id, date: getTodayDateString() });
-            updateAllUI(); updateButtonStates(); renderTasksPage();
-        }
-    }
+    async function claimTaskReward(taskKey) { const progressData = taskProgress[taskKey]; if (!progressData || progressData.is_claimed) return; const taskDef = Object.values(tasks).find(t => t.task_key === taskKey); if (progressData.current_progress >= taskDef.target_value) { let profileUpdate = {}; if (taskDef.reward_type === 'points') profileUpdate.points = user.points + taskDef.reward_amount; else if (taskDef.reward_type === 'pulls') profileUpdate.pulls = user.pulls + taskDef.reward_amount; await updateUserProfile(profileUpdate); progressData.is_claimed = true; await supabase.from('user_task_progress').update({ is_claimed: true }).match({ user_id: user.id, task_id: taskDef.id, date: getTodayDateString() }); updateAllUI(); updateButtonStates(); renderTasksPage(); } }
     function handleWatchAd() { watchAdButton.disabled = true; watchAdButton.textContent = "LOADING AD..."; AdController.show().then(async () => { await updateUserProfile({ pulls: user.pulls + 10 }); await updateTaskProgress('watch2'); updateAllUI(); updateButtonStates(); resultText.textContent = "YOU GOT 10 PULLS!"; }).catch(() => { resultText.textContent = "AD FAILED. NO REWARD."; }).finally(() => { watchAdButton.disabled = false; watchAdButton.textContent = "WATCH AD FOR 10 PULLS"; updateButtonStates(); renderTasksPage(); }); }
-    async function handlePull() { if (user.pulls <= 0 || isSpinning) return; isSpinning = true; await updateUserProfile({ pulls: user.pulls - 1 }); await updateTaskProgress('pull10'); updateAllUI(); pullButton.disabled = true; watchAdButton.disabled = true; resultText.classList.remove('win', 'jackpot'); resultText.textContent = 'GET READY...'; reelShutter.classList.add('open'); setTimeout(() => { gachaMachine.classList.add('shake-animation'); resultText.textContent = 'SPINNING...'; const finalResults = []; reels.forEach((reel, index) => { reel.innerHTML = ''; const newReelItems = buildReel(); reel.appendChild(newReelItems); const finalItem = GACHA_ITEMS[Math.floor(Math.random() * GACHA_ITEMS.length)]; finalResults.push(finalItem); const finalElement = document.createElement('div'); finalElement.className = 'reel-item'; finalElement.textContent = finalItem.symbol; newReelItems.appendChild(finalElement); const stopPosition = (newReelItems.children.length - 1) * REEL_ITEM_HEIGHT; setTimeout(() => { newReelItems.style.transition = `transform ${SPIN_DURATION / 1000}s cubic-bezier(0.34, 1.56, 0.64, 1)`; newReelItems.style.transform = `translateY(-${stopPosition}px)`; }, 100 + index * 200); }); setTimeout(async () => { await checkWin(finalResults); isSpinning = false; gachaMachine.classList.remove('shake-animation'); reelShutter.classList.remove('open'); updateButtonStates(); }, SPIN_DURATION + 600); }, 500); }
+    async function handlePull() { if (user.pulls <= 0 || isSpinning) return; isSpinning = true; await updateUserProfile({ pulls: user.pulls - 1 }); await updateTaskProgress('pull10'); updateAllUI(); pullButton.disabled = true; watchAdButton.disabled = true; resultText.classList.remove('win', 'jackpot'); resultText.textContent = 'GET READY...'; if(spinSound) { spinSound.currentTime = 0; spinSound.play().catch(e => {}); } reelShutter.classList.add('open'); setTimeout(() => { gachaMachine.classList.add('shake-animation'); resultText.textContent = 'SPINNING...'; const finalResults = []; reels.forEach((reel, index) => { reel.innerHTML = ''; const newReelItems = buildReel(); reel.appendChild(newReelItems); const finalItem = GACHA_ITEMS[Math.floor(Math.random() * GACHA_ITEMS.length)]; finalResults.push(finalItem); const finalElement = document.createElement('div'); finalElement.className = 'reel-item'; finalElement.textContent = finalItem.symbol; newReelItems.appendChild(finalElement); const stopPosition = (newReelItems.children.length - 1) * REEL_ITEM_HEIGHT; setTimeout(() => { newReelItems.style.transition = `transform ${SPIN_DURATION / 1000}s cubic-bezier(0.34, 1.56, 0.64, 1)`; newReelItems.style.transform = `translateY(-${stopPosition}px)`; }, 100 + index * 200); }); setTimeout(async () => { await checkWin(finalResults); isSpinning = false; gachaMachine.classList.remove('shake-animation'); reelShutter.classList.remove('open'); updateButtonStates(); }, SPIN_DURATION + 600); }, 500); }
     async function checkWin(results) { const symbols = results.map(r => r.symbol); let pointsWon = 0; let isJackpot = false; let isPair = false; if (symbols[0] === symbols[1] && symbols[1] === symbols[2]) { pointsWon = results[0].points * 10; resultText.textContent = `JACKPOT! +${pointsWon}`; resultText.classList.add('jackpot'); isJackpot = true; } else if (symbols[0] === symbols[1] || symbols[1] === symbols[2] || symbols[0] === symbols[2]) { const pairSymbol = symbols[0] === symbols[1] ? symbols[0] : (symbols[0] === symbols[2] ? symbols[0] : symbols[1]); pointsWon = results.find(r => r.symbol === pairSymbol).points * 2; resultText.textContent = `PAIR! +${pointsWon}`; resultText.classList.add('win'); isPair = true; } else { results.forEach(item => pointsWon += item.points); resultText.textContent = `+${pointsWon} PTS`; resultText.classList.add('win'); } await updateUserProfile({ points: user.points + pointsWon }); await updateTaskProgress('earn10k', pointsWon); if (isJackpot) await updateTaskProgress('winJackpot'); if (isPair) await updateTaskProgress('winPair'); updateAllUI(); renderTasksPage(); }
     function buildReel() { const reelItems = document.createElement('div'); reelItems.className = 'reel-items'; for (let i = 0; i < 50; i++) { const item = GACHA_ITEMS[Math.floor(Math.random() * GACHA_ITEMS.length)]; const div = document.createElement('div'); div.className = 'reel-item'; div.textContent = item.symbol; reelItems.appendChild(div); } return reelItems; }
     function initializeReels() { reels.forEach(reel => { reel.innerHTML = ''; reel.appendChild(buildReel()); }); }
 
-    // --- MODIFIED & NEW WALLET/PROFILE/EVENTS FUNCTIONS ---
-    async function handleExchange() {
-        const pointsToExchange = parseInt(pointsToExchangeInput.value, 10);
-        const selectedCrypto = exchangeCryptoSelect.value;
-        
-        if (isNaN(pointsToExchange) || pointsToExchange <= 0) return showFeedback(exchangeFeedbackEl, "Please enter a valid number.", "error");
-        if (pointsToExchange > user.points) return showFeedback(exchangeFeedbackEl, "You do not have enough points.", "error");
-        if (pointsToExchange % POINTS_PER_BLOCK !== 0) return showFeedback(exchangeFeedbackEl, `Exchange in blocks of ${POINTS_PER_BLOCK.toLocaleString()}.`, "error");
-
-        const blocks = pointsToExchange / POINTS_PER_BLOCK;
-        let profileUpdate = { points: user.points - pointsToExchange };
-        let feedbackMessage = '';
-
-        if (selectedCrypto === 'ton') {
-            const tonGained = blocks * TON_PER_BLOCK;
-            profileUpdate.ton_balance = parseFloat(user.ton_balance) + tonGained;
-            feedbackMessage = `Exchanged for ${tonGained.toFixed(2)} TON!`;
-        } else if (selectedCrypto === 'sol') {
-            const solGained = blocks * SOL_PER_BLOCK;
-            profileUpdate.sol_balance = parseFloat(user.sol_balance) + solGained;
-            feedbackMessage = `Exchanged for ${solGained.toFixed(4)} SOL!`;
-        }
-
-        await updateUserProfile(profileUpdate);
-        await supabase.from('transaction_logs').insert({ user_id: user.id, transaction_type: 'exchange', points_exchanged: pointsToExchange, currency: selectedCrypto.toUpperCase(), status: 'completed' });
-        updateAllUI();
-        pointsToExchangeInput.value = '';
-        showFeedback(exchangeFeedbackEl, feedbackMessage, "success");
-    }
-
-    async function handleWithdraw() { const currency = cryptoSelect.value; const amount = parseFloat(withdrawalAmountInput.value); const address = walletAddressInput.value.trim(); if (isNaN(amount) || amount <= 0) return showFeedback(withdrawalFeedbackEl, "Please enter a valid amount.", "error"); if (address === '') return showFeedback(withdrawalFeedbackEl, "Please enter a wallet address.", "error"); let newBalance; if (currency === 'ton') { if (amount < MIN_TON_WITHDRAWAL) return showFeedback(withdrawalFeedbackEl, `Minimum TON withdrawal is ${MIN_TON_WITHDRAWAL}.`, "error"); if (amount > user.ton_balance) return showFeedback(withdrawalFeedbackEl, `Insufficient TON balance.`, "error"); newBalance = { ton_balance: parseFloat(user.ton_balance) - amount }; } else if (currency === 'sol') { if (amount < MIN_SOL_WITHDRAWAL) return showFeedback(withdrawalFeedbackEl, `Minimum SOL withdrawal is ${MIN_SOL_WITHDRAWAL}.`, "error"); if (amount > user.sol_balance) return showFeedback(withdrawalFeedbackEl, `Insufficient SOL balance.`, "error"); newBalance = { sol_balance: parseFloat(user.sol_balance) - amount }; } await updateUserProfile(newBalance); await supabase.from('transaction_logs').insert({ user_id: user.id, transaction_type: 'withdrawal', currency: currency.toUpperCase(), amount: amount, withdrawal_address: address, status: 'pending' }); updateAllUI(); withdrawalAmountInput.value = ''; walletAddressInput.value = ''; showFeedback(withdrawalFeedbackEl, `Withdrawal request of ${amount} ${currency.toUpperCase()} submitted for processing.`, "success"); fetchAndRenderWithdrawalHistory(); }
-
-    async function handleHistoryToggle(event) {
-        if (event.target.open) {
-            await fetchAndRenderWithdrawalHistory();
-        }
-    }
-
-    async function fetchAndRenderWithdrawalHistory() {
-        withdrawalHistoryContainer.innerHTML = '<div class="spinner" style="margin: 20px auto;"></div>';
-        
-        const { data, error } = await supabase
-            .from('transaction_logs')
-            .select('*')
-            .eq('user_id', user.id)
-            .eq('transaction_type', 'withdrawal')
-            .order('created_at', { ascending: false });
-
-        if (error) {
-            console.error('Error fetching withdrawal history:', error);
-            withdrawalHistoryContainer.innerHTML = '<p class="no-history" style="color: var(--error-color);">Could not load history.</p>';
-            return;
-        }
-
-        if (data.length === 0) {
-            withdrawalHistoryContainer.innerHTML = '<p class="no-history">No withdrawal history yet.</p>';
-            return;
-        }
-
-        withdrawalHistoryContainer.innerHTML = data.map(tx => `
-            <div class="history-item">
-                <div class="history-details">
-                    <p>Amount: <strong>${tx.amount} ${tx.currency}</strong></p>
-                    <p class="history-address">To: ${tx.withdrawal_address}</p>
-                </div>
-                <div class="history-status ${tx.status}">${tx.status}</div>
-                <div class="history-date">${new Date(tx.created_at).toLocaleString()}</div>
-            </div>
-        `).join('');
-    }
-
-    async function handleLeaderboardToggle(event) {
-        if (event.target.open) {
-            await fetchAndRenderLeaderboard();
-        }
-    }
-    
-    async function fetchAndRenderLeaderboard() {
-        leaderboardList.innerHTML = '<div class="spinner" style="margin: 20px auto;"></div>';
-    
-        const { data, error } = await supabase
-            .from('profiles')
-            .select('full_name, points')
-            .order('points', { ascending: false })
-            .limit(100);
-    
-        if (error) {
-            console.error('Error fetching leaderboard:', error);
-            leaderboardList.innerHTML = '<p class="no-history" style="color: var(--error-color);">Could not load leaderboard.</p>';
-            return;
-        }
-    
-        if (data.length === 0) {
-            leaderboardList.innerHTML = '<p class="no-history">Leaderboard is empty.</p>';
-            return;
-        }
-    
-        leaderboardList.innerHTML = data.map((player, index) => `
-            <div class="leaderboard-item">
-                <span class="leaderboard-rank">#${index + 1}</span>
-                <span class="leaderboard-name">${player.full_name}</span>
-                <span class="leaderboard-points">${Math.floor(player.points).toLocaleString()}</span>
-            </div>
-        `).join('');
-    }
-
-    async function fetchAndRenderEventStats() {
-        totalUsersValueEl.textContent = 'Loading...';
-        totalPointsValueEl.textContent = 'Loading...';
-
-        const { count, error: countError } = await supabase
-            .from('profiles')
-            .select('*', { count: 'exact', head: true });
-
-        if (countError) {
-            console.error('Error fetching total users:', countError);
-            totalUsersValueEl.textContent = 'Error';
-        } else {
-            totalUsersValueEl.textContent = count.toLocaleString();
-        }
-        
-        const { data: totalPoints, error: rpcError } = await supabase
-            .rpc('get_total_points');
-
-        if (rpcError) {
-            console.error('Error fetching total points:', rpcError);
-            totalPointsValueEl.textContent = 'Error';
-        } else {
-            totalPointsValueEl.textContent = Math.floor(totalPoints).toLocaleString();
-        }
-    }
+    // --- WALLET/PROFILE/EVENTS FUNCTIONS ---
+    async function checkWithdrawalGate() { const { count, error } = await supabase.from('profiles').select('*', { count: 'exact', head: true }); if (error) { console.error("Could not fetch user count:", error); return; } totalUserCount = count; const progressPercent = Math.min(100, (totalUserCount / WITHDRAWAL_USER_GATE) * 100); userCountProgress.textContent = `${totalUserCount.toLocaleString()} / ${WITHDRAWAL_USER_GATE.toLocaleString()} Players`; userProgressBarInner.style.width = `${progressPercent}%`; if (totalUserCount >= WITHDRAWAL_USER_GATE) { withdrawalGateNotice.classList.add('hidden'); withdrawalFieldset.disabled = false; } else { withdrawalGateNotice.classList.remove('hidden'); withdrawalFieldset.disabled = true; } }
+    async function handleExchange() { const pointsToExchange = parseInt(pointsToExchangeInput.value, 10); const selectedCrypto = exchangeCryptoSelect.value; if (isNaN(pointsToExchange) || pointsToExchange <= 0) return showFeedback(exchangeFeedbackEl, "Please enter a valid number.", "error"); if (pointsToExchange > user.points) return showFeedback(exchangeFeedbackEl, "You do not have enough points.", "error"); if (pointsToExchange % POINTS_PER_BLOCK !== 0) return showFeedback(exchangeFeedbackEl, `Exchange in blocks of ${POINTS_PER_BLOCK.toLocaleString()}.`, "error"); const blocks = pointsToExchange / POINTS_PER_BLOCK; let profileUpdate = { points: user.points - pointsToExchange }; let feedbackMessage = ''; if (selectedCrypto === 'ton') { const tonGained = blocks * TON_PER_BLOCK; profileUpdate.ton_balance = parseFloat(user.ton_balance) + tonGained; feedbackMessage = `Exchanged for ${tonGained.toFixed(2)} TON!`; } else if (selectedCrypto === 'sol') { const solGained = blocks * SOL_PER_BLOCK; profileUpdate.sol_balance = parseFloat(user.sol_balance) + solGained; feedbackMessage = `Exchanged for ${solGained.toFixed(4)} SOL!`; } await updateUserProfile(profileUpdate); await supabase.from('transaction_logs').insert({ user_id: user.id, transaction_type: 'exchange', points_exchanged: pointsToExchange, currency: selectedCrypto.toUpperCase(), status: 'completed' }); updateAllUI(); pointsToExchangeInput.value = ''; showFeedback(exchangeFeedbackEl, feedbackMessage, "success"); }
+    async function handleWithdraw() { const currency = cryptoSelect.value; const amount = parseFloat(withdrawalAmountInput.value); const address = walletAddressInput.value.trim(); if (isNaN(amount) || amount <= 0) return showFeedback(withdrawalFeedbackEl, "Please enter a valid amount.", "error"); if (address === '') return showFeedback(withdrawalFeedbackEl, "Please enter a wallet address.", "error"); let newBalance; const fee = amount * (WITHDRAWAL_FEE_PERCENT / 100); const amountAfterFee = amount - fee; if (currency === 'ton') { if (amount < MIN_TON_WITHDRAWAL) return showFeedback(withdrawalFeedbackEl, `Minimum TON withdrawal is ${MIN_TON_WITHDRAWAL}.`, "error"); if (amount > user.ton_balance) return showFeedback(withdrawalFeedbackEl, `Insufficient TON balance.`, "error"); newBalance = { ton_balance: parseFloat(user.ton_balance) - amount }; } else if (currency === 'sol') { if (amount < MIN_SOL_WITHDRAWAL) return showFeedback(withdrawalFeedbackEl, `Minimum SOL withdrawal is ${MIN_SOL_WITHDRAWAL}.`, "error"); if (amount > user.sol_balance) return showFeedback(withdrawalFeedbackEl, `Insufficient SOL balance.`, "error"); newBalance = { sol_balance: parseFloat(user.sol_balance) - amount }; } await updateUserProfile(newBalance); await supabase.from('transaction_logs').insert({ user_id: user.id, transaction_type: 'withdrawal', currency: currency.toUpperCase(), amount: amountAfterFee, withdrawal_address: address, status: 'pending' }); updateAllUI(); withdrawalAmountInput.value = ''; walletAddressInput.value = ''; showFeedback(withdrawalFeedbackEl, `Request for ${amount} ${currency.toUpperCase()} submitted. You will receive ~${amountAfterFee.toFixed(4)} after fees.`, "success"); fetchAndRenderWithdrawalHistory(); }
+    async function handleHistoryToggle(event) { if (event.target.open) await fetchAndRenderWithdrawalHistory(); }
+    async function fetchAndRenderWithdrawalHistory() { withdrawalHistoryContainer.innerHTML = '<div class="spinner" style="margin: 20px auto;"></div>'; const { data, error } = await supabase.from('transaction_logs').select('*').eq('user_id', user.id).eq('transaction_type', 'withdrawal').order('created_at', { ascending: false }); if (error) { withdrawalHistoryContainer.innerHTML = '<p class="placeholder-text error-text">Could not load history.</p>'; return; } if (data.length === 0) { withdrawalHistoryContainer.innerHTML = '<p class="placeholder-text">No withdrawal history yet.</p>'; return; } withdrawalHistoryContainer.innerHTML = data.map(tx => `<div class="history-item"><div class="history-details"><p>Amount: <strong>${tx.amount.toFixed(4)} ${tx.currency}</strong></p><p class="history-address">To: ${tx.withdrawal_address}</p></div><div class="history-status ${tx.status}">${tx.status}</div><div class="history-date">${new Date(tx.created_at).toLocaleString()}</div></div>`).join(''); }
+    async function handleLeaderboardToggle(event) { if (event.target.open) await fetchAndRenderLeaderboard(); }
+    async function fetchAndRenderLeaderboard() { leaderboardList.innerHTML = '<div class="spinner" style="margin: 20px auto;"></div>'; const { data, error } = await supabase.from('profiles').select('full_name, points').order('points', { ascending: false }).limit(100); if (error) { leaderboardList.innerHTML = '<p class="placeholder-text error-text">Could not load leaderboard.</p>'; return; } if (data.length === 0) { leaderboardList.innerHTML = '<p class="placeholder-text">Leaderboard is empty.</p>'; return; } leaderboardList.innerHTML = data.map((player, index) => `<div class="leaderboard-item"><span class="leaderboard-rank">#${index + 1}</span><span class="leaderboard-name">${player.full_name}</span><span class="leaderboard-points">${Math.floor(player.points).toLocaleString()}</span></div>`).join(''); }
+    async function fetchAndRenderEventStats() { totalUsersValueEl.textContent = 'Loading...'; totalPointsValueEl.textContent = 'Loading...'; const { count, error: countError } = await supabase.from('profiles').select('*', { count: 'exact', head: true }); if (countError) { totalUsersValueEl.textContent = 'Error'; } else { totalUsersValueEl.textContent = count.toLocaleString(); } const { data: totalPoints, error: rpcError } = await supabase.rpc('get_total_points'); if (rpcError) { totalPointsValueEl.textContent = 'Error'; } else { totalPointsValueEl.textContent = Math.floor(totalPoints).toLocaleString(); } }
 
     // --- START THE APP ---
-    main().catch(error => {
-        console.error("Failed to initialize the app:", error);
-        loadingOverlay.innerHTML = `<p style="color: var(--error-color); text-align: center;">Failed to load game data.<br>Please try again later.</p>`;
-    });
+    main().catch(error => { console.error("Failed to initialize the app:", error); loadingOverlay.innerHTML = `<p style="color: var(--error-color); text-align: center;">Failed to load game data.<br>Please try again later.<br><small>${error.message}</small></p>`; });
 });
