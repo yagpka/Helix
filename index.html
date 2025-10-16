@@ -7,26 +7,32 @@
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     
     <!-- SDKs -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
 </head>
 <body>
+    <!-- Sound Effect Elements -->
+    <audio id="tap-sound" src="tap.mp3" preload="auto"></audio>
+    <audio id="spin-sound" src="spin1.mp3" preload="auto"></audio>
+    <audio id="background-music" src="back.mp3" preload="auto" loop></audio>
 
     <!-- Loading Overlay -->
     <div id="loading-overlay" class="loading-overlay">
         <div class="spinner"></div>
-        <p>Loading Game...</p>
+        <p>Initializing Game Systems...</p>
     </div>
 
     <div class="app-container">
         <!-- TOP BAR: PROFILE & POINTS -->
         <header class="top-bar">
-            <div id="profile-button" class="profile-icon" title="View Profile">🧑‍🚀</div>
+            <div id="profile-button" class="profile-icon" title="View Profile">
+                <span>🧑‍🚀</span>
+            </div>
             <div class="points-display">
-                <span>POINTS</span>
+                <span class="label">POINTS</span>
                 <strong id="points-value">0</strong>
             </div>
         </header>
@@ -38,161 +44,170 @@
             <section id="home-page" class="page active">
                 <div id="gacha-machine" class="gacha-machine">
                     <div class="header">
-                        <h1>YTD Gacha</h1>
-                        <p>MiniGame</p>
+                        <h1>YTD GACHA</h1>
                     </div>
-                    <div class="reels-container">
-                        <div class="reel-shutter"></div>
-                        <div class="reel"></div>
-                        <div class="reel"></div>
-                        <div class="reel"></div>
+                     <div class="reels-window">
+                        <div class="reels-container">
+                            <div class="reel"></div>
+                            <div class="reel"></div>
+                            <div class="reel"></div>
+                        </div>
+                        <div class="reel-shutter">
+                             <div class="shutter-logo">YTD</div>
+                        </div>
                     </div>
                     <div class="display-panel">
                         <div class="currency">
                             <span id="currency-icon">🎟️</span> <span id="currency-amount">0</span> PULLS
                         </div>
-                        <div id="result-text" class="pixel-font">WATCH AD TO PLAY</div>
+                        <div id="result-text" class="result-text">WATCH AD TO PLAY</div>
                     </div>
                     <div class="controls">
-                        <button id="pull-button" class="lever-button" disabled>
-                            <span class="lever-text">PULL LEVER</span>
-                            <span class="lever-handle"></span>
-                        </button>
-                        <button id="watch-ad-button" class="ad-button">WATCH AD FOR 10 PULLS</button>
+                        <button id="pull-button" class="action-button primary" disabled>PULL</button>
+                        <button id="watch-ad-button" class="action-button secondary">WATCH AD FOR 10 PULLS</button>
                     </div>
                 </div>
                 
-                <!-- TIMED REWARDS SECTION -->
-                <div class="timed-rewards-container">
-                    <div id="treasure-box" class="timed-reward-box">
-                        <div class="reward-icon">🎁</div>
-                        <div id="treasure-timer" class="reward-timer">00:00</div>
-                        <button id="treasure-claim-button" class="reward-claim-button" disabled>Claim</button>
-                    </div>
-                    <div id="ticket-box" class="timed-reward-box">
-                        <div class="reward-icon">🎟️</div>
-                        <div id="ticket-timer" class="reward-timer">00:00</div>
-                        <button id="ticket-claim-button" class="reward-claim-button" disabled>Claim</button>
-                    </div>
+                <!-- NEW FLOATING REWARDS -->
+                <div class="floating-rewards-container">
+                    <button id="floating-treasure-button" class="floating-reward-btn left" disabled>
+                        <div class="icon">🎁</div>
+                        <div class="timer" id="treasure-timer-float"></div>
+                    </button>
+                    <button id="floating-ticket-button" class="floating-reward-btn right" disabled>
+                        <div class="icon">🎟️</div>
+                        <div class="timer" id="ticket-timer-float"></div>
+                    </button>
                 </div>
 
             </section>
 
-            <!-- PAGE 2: PROFILE (MODIFIED) -->
+            <!-- PAGE 2: PROFILE -->
             <section id="profile-page" class="page">
-                <div class="page-content">
-                     <!-- PROFILE DROPDOWN -->
-                    <details id="profile-details" open>
+                <div class="page-header">
+                    <h1 class="page-title">Profile & Ranks</h1>
+                    <button id="close-profile-button" class="close-button">×</button>
+                </div>
+                 <div class="page-content">
+                    <details id="profile-details" class="expandable-section" open>
                         <summary class="expandable-header">My Profile</summary>
                         <div class="profile-card">
                             <div class="profile-avatar">🧑‍🚀</div>
                             <h2 id="profile-name">Player One</h2>
                             <p id="profile-username">@player1</p>
                             <div class="profile-points">
-                                <span class="pixel-font">TOTAL POINTS</span>
+                                <span class="label">TOTAL POINTS</span>
                                 <strong id="profile-points-value">0</strong>
                             </div>
-                             <button id="close-profile-button" class="action-button">Close</button>
                         </div>
                     </details>
             
-                    <!-- LEADERBOARD DROPDOWN -->
-                    <details id="leaderboard-details">
+                    <details id="leaderboard-details" class="expandable-section">
                         <summary class="expandable-header">Leaderboard</summary>
-                        <div class="leaderboard-container">
-                            <div id="leaderboard-list">
-                                <p class="no-history">Expand to view leaderboard.</p>
-                            </div>
+                        <!-- NEW LEADERBOARD REWARDS INFO -->
+                        <div class="leaderboard-rewards-info">
+                            <h3>🏆 Weekly Rewards</h3>
+                            <p>Rewards are distributed every Monday to the top 10 players based on weekly points.</p>
+                            <ul>
+                                <li><strong>1st:</strong> 0.02 TON</li>
+                                <li><strong>2nd:</strong> 0.01 TON</li>
+                                <li><strong>3rd:</strong> 0.008 TON</li>
+                                <li><strong>4th-5th:</strong> 0.005 TON</li>
+                                <li><strong>6th-10th:</strong> 0.001 TON</li>
+                            </ul>
+                        </div>
+                        <div id="leaderboard-list" class="leaderboard-container scrollable-list">
+                            <p class="placeholder-text">Expand to view leaderboard.</p>
                         </div>
                     </details>
                 </div>
             </section>
 
-
             <!-- PAGE 3: WALLET -->
             <section id="wallet-page" class="page">
-                <div class="page-content">
-                    <h1 class="page-title">My Wallet</h1>
+                 <div class="page-header"><h1 class="page-title">Wallet</h1></div>
+                 <div class="page-content">
+                    <div id="withdrawal-gate-notice" class="gate-notice hidden">
+                        <h2>Withdrawals Locked</h2>
+                        <p>To ensure system stability, withdrawals will be activated once our community grows to <strong>1,000 players</strong>.</p>
+                        <div class="user-progress-bar">
+                            <div id="user-progress-bar-inner" class="progress-bar-inner"></div>
+                        </div>
+                        <p><strong id="user-count-progress">0 / 1,000</strong> Players</p>
+                    </div>
+
                     <div class="wallet-section">
                         <h2>Points Exchange</h2>
-                        <p class="instructions">Exchange your game points for cryptocurrency. You must exchange in blocks of 1,000,000 points.</p>
+                        <p class="instructions">Convert your points into cryptocurrency. You must exchange in multiples of 1,000,000 points. This is the only way to fund your withdrawal balance.</p>
                         <div class="exchange-rates">
                             <div class="rate">1,000,000 Points = <strong>0.3 TON</strong></div>
                             <div class="rate">1,000,000 Points = <strong>0.0038 SOL</strong></div>
                         </div>
                         <div class="wallet-form">
-                            <label for="points-to-exchange">Points to Exchange:</label>
                             <input type="number" id="points-to-exchange" placeholder="e.g., 1000000">
-                            <label for="exchange-crypto-select">Exchange For:</label>
                             <select id="exchange-crypto-select">
                                 <option value="ton">TON</option>
                                 <option value="sol">SOL</option>
                             </select>
-                            <button id="exchange-button" class="action-button">Exchange</button>
+                            <button id="exchange-button" class="action-button primary full-width">Exchange</button>
                             <div id="exchange-feedback" class="feedback-message"></div>
                         </div>
                     </div>
                     <div class="wallet-section">
                         <h2>Withdrawal</h2>
-                        <p class="instructions">
-                            Withdraw your crypto to an external wallet.
-                            <br>• Min TON: <strong>1</strong> | Min SOL: <strong>0.01</strong>
-                            <br>• A <strong>1.5%</strong> fee applies to all withdrawals.
-                        </p>
-                        <div class="crypto-balances">
-                            <div class="balance">Your TON: <strong id="ton-balance">0.00</strong></div>
-                            <div class="balance">Your SOL: <strong id="sol-balance">0.0000</strong></div>
-                        </div>
-                        <div class="wallet-form">
-                            <label for="crypto-select">Select Currency:</label>
-                            <select id="crypto-select">
-                                <option value="ton">TON</option>
-                                <option value="sol">SOL</option>
-                            </select>
-                            <label for="withdrawal-amount">Amount:</label>
-                            <input type="text" id="withdrawal-amount" placeholder="e.g., 1.5">
-                            <label for="wallet-address">Your Wallet Address:</label>
-                            <input type="text" id="wallet-address" placeholder="Enter your wallet address">
-                            <button id="withdraw-button" class="action-button">Withdraw</button>
-                            <div id="withdrawal-feedback" class="feedback-message"></div>
-                        </div>
-                    </div>
-                    <div class="wallet-section">
-                        <details id="history-details">
-                            <summary class="expandable-header">Withdrawal History</summary>
-                            <div id="withdrawal-history-container" class="history-container">
-                                <p class="no-history">No withdrawal history yet.</p>
+                        <fieldset id="withdrawal-fieldset" disabled>
+                            <p class="instructions">
+                                Withdraw crypto to an external wallet.
+                                <br>• Min: <strong>1 TON</strong> or <strong>0.01 SOL</strong>
+                                <br>• A flat <strong>5%</strong> network fee applies to all withdrawals.
+                            </p>
+                            <div class="crypto-balances">
+                                <div class="balance">TON: <strong id="ton-balance">0.00</strong></div>
+                                <div class="balance">SOL: <strong id="sol-balance">0.0000</strong></div>
                             </div>
-                        </details>
+                            <div class="wallet-form">
+                                <select id="crypto-select">
+                                    <option value="ton">TON</option>
+                                    <option value="sol">SOL</option>
+                                </select>
+                                <input type="text" id="withdrawal-amount" placeholder="Amount to withdraw">
+                                <input type="text" id="wallet-address" placeholder="Your Wallet Address">
+                                <button id="withdraw-button" class="action-button primary full-width">Request Withdrawal</button>
+                                <div id="withdrawal-feedback" class="feedback-message"></div>
+                            </div>
+                        </fieldset>
                     </div>
+                    <details id="history-details" class="expandable-section">
+                        <summary class="expandable-header">Withdrawal History</summary>
+                        <div id="withdrawal-history-container" class="history-container scrollable-list">
+                            <p class="placeholder-text">No withdrawal history yet.</p>
+                        </div>
+                    </details>
                 </div>
             </section>
 
             <!-- PAGE 4: TASKS -->
             <section id="tasks-page" class="page">
-                <div class="page-content">
-                    <h1 class="page-title">Daily Activity</h1>
-                    <div class="streak-section">
+                 <div class="page-header"><h1 class="page-title">Daily Activity</h1></div>
+                 <div class="page-content">
+                    <div class="tasks-section">
                         <h2>Daily Streak</h2>
-                        <div id="streak-container" class="streak-container">
-                            <!-- Streak days will be generated by JS -->
+                        <div id="streak-container" class="streak-container-structured">
+                            <!-- JS will generate structured streak items here -->
                         </div>
                     </div>
                     <div class="tasks-section">
                         <h2>Daily Tasks</h2>
-                        <div id="tasks-container" class="tasks-container">
-                            <!-- Tasks will be generated by JS -->
-                        </div>
+                        <div id="tasks-container" class="tasks-container"></div>
                     </div>
                 </div>
             </section>
 
             <!-- PAGE 5: EVENTS -->
             <section id="events-page" class="page">
-                <div class="page-content">
-                    <h1 class="page-title">Game Statistics</h1>
+                 <div class="page-header"><h1 class="page-title">Game Statistics</h1></div>
+                 <div class="page-content">
                     <p class="instructions" style="text-align: center; margin-bottom: 30px;">See how our community is growing!</p>
-                    
                     <div class="stats-container">
                         <div class="stat-box">
                             <h2>Total Users</h2>
@@ -203,10 +218,8 @@
                             <p id="total-points-value" class="stat-value">Loading...</p>
                         </div>
                     </div>
-
                 </div>
             </section>
-
         </main>
 
         <!-- BOTTOM NAVIGATION BAR -->
@@ -221,27 +234,25 @@
     <!-- ANNOUNCEMENT MODAL -->
     <div id="announcement-modal" class="modal-overlay hidden">
         <div class="modal-content">
-            <h2 class="modal-title">🎉 Game Update! 🎉</h2>
+            <h2 class="modal-title">Welcome & Updates!</h2>
             <div class="announcement-body">
-                <p><strong>Hello Players! We've just rolled out some exciting new features:</strong></p>
+                <p><strong>Here's what's new and what's coming:</strong></p>
                 <ul>
-                    <li>🏆 <strong>Leaderboard:</strong> Compete with other players! Check your rank in the Profile section.</li>
-                    <li>📊 <strong>Community Stats:</strong> A new 'Events' tab shows our total players and points farmed.</li>
-                    <li>🎁 <strong>Special Event Coming:</strong> Once we reach <strong>100 players</strong>, a special in-game event with huge rewards will begin!</li>
+                    <li>🏆 <strong>NEW Leaderboard Rewards:</strong> Top 10 players win TON rewards every Monday! Check the Leaderboard for prize details.</li>
+                    <li>🎉 <strong>Community Event:</strong> A special in-game event with huge rewards will begin when we reach <strong>200 players!</strong></li>
+                    <li>💰 <strong>Withdrawals Unlock:</strong> The ability to withdraw crypto will be enabled for everyone once we reach <strong>1,000 players!</strong></li>
                 </ul>
-                <p>Help us grow! Share the game with your friends and let's unlock the event together!</p>
+                <p>Help us grow! Share the game with your friends and let's unlock these milestones together!</p>
             </div>
             <div class="modal-actions">
-                <button id="share-game-button" class="action-button">Share Game</button>
+                <button id="share-game-button" class="action-button primary">Share Game</button>
                 <button id="close-announcement-button" class="action-button secondary">Close</button>
             </div>
         </div>
     </div>
 
-
     <!-- Supabase Client Library (must be before script.js) -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
     <script src="script.js"></script>
 </body>
 </html>
