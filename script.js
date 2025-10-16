@@ -109,7 +109,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         
         TWA.expand();
-        document.body.style.setProperty('--bg-color', TWA.themeParams.bg_color || '#0F0F1A');
+        // ** THEME FIX **: Force the app's dark background color.
+        // This tells the Telegram client that our app is dark, ensuring the status bar and other native UI elements match.
+        TWA.setBackgroundColor('#0F0F1A');
+        TWA.setHeaderColor('#1B1B2B');
         
         await loadInitialData(telegramUser);
         await checkDailyResets();
