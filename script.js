@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         iconCount: 40, 
         spinDuration: 1000, 
         staggerDelay: 500,
-        stopDuration: 4000 // IMPORTANT: This should match the CSS transition duration for stopping.
+        stopDuration: 4000
     };
 
     // --- STATE MANAGEMENT ---
@@ -95,6 +95,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     let taskProgress = {};
     let isSpinning = false;
     let totalUserCount = 0;
+    let animationIconHeight = 0; // ** NEW: To store reliable icon height **
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     
     // =================================================================
     // --- DATA & INITIALIZATION LOGIC ---
@@ -103,6 +105,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     const main = async () => {
         setupEventListeners();
         buildAnimationReels();
+        
+        // ** NEW: Reliably measure icon height after DOM is built **
+        setTimeout(() => {
+            const iconEl = document.querySelector('.animation-reel-icon');
+            if (iconEl) {
+                animationIconHeight = iconEl.offsetHeight;
+            }
+        }, 100); // A small delay ensures the browser has rendered the element.
 
         const TWA = window.Telegram.WebApp;
 
@@ -217,7 +227,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // =================================================================
 
     async function handlePull() {
-        if (isSpinning || user.pulls <= 0) return;
+        if (isSpinning || user.pulls <= 0 || animationIconHeight === 0) return; // Prevent pull if icon height not measured
         isSpinning = true;
 
         await updateUserProfile({ pulls: user.pulls - 1 });
@@ -243,7 +253,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         const stopPromises = reels.map((reel, i) => {
             return new Promise(resolve => {
                 setTimeout(() => {
-                    // The stopAnimationReel now returns the result directly
                     const result = stopAnimationReel(reel);
                     resolve(result);
                 }, i * ANIMATION_REEL_CONFIG.staggerDelay);
@@ -252,35 +261,32 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const finalResults = await Promise.all(stopPromises);
         
-        // This timeout ensures the visual stopping animation has completed before checking the win
         setTimeout(() => {
             checkWin(finalResults);
         }, ANIMATION_REEL_CONFIG.stopDuration);
     }
 
-    // --- MODIFIED & SIMPLIFIED FUNCTION ---
     function stopAnimationReel(reel) {
         reel.classList.remove('spinning');
         
-        const iconHeight = reel.querySelector('.animation-reel-icon').offsetHeight;
         const iconCount = ANIMATION_REEL_CONFIG.iconCount;
         const randomIndex = Math.floor(Math.random() * iconCount);
-        const screenCenterOffset = (gachaAnimationScreen.offsetHeight - iconHeight) / 2;
-        const finalPosition = (randomIndex * iconHeight) - screenCenterOffset;
+        
+        // ** THE FIX: Use the pre-calculated, reliable icon height **
+        const screenCenterOffset = (gachaAnimationScreen.offsetHeight - animationIconHeight) / 2;
+        const finalPosition = (randomIndex * animationIconHeight) - screenCenterOffset;
 
         reel.style.transform = `translateY(-${finalPosition}px)`;
         
-        // After the transition visually completes, apply final classes
         setTimeout(() => {
             reel.classList.add('stopped');
             const winnerIcon = reel.children[randomIndex];
             if (winnerIcon) winnerIcon.classList.add('winner');
-        }, 50); // Small delay to ensure styles apply
+        }, 50);
 
-        // Return the result immediately for logic processing.
         const winnerIconEl = reel.children[randomIndex];
         const symbol = winnerIconEl.textContent;
-        const points = GACHA_ITEMS.find(item => item.symbol === symbol).points;
+        const points = GACHA_ITEMS.find(item => item.symbol === symbol)?.points || 0;
         return { symbol, points };
     }
 
@@ -333,10 +339,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (isJackpot) resultText.classList.add('jackpot');
             else resultText.classList.add('win');
             
-            isSpinning = false; // Set spinning to false HERE, at the very end.
+            isSpinning = false;
             updateButtonStates();
             renderTasksPage();
-        }, 400); // This should match the CSS exit transition
+        }, 400);
     }
 
     function buildAnimationReels() {
@@ -351,7 +357,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const item = GACHA_ITEMS[Math.floor(Math.random() * GACHA_ITEMS.length)];
                 iconPool.push(item);
             }
-            // Duplicate the pool to allow seamless looping
             const allIcons = [...iconPool, ...iconPool]; 
             allIcons.forEach(item => {
                 const iconDiv = document.createElement('div');
@@ -373,10 +378,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         document.querySelectorAll('.animation-reel-inner').forEach(reel => {
             reel.classList.remove('stopped', 'spinning');
-            reel.style.transition = 'none'; // Temporarily remove transition for instant reset
+            reel.style.transition = 'none';
             reel.style.transform = 'translateY(0)';
-            reel.offsetHeight; // Force a browser reflow to apply the reset
-            reel.style.transition = ''; // Re-add the transition property
+            reel.offsetHeight;
+            reel.style.transition = '';
             Array.from(reel.children).forEach(icon => icon.classList.remove('winner'));
         });
     }
@@ -394,6 +399,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function createParticleBurst() {
+        if (prefersReducedMotion) return; // Respect user settings
         for (let i = 0; i < 30; i++) {
             const p = document.createElement('div'); p.className = 'particle';
             const angle = Math.random() * 360; const radius = Math.random() * 150 + 50;
