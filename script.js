@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let taskProgress = {};
     let isSpinning = false;
     let totalUserCount = 0;
-    let animationIconHeight = 0; // ** NEW: To store reliable icon height **
+    let animationIconHeight = 0; // Cached value for reliable animation
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     
     // =================================================================
@@ -105,14 +105,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const main = async () => {
         setupEventListeners();
         buildAnimationReels();
-        
-        // ** NEW: Reliably measure icon height after DOM is built **
-        setTimeout(() => {
-            const iconEl = document.querySelector('.animation-reel-icon');
-            if (iconEl) {
-                animationIconHeight = iconEl.offsetHeight;
-            }
-        }, 100); // A small delay ensures the browser has rendered the element.
 
         const TWA = window.Telegram.WebApp;
 
@@ -227,7 +219,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     // =================================================================
 
     async function handlePull() {
-        if (isSpinning || user.pulls <= 0 || animationIconHeight === 0) return; // Prevent pull if icon height not measured
+        // ** THE FIX: Measure the icon height just-in-time, but only once. **
+        if (animationIconHeight === 0) {
+            const iconEl = document.querySelector('.animation-reel-icon');
+            if (iconEl && iconEl.offsetHeight > 0) {
+                animationIconHeight = iconEl.offsetHeight;
+            } else {
+                // If it's still 0, something is wrong, so we wait and let the user try again.
+                console.error("Could not measure icon height. Please try pulling again.");
+                return; 
+            }
+        }
+        
+        // Final guard to ensure everything is ready
+        if (isSpinning || user.pulls <= 0) return;
         isSpinning = true;
 
         await updateUserProfile({ pulls: user.pulls - 1 });
@@ -245,7 +250,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const reels = Array.from(document.querySelectorAll('.animation-reel-inner'));
         reels.forEach(reel => {
             reel.classList.add('spinning');
-            reel.style.transform = `translateY(-${reel.scrollHeight / 1.5}px)`;
+            // Remove the old transform to let the CSS animation take over
         });
         
         await new Promise(resolve => setTimeout(resolve, ANIMATION_REEL_CONFIG.spinDuration));
@@ -268,11 +273,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function stopAnimationReel(reel) {
         reel.classList.remove('spinning');
+        reel.style.animation = 'none'; // Stop the CSS keyframe animation
         
         const iconCount = ANIMATION_REEL_CONFIG.iconCount;
         const randomIndex = Math.floor(Math.random() * iconCount);
         
-        // ** THE FIX: Use the pre-calculated, reliable icon height **
         const screenCenterOffset = (gachaAnimationScreen.offsetHeight - animationIconHeight) / 2;
         const finalPosition = (randomIndex * animationIconHeight) - screenCenterOffset;
 
@@ -357,7 +362,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const item = GACHA_ITEMS[Math.floor(Math.random() * GACHA_ITEMS.length)];
                 iconPool.push(item);
             }
-            const allIcons = [...iconPool, ...iconPool]; 
+            const allIcons = [...iconPool, ...iconPool, ...iconPool, ...iconPool]; // Add more copies for smoother animation
             allIcons.forEach(item => {
                 const iconDiv = document.createElement('div');
                 iconDiv.className = 'animation-reel-icon';
@@ -379,6 +384,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.querySelectorAll('.animation-reel-inner').forEach(reel => {
             reel.classList.remove('stopped', 'spinning');
             reel.style.transition = 'none';
+            reel.style.animation = ''; // Reset animation property
             reel.style.transform = 'translateY(0)';
             reel.offsetHeight;
             reel.style.transition = '';
@@ -399,7 +405,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function createParticleBurst() {
-        if (prefersReducedMotion) return; // Respect user settings
+        if (prefersReducedMotion) return;
         for (let i = 0; i < 30; i++) {
             const p = document.createElement('div'); p.className = 'particle';
             const angle = Math.random() * 360; const radius = Math.random() * 150 + 50;
@@ -408,7 +414,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             particleContainer.appendChild(p);
         }
     }
-
 
     // --- WALLET/PROFILE/EVENTS FUNCTIONS ---
     async function checkWithdrawalGate() { const { count, error } = await supabase.from('profiles').select('*', { count: 'exact', head: true }); if (error) { console.error("Could not fetch user count:", error); return; } totalUserCount = count; const progressPercent = Math.min(100, (totalUserCount / WITHDRAWAL_USER_GATE) * 100); userCountProgress.textContent = `${totalUserCount.toLocaleString()} / ${WITHDRAWAL_USER_GATE.toLocaleString()} Players`; userProgressBarInner.style.width = `${progressPercent}%`; if (totalUserCount >= WITHDRAWAL_USER_GATE) { withdrawalGateNotice.classList.add('hidden'); withdrawalFieldset.disabled = false; } else { withdrawalGateNotice.classList.remove('hidden'); withdrawalFieldset.disabled = true; } }
