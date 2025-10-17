@@ -25,6 +25,7 @@
         <p>Initializing Game Systems...</p>
     </div>
 
+    <!-- YOUR GAME UI CONTAINER -->
     <div class="app-container">
         <!-- TOP BAR: PROFILE & POINTS -->
         <header class="top-bar">
@@ -44,7 +45,7 @@
             <section id="home-page" class="page active">
                 <div id="gacha-machine" class="gacha-machine">
                     <div class="header">
-                        <h1>YTD</h1>
+                        <h1>YTD GACHA</h1>
                     </div>
                      <div class="reels-window">
                         <div class="reels-container">
@@ -68,7 +69,6 @@
                     </div>
                 </div>
                 
-                <!-- NEW FLOATING REWARDS -->
                 <div class="floating-rewards-container">
                     <button id="floating-treasure-button" class="floating-reward-btn left" disabled>
                         <div class="icon">🎁</div>
@@ -104,7 +104,6 @@
             
                     <details id="leaderboard-details" class="expandable-section">
                         <summary class="expandable-header">Leaderboard</summary>
-                        <!-- NEW LEADERBOARD REWARDS INFO -->
                         <div class="leaderboard-rewards-info">
                             <h3>🏆 Weekly Rewards</h3>
                             <p>Rewards are distributed every Monday to the top 10 players based on weekly points.</p>
@@ -250,6 +249,21 @@
             </div>
         </div>
     </div>
+    
+    <!-- ================================================================= -->
+    <!-- === NEW FULL-SCREEN ANIMATION LAYER (INTEGRATED) === -->
+    <!-- ================================================================= -->
+    <div id="gacha-animation-screen" class="hidden">
+        <div class="casino-lights"></div>
+        <div id="animation-reels-container">
+            <!-- Reels for the new animation will be generated here -->
+        </div>
+        <div id="particle-container"></div>
+        <div id="animation-result-display" class="hidden">
+            <div id="animation-points-won"></div>
+        </div>
+    </div>
+
 
     <!-- Supabase Client Library (must be before script.js) -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
