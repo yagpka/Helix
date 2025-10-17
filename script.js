@@ -47,6 +47,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const ticketBtnFloat = document.getElementById('floating-ticket-button');
     const treasureTimerFloat = document.getElementById('treasure-timer-float');
     const ticketTimerFloat = document.getElementById('ticket-timer-float');
+
+    // --- NEW: Selectors for the animation screen ---
     const gachaAnimationScreen = document.getElementById('gacha-animation-screen');
     const animationReelsContainer = document.getElementById('animation-reels-container');
     const particleContainer = document.getElementById('particle-container');
@@ -82,12 +84,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const TREASURE_REWARD_POINTS = 2000;
     const TICKET_COOLDOWN = 5 * 60 * 1000;
     const TICKET_REWARD_PULLS = 6;
-    const ANIMATION_REEL_CONFIG = { 
-        iconCount: 40, 
-        spinDuration: 1000, 
-        staggerDelay: 500,
-        stopDuration: 4000
-    };
+    const ANIMATION_REEL_CONFIG = { iconCount: 40, spinDuration: 1000, staggerDelay: 500 };
 
     // --- STATE MANAGEMENT ---
     let user = {}; 
@@ -95,8 +92,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     let taskProgress = {};
     let isSpinning = false;
     let totalUserCount = 0;
-    let animationIconHeight = 0; // Cached value for reliable animation
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     
     // =================================================================
     // --- DATA & INITIALIZATION LOGIC ---
@@ -104,18 +99,20 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const main = async () => {
         setupEventListeners();
-        buildAnimationReels();
+        buildAnimationReels(); // NEW: Build animation reels on load
 
         const TWA = window.Telegram.WebApp;
 
-        if (!TWA || !TWA.initDataUnsafe?.user) {
-            throw new Error("Cannot authenticate user. Please open this app through the official Telegram client.");
+        // Production-ready check: Ensure the app is running in Telegram
+        if (!TWA || !TWA.initDataUnsafe || !TWA.initDataUnsafe.user) {
+            console.error("Telegram Web App user data not found. This app must be run within Telegram.");
+            loadingOverlay.innerHTML = `<p style="color: var(--error-color); text-align: center; padding: 20px;">This application can only be accessed through Telegram.</p>`;
+            return; // Stop execution if not in Telegram
         }
         
         TWA.ready();
         TWA.expand();
         document.body.style.setProperty('--bg-color', TWA.themeParams.bg_color || '#0F0F1A');
-        
         const telegramUser = TWA.initDataUnsafe.user;
         
         await loadInitialData(telegramUser);
@@ -172,7 +169,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.querySelectorAll('button, details > summary, .nav-button, .profile-icon').forEach(el => { el.addEventListener('click', playTapSound); });
         navButtons.forEach(button => button.addEventListener('click', () => navigateTo(button.dataset.page)));
         profileButton.addEventListener('click', () => navigateTo('profile-page'));
-        pullButton.addEventListener('click', handlePull);
+        pullButton.addEventListener('click', handlePull); // This now triggers the new animation
         watchAdButton.addEventListener('click', handleWatchAd);
         exchangeButton.addEventListener('click', handleExchange);
         withdrawButton.addEventListener('click', handleWithdraw);
@@ -203,6 +200,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     function renderDailyTasks() { tasksContainer.innerHTML = ''; if (Object.keys(tasks).length === 0) { tasksContainer.innerHTML = '<p class="placeholder-text">Loading tasks...</p>'; return; } DAILY_TASK_KEYS.forEach(taskKey => { const taskDef = Object.values(tasks).find(t => t.task_key === taskKey); if (!taskDef) return; const progress = taskProgress[taskKey]?.current_progress || 0; const isClaimed = taskProgress[taskKey]?.is_claimed || false; const isComplete = progress >= taskDef.target_value; let rewardText = taskDef.reward_type === 'points' ? `+${taskDef.reward_amount.toLocaleString()} PTS` : `+${taskDef.reward_amount} Pulls`; const taskEl = document.createElement('div'); taskEl.className = 'task-item'; taskEl.innerHTML = `<div class="task-info"><p>${taskDef.description} (${progress}/${taskDef.target_value})</p><div class="progress-bar"><div class="progress-bar-inner" style="width: ${Math.min(100, (progress / taskDef.target_value) * 100)}%;"></div></div></div><div class="task-reward">${rewardText}</div><button class="claim-button" data-task-key="${taskDef.task_key}" ${(!isComplete || isClaimed) ? 'disabled' : ''}>${isClaimed ? 'Claimed' : 'Claim'}</button>`; tasksContainer.appendChild(taskEl); }); tasksContainer.querySelectorAll('.claim-button').forEach(button => button.addEventListener('click', (e) => claimTaskReward(e.currentTarget.dataset.taskKey))); }
     function showFeedback(element, message, type) { element.textContent = message; element.className = `feedback-message ${type} show`; setTimeout(() => { element.classList.remove('show'); }, 4000); }
     
+    // --- GAME ACTIONS ---
     function initializeTimedRewards() { setInterval(updateTimedRewards, 1000); updateTimedRewards(); }
     
     function updateTimedRewards() { const now = Date.now(); const lastTreasureClaim = user.last_treasure_claim ? new Date(user.last_treasure_claim).getTime() : 0; const treasureCooldownEnd = lastTreasureClaim + TREASURE_COOLDOWN; if (now < treasureCooldownEnd) { treasureTimerFloat.textContent = formatTime(treasureCooldownEnd - now); treasureBtnFloat.disabled = true; } else { treasureTimerFloat.textContent = ''; treasureBtnFloat.disabled = false; } const lastTicketClaim = user.last_ticket_claim ? new Date(user.last_ticket_claim).getTime() : 0; const ticketCooldownEnd = lastTicketClaim + TICKET_COOLDOWN; if (now < ticketCooldownEnd) { ticketTimerFloat.textContent = formatTime(ticketCooldownEnd - now); ticketBtnFloat.disabled = true; } else { ticketTimerFloat.textContent = ''; ticketBtnFloat.disabled = false; } }
@@ -214,27 +212,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     async function claimTaskReward(taskKey) { const progressData = taskProgress[taskKey]; if (!progressData || progressData.is_claimed) return; const taskDef = Object.values(tasks).find(t => t.task_key === taskKey); if (progressData.current_progress >= taskDef.target_value) { let profileUpdate = {}; if (taskDef.reward_type === 'points') profileUpdate.points = user.points + taskDef.reward_amount; else if (taskDef.reward_type === 'pulls') profileUpdate.pulls = user.pulls + taskDef.reward_amount; await updateUserProfile(profileUpdate); progressData.is_claimed = true; await supabase.from('user_task_progress').update({ is_claimed: true }).match({ user_id: user.id, task_id: taskDef.id, date: getTodayDateString() }); updateAllUI(); updateButtonStates(); renderTasksPage(); } }
     function handleWatchAd() { watchAdButton.disabled = true; watchAdButton.textContent = "LOADING AD..."; AdController.show().then(async () => { await updateUserProfile({ pulls: user.pulls + 10 }); await updateTaskProgress('watch2'); updateAllUI(); updateButtonStates(); resultText.textContent = "YOU GOT 10 PULLS!"; }).catch(() => { resultText.textContent = "AD FAILED. NO REWARD."; }).finally(() => { watchAdButton.disabled = false; watchAdButton.textContent = "WATCH AD FOR 10 PULLS"; updateButtonStates(); renderTasksPage(); }); }
     
+
     // =================================================================
-    // === GACHA ANIMATION SYSTEM (FIXED & ROBUST) ===
+    // === NEW ANIMATION SYSTEM (REPLACES OLD handlePull LOGIC) ===
     // =================================================================
 
     async function handlePull() {
-        // ** THE FIX: Measure the icon height just-in-time, but only once. **
-        if (animationIconHeight === 0) {
-            const iconEl = document.querySelector('.animation-reel-icon');
-            if (iconEl && iconEl.offsetHeight > 0) {
-                animationIconHeight = iconEl.offsetHeight;
-            } else {
-                // If it's still 0, something is wrong, so we wait and let the user try again.
-                console.error("Could not measure icon height. Please try pulling again.");
-                return; 
-            }
-        }
-        
-        // Final guard to ensure everything is ready
-        if (isSpinning || user.pulls <= 0) return;
+        if (user.pulls <= 0 || isSpinning) return;
         isSpinning = true;
 
+        // --- PRESERVED: Your original game logic ---
         await updateUserProfile({ pulls: user.pulls - 1 });
         await updateTaskProgress('pull10');
         updateAllUI();
@@ -243,15 +230,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         resultText.textContent = 'GET READY...';
         if(spinSound) { spinSound.currentTime = 0; spinSound.play().catch(e => {}); }
 
+        // --- NEW: Start the new animation sequence ---
         resetAnimationState();
         appContainer.classList.add('hidden');
         gachaAnimationScreen.classList.remove('hidden');
 
         const reels = Array.from(document.querySelectorAll('.animation-reel-inner'));
-        reels.forEach(reel => {
+        for (const reel of reels) {
             reel.classList.add('spinning');
-            // Remove the old transform to let the CSS animation take over
-        });
+            reel.style.transform = `translateY(-${reel.scrollHeight / 1.5}px)`;
+        }
         
         await new Promise(resolve => setTimeout(resolve, ANIMATION_REEL_CONFIG.spinDuration));
 
@@ -266,33 +254,32 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const finalResults = await Promise.all(stopPromises);
         
-        setTimeout(() => {
-            checkWin(finalResults);
-        }, ANIMATION_REEL_CONFIG.stopDuration);
+        // --- Hand off to your win calculation logic ---
+        await checkWin(finalResults);
     }
 
     function stopAnimationReel(reel) {
-        reel.classList.remove('spinning');
-        reel.style.animation = 'none'; // Stop the CSS keyframe animation
-        
-        const iconCount = ANIMATION_REEL_CONFIG.iconCount;
-        const randomIndex = Math.floor(Math.random() * iconCount);
-        
-        const screenCenterOffset = (gachaAnimationScreen.offsetHeight - animationIconHeight) / 2;
-        const finalPosition = (randomIndex * animationIconHeight) - screenCenterOffset;
+        return new Promise(resolve => {
+            reel.classList.remove('spinning');
+            
+            const iconHeight = reel.querySelector('.animation-reel-icon').offsetHeight;
+            const iconCount = ANIMATION_REEL_CONFIG.iconCount;
+            const randomIndex = Math.floor(Math.random() * iconCount);
+            const screenCenterOffset = (gachaAnimationScreen.offsetHeight - iconHeight) / 2;
+            const finalPosition = (randomIndex * iconHeight) - screenCenterOffset;
 
-        reel.style.transform = `translateY(-${finalPosition}px)`;
-        
-        setTimeout(() => {
-            reel.classList.add('stopped');
-            const winnerIcon = reel.children[randomIndex];
-            if (winnerIcon) winnerIcon.classList.add('winner');
-        }, 50);
-
-        const winnerIconEl = reel.children[randomIndex];
-        const symbol = winnerIconEl.textContent;
-        const points = GACHA_ITEMS.find(item => item.symbol === symbol)?.points || 0;
-        return { symbol, points };
+            reel.style.transform = `translateY(-${finalPosition}px)`;
+            
+            reel.addEventListener('transitionend', () => {
+                reel.classList.add('stopped');
+                const winnerIcon = reel.children[randomIndex];
+                if (winnerIcon) winnerIcon.classList.add('winner');
+                
+                const symbol = winnerIcon.textContent;
+                const points = GACHA_ITEMS.find(item => item.symbol === symbol).points;
+                resolve({ symbol, points });
+            }, { once: true });
+        });
     }
 
     async function checkWin(results) {
@@ -362,7 +349,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const item = GACHA_ITEMS[Math.floor(Math.random() * GACHA_ITEMS.length)];
                 iconPool.push(item);
             }
-            const allIcons = [...iconPool, ...iconPool, ...iconPool, ...iconPool]; // Add more copies for smoother animation
+            const allIcons = [...iconPool, ...iconPool];
             allIcons.forEach(item => {
                 const iconDiv = document.createElement('div');
                 iconDiv.className = 'animation-reel-icon';
@@ -384,7 +371,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.querySelectorAll('.animation-reel-inner').forEach(reel => {
             reel.classList.remove('stopped', 'spinning');
             reel.style.transition = 'none';
-            reel.style.animation = ''; // Reset animation property
             reel.style.transform = 'translateY(0)';
             reel.offsetHeight;
             reel.style.transition = '';
@@ -405,7 +391,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function createParticleBurst() {
-        if (prefersReducedMotion) return;
         for (let i = 0; i < 30; i++) {
             const p = document.createElement('div'); p.className = 'particle';
             const angle = Math.random() * 360; const radius = Math.random() * 150 + 50;
@@ -415,7 +400,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // --- WALLET/PROFILE/EVENTS FUNCTIONS ---
+
+    // --- WALLET/PROFILE/EVENTS FUNCTIONS (Unchanged) ---
     async function checkWithdrawalGate() { const { count, error } = await supabase.from('profiles').select('*', { count: 'exact', head: true }); if (error) { console.error("Could not fetch user count:", error); return; } totalUserCount = count; const progressPercent = Math.min(100, (totalUserCount / WITHDRAWAL_USER_GATE) * 100); userCountProgress.textContent = `${totalUserCount.toLocaleString()} / ${WITHDRAWAL_USER_GATE.toLocaleString()} Players`; userProgressBarInner.style.width = `${progressPercent}%`; if (totalUserCount >= WITHDRAWAL_USER_GATE) { withdrawalGateNotice.classList.add('hidden'); withdrawalFieldset.disabled = false; } else { withdrawalGateNotice.classList.remove('hidden'); withdrawalFieldset.disabled = true; } }
     async function handleExchange() { const pointsToExchange = parseInt(pointsToExchangeInput.value, 10); const selectedCrypto = exchangeCryptoSelect.value; if (isNaN(pointsToExchange) || pointsToExchange <= 0) return showFeedback(exchangeFeedbackEl, "Please enter a valid number.", "error"); if (pointsToExchange > user.points) return showFeedback(exchangeFeedbackEl, "You do not have enough points.", "error"); if (pointsToExchange % POINTS_PER_BLOCK !== 0) return showFeedback(exchangeFeedbackEl, `Exchange in blocks of ${POINTS_PER_BLOCK.toLocaleString()}.`, "error"); const blocks = pointsToExchange / POINTS_PER_BLOCK; let profileUpdate = { points: user.points - pointsToExchange }; let feedbackMessage = ''; if (selectedCrypto === 'ton') { const tonGained = blocks * TON_PER_BLOCK; profileUpdate.ton_balance = parseFloat(user.ton_balance) + tonGained; feedbackMessage = `Exchanged for ${tonGained.toFixed(2)} TON!`; } else if (selectedCrypto === 'sol') { const solGained = blocks * SOL_PER_BLOCK; profileUpdate.sol_balance = parseFloat(user.sol_balance) + solGained; feedbackMessage = `Exchanged for ${solGained.toFixed(4)} SOL!`; } await updateUserProfile(profileUpdate); await supabase.from('transaction_logs').insert({ user_id: user.id, transaction_type: 'exchange', points_exchanged: pointsToExchange, currency: selectedCrypto.toUpperCase(), status: 'completed' }); updateAllUI(); pointsToExchangeInput.value = ''; showFeedback(exchangeFeedbackEl, feedbackMessage, "success"); }
     async function handleWithdraw() { const currency = cryptoSelect.value; const amount = parseFloat(withdrawalAmountInput.value); const address = walletAddressInput.value.trim(); if (isNaN(amount) || amount <= 0) return showFeedback(withdrawalFeedbackEl, "Please enter a valid amount.", "error"); if (address === '') return showFeedback(withdrawalFeedbackEl, "Please enter a wallet address.", "error"); let newBalance; const fee = amount * (WITHDRAWAL_FEE_PERCENT / 100); const amountAfterFee = amount - fee; if (currency === 'ton') { if (amount < MIN_TON_WITHDRAWAL) return showFeedback(withdrawalFeedbackEl, `Minimum TON withdrawal is ${MIN_TON_WITHDRAWAL}.`, "error"); if (amount > user.ton_balance) return showFeedback(withdrawalFeedbackEl, `Insufficient TON balance.`, "error"); newBalance = { ton_balance: parseFloat(user.ton_balance) - amount }; } else if (currency === 'sol') { if (amount < MIN_SOL_WITHDRAWAL) return showFeedback(withdrawalFeedbackEl, `Minimum SOL withdrawal is ${MIN_SOL_WITHDRAWAL}.`, "error"); if (amount > user.sol_balance) return showFeedback(withdrawalFeedbackEl, `Insufficient SOL balance.`, "error"); newBalance = { sol_balance: parseFloat(user.sol_balance) - amount }; } await updateUserProfile(newBalance); await supabase.from('transaction_logs').insert({ user_id: user.id, transaction_type: 'withdrawal', currency: currency.toUpperCase(), amount: amountAfterFee, withdrawal_address: address, status: 'pending' }); updateAllUI(); withdrawalAmountInput.value = ''; walletAddressInput.value = ''; showFeedback(withdrawalFeedbackEl, `Request for ${amount} ${currency.toUpperCase()} submitted. You will receive ~${amountAfterFee.toFixed(4)} after fees.`, "success"); fetchAndRenderWithdrawalHistory(); }
