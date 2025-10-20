@@ -43,30 +43,37 @@
 
             <!-- PAGE 1: HOME (THE GAME) -->
             <section id="home-page" class="page active">
-                <div id="gacha-machine" class="gacha-machine">
-                    <div class="header">
-                        <h1>YTD GACHA</h1>
-                    </div>
-                     <div class="reels-window">
-                        <div class="reels-container">
-                            <div class="reel"></div>
-                            <div class="reel"></div>
-                            <div class="reel"></div>
+                <!-- Added .page-content for consistency -->
+                <div class="page-content">
+                    <!-- NEW: Gacha machine is now inside an expandable section -->
+                    <details id="gacha-details" class="expandable-section" open>
+                        <summary class="expandable-header">YTD Gacha</summary>
+                        
+                        <div id="gacha-machine" class="gacha-machine">
+                            <!-- REMOVED: The old header with the h1 title is gone -->
+                             <div class="reels-window">
+                                <div class="reels-container">
+                                    <div class="reel"><div class="reel-inner">🎰</div></div>
+                                    <div class="reel"><div class="reel-inner">🎰</div></div>
+                                    <div class="reel"><div class="reel-inner">🎰</div></div>
+                                </div>
+                                <div class="reel-shutter">
+                                     <div class="shutter-logo">YTD</div>
+                                </div>
+                            </div>
+                            <div class="display-panel">
+                                <div class="currency">
+                                    <span id="currency-icon">🎟️</span> <span id="currency-amount">0</span> PULLS
+                                </div>
+                                <div id="result-text" class="result-text">WATCH AD TO PLAY</div>
+                            </div>
+                            <div class="controls">
+                                <button id="pull-button" class="action-button primary" disabled>PULL</button>
+                                <button id="watch-ad-button" class="action-button secondary">WATCH AD FOR 10 PULLS</button>
+                            </div>
                         </div>
-                        <div class="reel-shutter">
-                             <div class="shutter-logo">YTD</div>
-                        </div>
-                    </div>
-                    <div class="display-panel">
-                        <div class="currency">
-                            <span id="currency-icon">🎟️</span> <span id="currency-amount">0</span> PULLS
-                        </div>
-                        <div id="result-text" class="result-text">WATCH AD TO PLAY</div>
-                    </div>
-                    <div class="controls">
-                        <button id="pull-button" class="action-button primary" disabled>PULL</button>
-                        <button id="watch-ad-button" class="action-button secondary">WATCH AD FOR 10 PULLS</button>
-                    </div>
+                    </details>
+                    <!-- You can add more <details> sections here for future features -->
                 </div>
                 
                 <div class="floating-rewards-container">
@@ -249,21 +256,6 @@
             </div>
         </div>
     </div>
-    
-    <!-- ================================================================= -->
-    <!-- === NEW FULL-SCREEN ANIMATION LAYER (INTEGRATED) === -->
-    <!-- ================================================================= -->
-    <div id="gacha-animation-screen" class="hidden">
-        <div class="casino-lights"></div>
-        <div id="animation-reels-container">
-            <!-- Reels for the new animation will be generated here -->
-        </div>
-        <div id="particle-container"></div>
-        <div id="animation-result-display" class="hidden">
-            <div id="animation-points-won"></div>
-        </div>
-    </div>
-
 
     <!-- Supabase Client Library (must be before script.js) -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
