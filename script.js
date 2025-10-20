@@ -13,6 +13,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     const pullButton = document.getElementById('pull-button');
     const watchAdButton = document.getElementById('watch-ad-button');
     const resultText = document.getElementById('result-text');
+    const reels = document.querySelectorAll('.reel'); // The parent reel containers
+    const reelInners = document.querySelectorAll('.reel-inner');
+    const shutter = document.querySelector('.reel-shutter');
     const tonBalanceEl = document.getElementById('ton-balance');
     const solBalanceEl = document.getElementById('sol-balance');
     const exchangeButton = document.getElementById('exchange-button');
@@ -48,14 +51,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const treasureTimerFloat = document.getElementById('treasure-timer-float');
     const ticketTimerFloat = document.getElementById('ticket-timer-float');
 
-    // --- NEW: Selectors for the animation screen ---
-    const gachaAnimationScreen = document.getElementById('gacha-animation-screen');
-    const animationReelsContainer = document.getElementById('animation-reels-container');
-    const particleContainer = document.getElementById('particle-container');
-    const animationResultDisplay = document.getElementById('animation-result-display');
-    const animationPointsWon = document.getElementById('animation-points-won');
-
-
     // =================================================================
     // --- SUPABASE & SDK INITIALIZATION ---
     // =================================================================
@@ -84,7 +79,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const TREASURE_REWARD_POINTS = 2000;
     const TICKET_COOLDOWN = 5 * 60 * 1000;
     const TICKET_REWARD_PULLS = 6;
-    const ANIMATION_REEL_CONFIG = { iconCount: 40, spinDuration: 1000, staggerDelay: 500 };
 
     // --- STATE MANAGEMENT ---
     let user = {}; 
@@ -99,35 +93,32 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const main = async () => {
         setupEventListeners();
-        buildAnimationReels(); // NEW: Build animation reels on load
-
-        const TWA = window.Telegram.WebApp;
-
-        // Production-ready check: Ensure the app is running in Telegram
-        if (!TWA || !TWA.initDataUnsafe || !TWA.initDataUnsafe.user) {
-            console.error("Telegram Web App user data not found. This app must be run within Telegram.");
-            loadingOverlay.innerHTML = `<p style="color: var(--error-color); text-align: center; padding: 20px;">This application can only be accessed through Telegram.</p>`;
-            return; // Stop execution if not in Telegram
-        }
         
+        const TWA = window.Telegram.WebApp;
+        // Production-ready check: Ensure the app is running inside Telegram
+        if (!TWA || !TWA.initDataUnsafe || !TWA.initDataUnsafe.user || !TWA.initDataUnsafe.user.id) {
+            console.error("Telegram user data not found. This app must be run inside Telegram.");
+            loadingOverlay.innerHTML = `<p style="color: var(--text-color); text-align: center;">This app can only be used inside Telegram.</p>`;
+            loadingOverlay.style.opacity = '1'; // Ensure the error is visible
+            return; // Halt execution
+        }
+
+        // If we're here, we have valid Telegram user data
         TWA.ready();
         TWA.expand();
         document.body.style.setProperty('--bg-color', TWA.themeParams.bg_color || '#0F0F1A');
         const telegramUser = TWA.initDataUnsafe.user;
-        
+
         await loadInitialData(telegramUser);
         await checkDailyResets();
         await checkWithdrawalGate();
-        
         updateAllUI();
         updateButtonStates();
         renderTasksPage();
         initializeTimedRewards();
-        
         loadingOverlay.style.opacity = '0';
         appContainer.style.opacity = '1';
         setTimeout(() => loadingOverlay.style.display = 'none', 500);
-
         handleAnnouncement();
         playBGM();
     };
@@ -135,28 +126,37 @@ document.addEventListener('DOMContentLoaded', async () => {
     const loadInitialData = async (telegramUser) => {
         let { data: profileData, error: profileError } = await supabase.from('profiles').select('*').eq('telegram_id', telegramUser.id).single();
         if (profileError && profileError.code !== 'PGRST116') throw new Error(`Could not fetch profile: ${profileError.message}`);
-        
         if (!profileData) {
-            const { data: newUser, error: createError } = await supabase.from('profiles').insert({ telegram_id: telegramUser.id, username: telegramUser.username ? '@' + telegramUser.username : 'No Username', full_name: `${telegramUser.first_name} ${telegramUser.last_name || ''}`.trim(), points: 1250, pulls: 20 }).select().single();
+            const fullName = `${telegramUser.first_name || ''} ${telegramUser.last_name || ''}`.trim();
+            const { data: newUser, error: createError } = await supabase.from('profiles').insert({ telegram_id: telegramUser.id, username: telegramUser.username ? '@' + telegramUser.username : 'No Username', full_name: fullName || 'Gamer', points: 1250, pulls: 20 }).select().single();
             if (createError) throw new Error(`Could not create profile: ${createError.message}`);
             profileData = newUser;
         }
         user = profileData;
-
         const today = getTodayDateString();
         const [taskDefsResult, progressResult] = await Promise.all([ supabase.from('tasks').select('*'), supabase.from('user_task_progress').select('*').eq('user_id', user.id).eq('date', today) ]);
         if (taskDefsResult.error) throw new Error('Could not fetch task definitions');
         if (progressResult.error) throw new Error('Could not fetch task progress');
-
         tasks = taskDefsResult.data.reduce((acc, task) => { acc[task.id] = task; return acc; }, {});
         const progressByTaskId = progressResult.data.reduce((acc, p) => { acc[p.task_id] = p; return acc; }, {});
-        
         taskProgress = {};
         for (const taskId in tasks) { const task = tasks[taskId]; taskProgress[task.task_key] = progressByTaskId[taskId] || { current_progress: 0, is_claimed: false }; }
     };
     
-    async function updateUserProfile(updateData) { Object.assign(user, updateData); const { data: updatedUser, error } = await supabase.from('profiles').update(updateData).eq('id', user.id).select().single(); if (error) console.error("Error updating profile:", error); else user = updatedUser; }
-    async function updateTaskProgress(taskKey, incrementValue = 1) { const taskDef = Object.values(tasks).find(t => t.task_key === taskKey); if (!taskDef) return; const currentProg = taskProgress[taskKey]?.current_progress || 0; const newProgress = currentProg + incrementValue; taskProgress[taskKey].current_progress = newProgress; await supabase.from('user_task_progress').upsert({ user_id: user.id, task_id: taskDef.id, date: getTodayDateString(), current_progress: newProgress }, { onConflict: 'user_id, task_id, date' }); }
+    async function updateUserProfile(updateData) {
+        Object.assign(user, updateData);
+        const { data: updatedUser, error } = await supabase.from('profiles').update(updateData).eq('id', user.id).select().single();
+        if (error) { console.error("Error updating profile:", error); } else { user = updatedUser; }
+    }
+    
+    async function updateTaskProgress(taskKey, incrementValue = 1) {
+        const taskDef = Object.values(tasks).find(t => t.task_key === taskKey);
+        if (!taskDef) return;
+        const currentProg = taskProgress[taskKey]?.current_progress || 0;
+        const newProgress = currentProg + incrementValue;
+        taskProgress[taskKey].current_progress = newProgress;
+        await supabase.from('user_task_progress').upsert({ user_id: user.id, task_id: taskDef.id, date: getTodayDateString(), current_progress: newProgress }, { onConflict: 'user_id, task_id, date' });
+    }
     
     // =================================================================
     // --- UI, SOUND & EVENT LISTENERS ---
@@ -169,7 +169,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.querySelectorAll('button, details > summary, .nav-button, .profile-icon').forEach(el => { el.addEventListener('click', playTapSound); });
         navButtons.forEach(button => button.addEventListener('click', () => navigateTo(button.dataset.page)));
         profileButton.addEventListener('click', () => navigateTo('profile-page'));
-        pullButton.addEventListener('click', handlePull); // This now triggers the new animation
+        pullButton.addEventListener('click', handlePull);
         watchAdButton.addEventListener('click', handleWatchAd);
         exchangeButton.addEventListener('click', handleExchange);
         withdrawButton.addEventListener('click', handleWithdraw);
@@ -212,74 +212,61 @@ document.addEventListener('DOMContentLoaded', async () => {
     async function claimTaskReward(taskKey) { const progressData = taskProgress[taskKey]; if (!progressData || progressData.is_claimed) return; const taskDef = Object.values(tasks).find(t => t.task_key === taskKey); if (progressData.current_progress >= taskDef.target_value) { let profileUpdate = {}; if (taskDef.reward_type === 'points') profileUpdate.points = user.points + taskDef.reward_amount; else if (taskDef.reward_type === 'pulls') profileUpdate.pulls = user.pulls + taskDef.reward_amount; await updateUserProfile(profileUpdate); progressData.is_claimed = true; await supabase.from('user_task_progress').update({ is_claimed: true }).match({ user_id: user.id, task_id: taskDef.id, date: getTodayDateString() }); updateAllUI(); updateButtonStates(); renderTasksPage(); } }
     function handleWatchAd() { watchAdButton.disabled = true; watchAdButton.textContent = "LOADING AD..."; AdController.show().then(async () => { await updateUserProfile({ pulls: user.pulls + 10 }); await updateTaskProgress('watch2'); updateAllUI(); updateButtonStates(); resultText.textContent = "YOU GOT 10 PULLS!"; }).catch(() => { resultText.textContent = "AD FAILED. NO REWARD."; }).finally(() => { watchAdButton.disabled = false; watchAdButton.textContent = "WATCH AD FOR 10 PULLS"; updateButtonStates(); renderTasksPage(); }); }
     
+    // =================================================================
+    // === ENTIRELY NEW, ROBUST & SIMPLIFIED ANIMATION LOGIC ===
+    // =================================================================
 
-    // =================================================================
-    // === NEW ANIMATION SYSTEM (REPLACES OLD handlePull LOGIC) ===
-    // =================================================================
+    function getRandomIcon() {
+        return GACHA_ITEMS[Math.floor(Math.random() * GACHA_ITEMS.length)];
+    }
 
     async function handlePull() {
         if (user.pulls <= 0 || isSpinning) return;
         isSpinning = true;
 
-        // --- PRESERVED: Your original game logic ---
+        shutter.classList.add('open');
         await updateUserProfile({ pulls: user.pulls - 1 });
         await updateTaskProgress('pull10');
         updateAllUI();
         pullButton.disabled = true;
         watchAdButton.disabled = true;
-        resultText.textContent = 'GET READY...';
-        if(spinSound) { spinSound.currentTime = 0; spinSound.play().catch(e => {}); }
-
-        // --- NEW: Start the new animation sequence ---
-        resetAnimationState();
-        appContainer.classList.add('hidden');
-        gachaAnimationScreen.classList.remove('hidden');
-
-        const reels = Array.from(document.querySelectorAll('.animation-reel-inner'));
-        for (const reel of reels) {
-            reel.classList.add('spinning');
-            reel.style.transform = `translateY(-${reel.scrollHeight / 1.5}px)`;
-        }
+        resultText.textContent = 'SPINNING...';
+        resultText.classList.remove('win', 'jackpot');
         
-        await new Promise(resolve => setTimeout(resolve, ANIMATION_REEL_CONFIG.spinDuration));
+        if (spinSound) { spinSound.currentTime = 0; spinSound.play().catch(e => {}); }
 
-        const stopPromises = reels.map((reel, i) => {
-            return new Promise(resolve => {
-                setTimeout(() => {
-                    const result = stopAnimationReel(reel);
-                    resolve(result);
-                }, i * ANIMATION_REEL_CONFIG.staggerDelay);
-            });
-        });
+        const results = [getRandomIcon(), getRandomIcon(), getRandomIcon()];
+        const spinPromises = [];
 
-        const finalResults = await Promise.all(stopPromises);
-        
-        // --- Hand off to your win calculation logic ---
-        await checkWin(finalResults);
-    }
-
-    function stopAnimationReel(reel) {
-        return new Promise(resolve => {
-            reel.classList.remove('spinning');
-            
-            const iconHeight = reel.querySelector('.animation-reel-icon').offsetHeight;
-            const iconCount = ANIMATION_REEL_CONFIG.iconCount;
-            const randomIndex = Math.floor(Math.random() * iconCount);
-            const screenCenterOffset = (gachaAnimationScreen.offsetHeight - iconHeight) / 2;
-            const finalPosition = (randomIndex * iconHeight) - screenCenterOffset;
-
-            reel.style.transform = `translateY(-${finalPosition}px)`;
-            
-            reel.addEventListener('transitionend', () => {
-                reel.classList.add('stopped');
-                const winnerIcon = reel.children[randomIndex];
-                if (winnerIcon) winnerIcon.classList.add('winner');
+        reels.forEach((reel, i) => {
+            const reelInner = reel.querySelector('.reel-inner');
+            const promise = new Promise(resolve => {
+                // Prepare the reel with 3 icons: above, middle (blur), below (final result)
+                reelInner.innerHTML = `
+                    <div class="reel-icon" style="top: -100%">${getRandomIcon().symbol}</div>
+                    <div class="reel-icon" style="top: 0%">${getRandomIcon().symbol}</div>
+                    <div class="reel-icon" style="top: 100%">${results[i].symbol}</div>
+                `;
                 
-                const symbol = winnerIcon.textContent;
-                const points = GACHA_ITEMS.find(item => item.symbol === symbol).points;
-                resolve({ symbol, points });
-            }, { once: true });
+                setTimeout(() => {
+                    reel.classList.add('spinning');
+                    
+                    setTimeout(() => {
+                        reel.classList.remove('spinning');
+                        // Show the final result icon with a bounce
+                        reelInner.innerHTML = `<div class="reel-icon bounce">${results[i].symbol}</div>`;
+                        resolve();
+                    }, 1500 + i * 500); // Staggered stop time
+                }, i * 200); // Staggered start time
+            });
+            spinPromises.push(promise);
         });
+
+        // Wait for all animations to complete
+        await Promise.all(spinPromises);
+
+        // All reels have stopped, now reliably check for wins
+        checkWin(results);
     }
 
     async function checkWin(results) {
@@ -289,115 +276,48 @@ document.addEventListener('DOMContentLoaded', async () => {
         let isJackpot = false;
         let isPair = false;
 
+        // Apply win styling to the bounced icons
+        const finalIcons = document.querySelectorAll('.reel-icon.bounce');
+
         if (symbols[0] === symbols[1] && symbols[1] === symbols[2]) {
             pointsWon = results[0].points * 10;
             resultString = `JACKPOT! +${pointsWon}`;
             isJackpot = true;
+            finalIcons.forEach(icon => icon.classList.add('jackpot'));
         } else if (symbols[0] === symbols[1] || symbols[1] === symbols[2] || symbols[0] === symbols[2]) {
-            const pairSymbol = symbols[0] === symbols[1] ? symbols[0] : (symbols[0] === symbols[2] ? symbols[0] : symbols[1]);
-            pointsWon = results.find(r => r.symbol === pairSymbol).points * 2;
+            pointsWon = results.find(r => r.symbol === (symbols[0] === symbols[1] ? symbols[0] : (symbols[0] === symbols[2] ? symbols[0] : symbols[1]))).points * 2;
             resultString = `PAIR! +${pointsWon}`;
             isPair = true;
+            if (symbols[0] === symbols[1]) { finalIcons[0].classList.add('win'); finalIcons[1].classList.add('win'); }
+            if (symbols[0] === symbols[2]) { finalIcons[0].classList.add('win'); finalIcons[2].classList.add('win'); }
+            if (symbols[1] === symbols[2]) { finalIcons[1].classList.add('win'); finalIcons[2].classList.add('win'); }
         } else {
             results.forEach(item => pointsWon += item.points);
             resultString = `+${pointsWon} PTS`;
         }
 
+        resultText.textContent = resultString;
+        if (isJackpot) resultText.classList.add('jackpot');
+        else if (isPair || pointsWon > 0) resultText.classList.add('win');
+
+        // This part is now guaranteed to run after the animation is complete
         await updateUserProfile({ points: user.points + pointsWon });
         await updateTaskProgress('earn10k', pointsWon);
         if (isJackpot) await updateTaskProgress('winJackpot');
         if (isPair) await updateTaskProgress('winPair');
         
-        createParticleBurst();
-        animatePoints(pointsWon);
-        animationResultDisplay.classList.remove('hidden');
-        animationPointsWon.classList.add('animate');
-        
+        // After a delay to admire the result, close the shutter and reset
         setTimeout(() => {
-            exitGachaAnimation(resultString, isJackpot, isPair);
-        }, 3000);
-    }
-    
-    function exitGachaAnimation(finalResultString, isJackpot, isPair) {
-        gachaAnimationScreen.classList.add('exiting');
-        
-        setTimeout(() => {
-            gachaAnimationScreen.classList.add('hidden');
-            appContainer.classList.remove('hidden');
-
-            updateAllUI();
-            resultText.textContent = finalResultString;
-            resultText.classList.remove('win', 'jackpot');
-            if (isJackpot) resultText.classList.add('jackpot');
-            else resultText.classList.add('win');
-            
+            shutter.classList.remove('open');
+            // Reset the reels visually for the next spin's shutter reveal
+            reelInners.forEach(reelInner => {
+                reelInner.innerHTML = `🎰`;
+            });
             isSpinning = false;
+            updateAllUI(); // This will also update the points display with the new total
             updateButtonStates();
             renderTasksPage();
-        }, 400);
-    }
-
-    function buildAnimationReels() {
-        animationReelsContainer.innerHTML = '';
-        for (let i = 0; i < 3; i++) {
-            const reel = document.createElement('div');
-            reel.className = 'animation-reel';
-            const reelInner = document.createElement('div');
-            reelInner.className = 'animation-reel-inner';
-            const iconPool = [];
-            for (let j = 0; j < ANIMATION_REEL_CONFIG.iconCount; j++) {
-                const item = GACHA_ITEMS[Math.floor(Math.random() * GACHA_ITEMS.length)];
-                iconPool.push(item);
-            }
-            const allIcons = [...iconPool, ...iconPool];
-            allIcons.forEach(item => {
-                const iconDiv = document.createElement('div');
-                iconDiv.className = 'animation-reel-icon';
-                iconDiv.textContent = item.symbol;
-                reelInner.appendChild(iconDiv);
-            });
-            reel.appendChild(reelInner);
-            animationReelsContainer.appendChild(reel);
-        }
-    }
-    
-    function resetAnimationState() {
-        gachaAnimationScreen.classList.remove('exiting');
-        particleContainer.innerHTML = '';
-        animationResultDisplay.classList.add('hidden');
-        animationPointsWon.classList.remove('animate');
-        animationPointsWon.textContent = '';
-        
-        document.querySelectorAll('.animation-reel-inner').forEach(reel => {
-            reel.classList.remove('stopped', 'spinning');
-            reel.style.transition = 'none';
-            reel.style.transform = 'translateY(0)';
-            reel.offsetHeight;
-            reel.style.transition = '';
-            Array.from(reel.children).forEach(icon => icon.classList.remove('winner'));
-        });
-    }
-
-    function animatePoints(endValue) {
-        let startValue = 0; const duration = 1000; const startTime = Date.now();
-        function updateFrame() {
-            const elapsedTime = Date.now() - startTime;
-            if (elapsedTime >= duration) { animationPointsWon.textContent = `+${endValue.toLocaleString()} Points!`; return; }
-            const currentValue = Math.round(endValue * (elapsedTime / duration));
-            animationPointsWon.textContent = `+${currentValue.toLocaleString()} Points!`;
-            requestAnimationFrame(updateFrame);
-        }
-        requestAnimationFrame(updateFrame);
-    }
-
-    function createParticleBurst() {
-        for (let i = 0; i < 30; i++) {
-            const p = document.createElement('div'); p.className = 'particle';
-            const angle = Math.random() * 360; const radius = Math.random() * 150 + 50;
-            p.style.setProperty('--x', `${Math.cos(angle * Math.PI/180) * radius}px`);
-            p.style.setProperty('--y', `${Math.sin(angle * Math.PI/180) * radius}px`);
-            particleContainer.appendChild(p);
-        }
+        }, 2000);
     }
 
 
