@@ -79,13 +79,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     // --- SUPABASE & SDK INITIALIZATION ---
     // =================================================================
     const SUPABASE_URL = 'https://vddnlobgtnwwplburlja.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI leanerQiOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZkZG5sb2JndG53d3BsYnVybGphIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDEyMTcsImV4cCI6MjA3NTUxNzIxN30.2zYyICX5QyNDcLcGWia1F04yXPfNH6M09aczNlsLFSM';
+    // FIXED: The typo "leaner" has been removed from the key.
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZkZG5sb2JndG53d3BsYnVybGphIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NDEyMTcsImV4cCI6MjA3NTUxNzIxN30.2zYyICX5QyNDcLcGWia1F04yXPfNH6M09aczNlsLFSM';
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    const AdController = window.Adsgram ? window.Adsgram.init({ blockId: "int-14190" }) : { show: () => { console.log("AD STUB: Main ad show"); return Promise.resolve(); } };
-    const TreasureAdController = window.Adsgram ? window.Adsgram.init({ blockId: "int-15943" }) : { show: () => { console.log("AD STUB: Treasure ad show"); return Promise.resolve(); } };
-    const TicketAdController = window.Adsgram ? window.Adsgram.init({ blockId: "int-15944" }) : { show: () => { console.log("AD STUB: Ticket ad show"); return Promise.resolve(); } };
-    // UPDATED: Card game Ad ID changed and stub removed for production
+    const AdController = window.Adsgram.init({ blockId: "int-14190" });
+    const TreasureAdController = window.Adsgram.init({ blockId: "int-15943" });
+    const TicketAdController = window.Adsgram.init({ blockId: "int-15944" });
     const CardGameAdController = window.Adsgram.init({ blockId: "int-15864" });
 
     // =================================================================
@@ -137,14 +137,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         setupEventListeners();
         
-        // UPDATED: Use real Telegram script only
         const TWA = window.Telegram.WebApp;
         
         if (!TWA || !TWA.initDataUnsafe || !TWA.initDataUnsafe.user || !TWA.initDataUnsafe.user.id) {
             console.error("Telegram user data not found. This app must be run inside Telegram.");
-            loadingOverlay.style.display = 'none'; // Hide loading spinner
+            loadingOverlay.style.display = 'none';
             document.body.innerHTML = '<p style="color: #ff5572; font-family: sans-serif; text-align: center; padding: 20px; background-color: #0d0c1d; height: 100vh; margin: 0; display: grid; place-content: center;">This application can only be run inside the Telegram app.</p>';
-            return; // Stop the script
+            return;
         }
         
         TWA.ready();
@@ -563,10 +562,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             updateButtonStates();
         }).catch((error) => {
             console.error("Card game ad failed.", error);
-            // Re-enable button if ad fails
             watchAdForCardsButton.disabled = false;
         }).finally(() => {
-            updateCardAdTimer(); // Immediately update the timer state
+            updateCardAdTimer();
         });
     }
     
